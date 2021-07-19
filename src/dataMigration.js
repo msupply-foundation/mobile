@@ -9,6 +9,8 @@ import { compareVersions } from './utilities';
 import { SETTINGS_KEYS, SETTINGS_DEFAULTS } from './settings';
 import packageJson from '../package.json';
 
+import { createRequisitionItem } from './database/utilities/createRecord';
+
 const APP_VERSION_KEY = 'AppVersion';
 
 /* eslint-disable-next-line no-unused-vars */
@@ -24,10 +26,10 @@ export const getVersion = async settings => {
   // If app version not correctly retrieved from local storage, check settings.
   if (!fromVersion || fromVersion.length === 0) {
     fromVersion = settings.get(SETTINGS_KEYS.APP_VERSION);
-    
+
     // If app version not in settings or storage, assume new installation.
     fromVersion = packageJson.version;
-  
+
     // Migrate app version from settings to local storage.
     await AsyncStorage.setItem(APP_VERSION_KEY, fromVersion);
   }
@@ -333,7 +335,42 @@ const getMigrations = (database, settings) => [
   {
     version: '8.1.1',
     getTasks: () => {
-      let tasks = [];
+      // Inject test data for performance metrics.
+      const item = database.objects('Item')[0];
+      const requisition = database.objects('Requisition')[0];
+
+      const requistionItemCount = 20000;
+
+      const batchSize = 5000;
+      const taskCount = Math.ceil(requistionItemCount / batchSize);
+
+      const maxDailyUsage = 100;
+      const maxStockOnHand = 1000;
+
+      const tasks = [];
+
+      for (let i = 1; i <= taskCount; i++) {
+        tasks.push({
+          description: `Inject task data ${i}/${taskCount}`,
+          execute: () => {
+            database.write(() => {
+              for (let j = 0; j < batchSize; j++) {
+                const dailyUsage = (i % maxDailyUsage) + 1;
+                const stockOnHand = (i % maxStockOnHand) + 1;
+                createRequisitionItem(database, requisition, item, dailyUsage, stockOnHand);
+              }
+            });
+          },
+        });
+      }
+
+      return tasks;
+    },
+  },
+  {
+    version: '8.1.2',
+    getTasks: () => {
+      const tasks = [];
 
       const requisitionItems = database
         .objects('RequisitionItem')

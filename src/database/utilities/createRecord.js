@@ -785,7 +785,7 @@ const createCustomerRequisition = (
  * @param   {double}          dailyUsage   Daily usage of item.
  * @return  {RequisitionItem}
  */
-const createRequisitionItem = (database, requisition, item, dailyUsage, stockOnHand) => {
+export const createRequisitionItem = (database, requisition, item, dailyUsage, stockOnHand) => {
   // Handle cross reference items.
   const { realItem } = item;
 
@@ -794,7 +794,7 @@ const createRequisitionItem = (database, requisition, item, dailyUsage, stockOnH
   const requisitionItem = database.create('RequisitionItem', {
     id: generateUUID(),
     item: realItem,
-    itemName: realItem.name,
+    // itemName: realItem.name,
     requisition,
     stockOnHand: stockOnHand ?? realItem.totalQuantity,
     dailyUsage: dailyUsage ?? realItem.dailyUsage,

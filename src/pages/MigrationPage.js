@@ -14,6 +14,9 @@ import { getMigrationTasks } from '../dataMigration';
 import Settings from '../settings/MobileAppSettings';
 import Database from '../database/BaseDatabase';
 
+let timerStart;
+let timerStop;
+
 /**
  * @prop  {function}  onMigrated  Callback on completion of all migration tasks.
  */
@@ -28,6 +31,7 @@ export const MigrationPage = ({ onMigrated }) => {
       if (migrationTasks && migrationTasks.length > 0) {
         setTasks(migrationTasks);
         setExecuteCurrentTask(true);
+        timerStart = new Date().getTime();
       } else {
         onMigrated();
       }
@@ -48,6 +52,10 @@ export const MigrationPage = ({ onMigrated }) => {
         if (nextTaskIndex >= tasks.length) {
           // All tasks executed.
           onMigrated();
+
+          timerStop = new Date().getTime();
+
+          console.log('Elapsed time:', timerStop - timerStart);
         } else {
           // Increment task index to trigger next execution.
           setCurrentTaskIndex(nextTaskIndex);
