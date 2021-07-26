@@ -1,6 +1,8 @@
+/* eslint-disable max-classes-per-file */
 /* eslint-disable react/forbid-prop-types */
 /* eslint-disable max-len */
-import React, { useEffect, useImperativeHandle, useMemo, useRef } from 'react';
+import React, { useState, useEffect, useImperativeHandle, useMemo, useRef } from 'react';
+import { Text } from 'react-native';
 import PropTypes from 'prop-types';
 import pointer from 'json-pointer';
 import { withTheme } from '@rjsf/core';
@@ -12,7 +14,14 @@ import { JSONFormWidget } from './widgets/index';
 import { JSONFormErrorList } from './JSONFormErrorList';
 import { PageButton } from '../PageButton';
 import { JSONFormContext } from './JSONFormContext';
-import { useDebounce } from '../../hooks/useDebounce';
+import { useDebounce } from '../../hooks';
+import LoggerService from '../../utilities/logging';
+import { FlexColumn } from '../FlexColumn';
+import { BreachManUnhappy } from '../BreachManUnhappy';
+import { APP_FONT_FAMILY, DARKER_GREY, GREY } from '../../globalStyles';
+import { generalStrings } from '../../localization';
+
+const logger = LoggerService.createLogger('JSONForm');
 
 const ajvErrors = require('ajv-errors');
 
@@ -126,6 +135,24 @@ class FocusController {
   };
 }
 
+// eslint-disable-next-line react/prop-types
+const ErrorHeader = ({ children }) => (
+  <Text style={{ fontFamily: APP_FONT_FAMILY, fontSize: 20, color: DARKER_GREY }}>{children}</Text>
+);
+// eslint-disable-next-line react/prop-types
+const ErrorMessage = ({ children }) => (
+  <Text style={{ fontFamily: APP_FONT_FAMILY, textAlign: 'center', color: GREY }}>{children}</Text>
+);
+
+export const InvalidSchema = () => (
+  <FlexColumn flex={1} justifyContent="center" alignItems="center">
+    <BreachManUnhappy size={250} />
+    <ErrorHeader>{generalStrings.oh_no}</ErrorHeader>
+    <ErrorMessage>{generalStrings.theres_been_an_error_with_this_forms_configuration}</ErrorMessage>
+    <ErrorMessage>{generalStrings.please_contact_your_administrator}</ErrorMessage>
+  </FlexColumn>
+);
+
 // The underlying Form component takes a prop formData which just seeds the component
 // but does not update the form after that point.
 // So, just never re-render this component.
@@ -147,6 +174,8 @@ export const JSONFormComponent = React.forwardRef(
   ) => {
     if (!surveySchema) return null;
 
+    const [hasSchemaError, setSchemaError] = useState(false);
+
     const { uiSchema, jsonSchema } = surveySchema;
     const validator = useMemo(() => ajv.compile(jsonSchema), [jsonSchema]);
     const Form = useMemo(() => withTheme(theme), []);
@@ -165,7 +194,9 @@ export const JSONFormComponent = React.forwardRef(
 
     const debouncedOnChange = useDebounce(onChange, 500);
 
-    return (
+    return hasSchemaError ? (
+      <InvalidSchema />
+    ) : (
       <JSONFormContext.Provider value={options}>
         <Form
           liveValidate={liveValidate}
@@ -201,8 +232,13 @@ export const JSONFormComponent = React.forwardRef(
             });
 
             Object.entries(errorLookup).forEach(([dataPath, message]) => {
-              const errorHandler = pointer.get(errorHandlers, dataPath);
-              if (errorHandler?.addError) errorHandler.addError(message);
+              try {
+                const errorHandler = pointer.get(errorHandlers, dataPath);
+                if (errorHandler?.addError) errorHandler.addError(message);
+              } catch (e) {
+                setSchemaError(true);
+                logger.error(`Invalid JSON Schema ${dataPath} - ${message} - ${e}`);
+              }
             });
 
             // The same ErrorHandlers object must be returned from this function, which should be
