@@ -177,7 +177,14 @@ export const JSONFormComponent = React.forwardRef(
     const [hasSchemaError, setSchemaError] = useState(false);
 
     const { uiSchema, jsonSchema } = surveySchema;
-    const validator = useMemo(() => ajv.compile(jsonSchema), [jsonSchema]);
+    const validator = useMemo(() => {
+      try {
+        return ajv.compile(jsonSchema);
+      } catch (e) {
+        logger.error(`Invalid JSON Schema ${e} - ${JSON.stringify(jsonSchema)}`);
+        return setSchemaError(true);
+      }
+    }, [jsonSchema]);
     const Form = useMemo(() => withTheme(theme), []);
     // Attach to the ref passed a method `submit` which will allow a caller
     // to programmatically call submit
@@ -237,7 +244,11 @@ export const JSONFormComponent = React.forwardRef(
                 if (errorHandler?.addError) errorHandler.addError(message);
               } catch (e) {
                 setSchemaError(true);
-                logger.error(`Invalid JSON Schema ${dataPath} - ${message} - ${e}`);
+                logger.error(
+                  `Invalid JSON Schema ${dataPath} - ${message} - ${e} - ${JSON.stringify(
+                    jsonSchema
+                  )}`
+                );
               }
             });
 
