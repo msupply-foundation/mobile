@@ -24,10 +24,16 @@ const reducer = (state, action) => {
       const { data } = payload;
       const { data: initialData } = state;
       const localIds = initialData.map(history => history.id);
-      const newData = (data ?? []).map(history => ({
-        ...history,
-        isRemote: localIds.includes(history.id) ? '' : '✓',
-      }));
+
+      // Filter out local entries before merging
+      const additionalRemoteRecords = data
+        .filter(record => !localIds.includes(record.id))
+        .map(remoteHistory => ({
+          ...remoteHistory,
+          isRemote: '✓',
+        }));
+      const newData = initialData.concat(additionalRemoteRecords);
+
       return { ...state, data: newData, loading: false, searched: true };
     }
     case 'fetch_start': {
