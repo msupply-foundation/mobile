@@ -163,13 +163,41 @@ const createPrescription = (
   });
 };
 
-const createRefusalNameNote = name => {
-  const [patientEvent] = UIDatabase.objects('PatientEvent').filtered('code == "RV"');
+const createVaccinationNameNote = (
+  patient,
+  prescription,
+  refused,
+  bonusDose,
+  vaccinator,
+  selectedBatch
+) => {
+  const [patientEvent] = UIDatabase.objects('PatientEvent').filtered('code == "vaccination"');
 
   if (!patientEvent) return;
 
   const id = generateUUID();
-  const newNameNote = { id, name, patientEvent, entryDate: new Date() };
+  const data = {
+    refused,
+    bonusDose,
+    vaccine: selectedBatch?.itemName,
+    vaccineCode: selectedBatch?.itemCode,
+    batch: selectedBatch?.batch,
+    expiry: selectedBatch?.expiryDate,
+    vaccinator: vaccinator?.displayString,
+    extra: {
+      prescription: prescription?.toJSON(),
+      vaccinator: vaccinator.toJSON(),
+      patient: patient.toJSON(),
+    },
+  };
+
+  const newNameNote = {
+    id,
+    name: patient,
+    patientEvent,
+    entryDate: new Date(),
+    _data: JSON.stringify(data),
+  };
 
   UIDatabase.write(() => UIDatabase.create('NameNote', newNameNote));
 };
@@ -197,13 +225,14 @@ const confirm = () => (dispatch, getState) => {
   const hasBonusDoses = selectFoundBonusDose(getState());
   const patientID = selectEditingNameId(getState());
   const selectedBatches = selectSelectedBatches(getState());
+  const [selectedBatch] = selectedBatches;
   const vaccinator = selectSelectedVaccinator(getState());
   const supplementalData = selectSelectedSupplementalData(getState());
 
   if (hasBonusDoses) {
     UIDatabase.write(() => {
       const stocktake = createRecord(UIDatabase, 'Stocktake', currentUser, 'bonus_dose');
-      const [selectedBatch] = selectedBatches;
+
       const stocktakeItem = createRecord(
         UIDatabase,
         'StocktakeItem',
@@ -230,11 +259,21 @@ const confirm = () => (dispatch, getState) => {
   });
 
   const patient = UIDatabase.get('Name', patientID);
-  if (hasRefused) {
-    createRefusalNameNote(patient);
-  } else {
-    createPrescription(patient, currentUser, selectedBatches, vaccinator, supplementalData);
-  }
+  const prescription = createPrescription(
+    patient,
+    currentUser,
+    selectedBatches,
+    vaccinator,
+    supplementalData
+  );
+  createVaccinationNameNote(
+    patient,
+    prescription,
+    hasRefused,
+    hasBonusDoses,
+    vaccinator,
+    selectedBatch
+  );
 };
 
 const selectVaccinator = vaccinator => ({

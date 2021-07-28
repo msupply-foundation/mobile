@@ -9,6 +9,15 @@ export class MedicineAdministrator extends Realm.Object {
   get displayString() {
     return `${this.code ?? ''} ${this.firstName ?? ''} ${this.lastName ?? ''}`.trim();
   }
+
+  toJSON() {
+    return {
+      firstName: this.firstName,
+      lastName: this.lastName,
+      code: this.code,
+      isActive: this.isActive,
+    };
+  }
 }
 
 MedicineAdministrator.schema = {
