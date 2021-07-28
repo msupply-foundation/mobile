@@ -1,5 +1,6 @@
 {
   "gb": {
+    "vaccine_date": "VACCINATION DATE",
     "vaccinator": "VACCINATOR",
     "adr": "ADR",
     "mac_address": "MAC ADDRESS",

@@ -87,9 +87,11 @@ export const COLUMN_KEYS = {
   NEGATIVE_ADJUSTMENTS: 'negativeAdjustments',
   CLOSING_STOCK: 'stockOnHand',
   VACCINATOR: 'vaccinator',
+  VACCINE_DATE: 'vaccineDate',
 };
 
 export const COLUMN_NAMES = {
+  VACCINE_DATE: 'vaccineDate',
   VACCINATOR: 'vaccinator',
   EDITABLE_DOSES: 'editableDoses',
   ADVERSE_DRUG_EFFECT: 'adverseDrugEffect',

@@ -1,6 +1,6 @@
 import { generateUUID } from 'react-native-database';
 import { batch } from 'react-redux';
-
+import moment from 'moment';
 import { UIDatabase, createRecord } from '../../database';
 import {
   selectFoundBonusDose,
@@ -179,10 +179,11 @@ const createVaccinationNameNote = (
   const data = {
     refused,
     bonusDose,
-    vaccine: selectedBatch?.itemName,
-    vaccineCode: selectedBatch?.itemCode,
+    itemName: selectedBatch?.itemName,
+    itemCode: selectedBatch?.itemCode,
     batch: selectedBatch?.batch,
     expiry: selectedBatch?.expiryDate,
+    vaccineDate: moment().format('DD/MM/YYYY'), // Duplicating entry date for ease of reporting
     vaccinator: vaccinator?.displayString,
     extra: {
       prescription: prescription?.toJSON(),
@@ -266,6 +267,7 @@ const confirm = () => (dispatch, getState) => {
     vaccinator,
     supplementalData
   );
+
   createVaccinationNameNote(
     patient,
     prescription,

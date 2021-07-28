@@ -6,9 +6,11 @@
 export const MODALS = {
   PATIENT_HISTORY: 'patientHistory',
   VACCINE_HISTORY: 'vaccineHistory',
+  VACCINATION_HISTORY: 'vaccinationHistory',
   PATIENT_HISTORY_LOOKUP: 'patientHistoryLookup',
   VACCINE_HISTORY_LOOKUP: 'vaccineHistoryLookup',
   PATIENT_LOOKUP: 'patientLookup',
+  VACCINE_PATIENT_LOOKUP: 'vaccinePatientLookup',
   PRESCRIBER_LOOKUP: 'prescriberLookup',
   REGIMEN_DATA: 'regimenDataModal',
   STOCKTAKE_BATCH_EDIT: 'stocktakeBatchEditModal',
