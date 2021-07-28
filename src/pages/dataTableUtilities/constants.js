@@ -17,6 +17,9 @@ export const COLUMN_TYPES = {
 };
 
 export const COLUMN_KEYS = {
+  DOSES_DIFFERENCE: 'dosesDifference',
+  COUNTED_DOSES: 'countedDoses',
+  SNAPSHOT_DOSES: 'snapshotDoses',
   ADVERSE_DRUG_EFFECT: 'adverseDrugEffect',
   EDIT: 'edit',
   BATTERY_LEVEL: 'batteryLevelString',
@@ -91,6 +94,9 @@ export const COLUMN_KEYS = {
 };
 
 export const COLUMN_NAMES = {
+  DOSES_DIFFERENCE: 'dosesDifference',
+  COUNTED_DOSES: 'countedDoses',
+  SNAPSHOT_DOSES: 'snapshotDoses',
   VACCINE_DATE: 'vaccineDate',
   VACCINATOR: 'vaccinator',
   EDITABLE_DOSES: 'editableDoses',

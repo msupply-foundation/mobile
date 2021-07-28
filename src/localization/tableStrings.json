@@ -1,5 +1,8 @@
 {
   "gb": {
+    "doses_difference": "DOSES\nDIFFERENCE",
+    "counted_doses": "COUNTED\nDOSES",
+    "snapshot_doses": "SNAPSHOT\nDOSES",
     "vaccine_date": "VACCINATION DATE",
     "vaccinator": "VACCINATOR",
     "adr": "ADR",
