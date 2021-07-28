@@ -113,7 +113,6 @@ export const SimpleTable = React.memo(
 
       return (
         <FlatList
-          {...flatListProps}
           ref={ref}
           data={data}
           keyExtractor={recordKeyExtractor}
@@ -123,6 +122,7 @@ export const SimpleTable = React.memo(
           ListHeaderComponent={renderHeaders}
           extraData={selectedRows}
           style={style}
+          {...flatListProps}
         />
       );
     }
