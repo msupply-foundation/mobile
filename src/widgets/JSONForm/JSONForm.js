@@ -309,7 +309,7 @@ JSONFormComponent.defaultProps = {
   onChange: () => {},
   formData: {},
   surveySchema: undefined,
-  liveValidate: true,
+  liveValidate: false,
 };
 
 JSONFormComponent.propTypes = {
