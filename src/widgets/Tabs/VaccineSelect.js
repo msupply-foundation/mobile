@@ -117,9 +117,15 @@ const VaccineSelectComponent = ({
     ? toggleConfirmDoubleDoseModal
     : toggleConfirmAndRepeatDoubleDoseModal;
 
-  const onModalConfirm = confirmDoubleDoseModalOpen
-    ? confirmPrescription
-    : confirmAndRepeatPrescription;
+  const onModalConfirm = () => {
+    onModalClose();
+
+    if (confirmDoubleDoseModalOpen) {
+      confirmPrescription();
+    } else {
+      confirmAndRepeatPrescription();
+    }
+  };
 
   const isModalOpen = confirmDoubleDoseModalOpen || confirmAndRepeatDoubleDoseModalOpen;
 
