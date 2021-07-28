@@ -192,7 +192,12 @@ const PatientSelectComponent = ({
     getMorePatients,
   ] = useLocalAndRemotePatients([]);
 
-  const columns = React.useMemo(() => getColumns(MODALS.VACCINE_PATIENT_LOOKUP), []);
+  const columns = React.useMemo(() => {
+    if (UIDatabase.objects('PatientEvent').filtered("code == 'vaccination")) {
+      return getColumns(MODALS.VACCINE_PATIENT_LOOKUP);
+    }
+    return getColumns(MODALS.PATIENT_LOOKUP);
+  }, []);
   const { pageTopViewContainer } = globalStyles;
   const keyboardIsOpen = useKeyboardIsOpen();
 
