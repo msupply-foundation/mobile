@@ -193,7 +193,7 @@ const PatientSelectComponent = ({
   ] = useLocalAndRemotePatients([]);
 
   const columns = React.useMemo(() => {
-    if (UIDatabase.objects('PatientEvent').filtered("code == 'vaccination")) {
+    if (UIDatabase.get('PatientEvent', 'vaccination', 'code')) {
       return getColumns(MODALS.VACCINE_PATIENT_LOOKUP);
     }
     return getColumns(MODALS.PATIENT_LOOKUP);
