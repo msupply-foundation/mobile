@@ -18,6 +18,7 @@ import { Flag, IconButton } from '..';
 import { GenericChoiceList } from '../modalChildren/GenericChoiceList';
 import { ModalContainer } from './ModalContainer';
 import { LanguageIcon } from '../icons';
+import { useKeyboardIsOpen } from '../../hooks/useKeyboardIsOpen';
 
 import {
   LANGUAGE_NAMES,
@@ -38,6 +39,16 @@ const AUTH_STATUSES = {
   AUTHENTICATING: 'authenticating',
   AUTHENTICATED: 'authenticated',
   ERROR: 'error',
+};
+
+const AuthFormView = props => {
+  const { children } = props;
+  const keyboardIsOpen = useKeyboardIsOpen();
+  const marginTop = keyboardIsOpen ? 0 : 80;
+  return <View style={[globalStyles.authFormContainer, { marginTop }]}>{children}</View>;
+};
+AuthFormView.propTypes = {
+  children: PropTypes.oneOfType([PropTypes.arrayOf(PropTypes.node), PropTypes.node]).isRequired,
 };
 
 export class LoginModal extends React.Component {
@@ -164,7 +175,7 @@ export class LoginModal extends React.Component {
         backgroundColor={WHITE}
       >
         <View style={[globalStyles.verticalContainer, { flex: 1 }]}>
-          <View style={[globalStyles.authFormContainer]}>
+          <AuthFormView>
             <Image
               resizeMode="contain"
               style={globalStyles.authFormLogo}
@@ -228,7 +239,7 @@ export class LoginModal extends React.Component {
                 isDisabled={!this.canAttemptLogin}
               />
             </View>
-          </View>
+          </AuthFormView>
         </View>
         <View style={globalStyles.bottomContainer}>
           <IconButton
