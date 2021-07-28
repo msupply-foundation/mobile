@@ -19,7 +19,6 @@ export const authStyles = {
     fontFamily: APP_FONT_FAMILY,
   },
   authFormContainer: {
-    marginTop: 80,
     marginHorizontal: 300,
     alignItems: 'center',
     justifyContent: 'flex-start',
