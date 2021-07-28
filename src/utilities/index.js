@@ -23,3 +23,4 @@ export { chunk } from './chunk';
 export { parsePositiveIntegerInterfaceInput } from './parsers';
 export { twoDecimalsMax, formatErrorItemNames, roundNumber } from './formatters';
 export { MILLISECONDS } from './constants';
+export { validateJsonSchemaData } from './ajvValidator';
