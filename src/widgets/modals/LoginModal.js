@@ -18,7 +18,7 @@ import { Flag, IconButton } from '..';
 import { GenericChoiceList } from '../modalChildren/GenericChoiceList';
 import { ModalContainer } from './ModalContainer';
 import { LanguageIcon } from '../icons';
-import { useKeyboardIsOpen } from '../../hooks/useKeyboardIsOpen';
+import { AuthFormView } from '../AuthFormView';
 
 import {
   LANGUAGE_NAMES,
@@ -39,16 +39,6 @@ const AUTH_STATUSES = {
   AUTHENTICATING: 'authenticating',
   AUTHENTICATED: 'authenticated',
   ERROR: 'error',
-};
-
-const AuthFormView = props => {
-  const { children } = props;
-  const keyboardIsOpen = useKeyboardIsOpen();
-  const marginTop = keyboardIsOpen ? 0 : 80;
-  return <View style={[globalStyles.authFormContainer, { marginTop }]}>{children}</View>;
-};
-AuthFormView.propTypes = {
-  children: PropTypes.oneOfType([PropTypes.arrayOf(PropTypes.node), PropTypes.node]).isRequired,
 };
 
 export class LoginModal extends React.Component {
