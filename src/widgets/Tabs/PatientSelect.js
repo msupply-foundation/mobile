@@ -222,7 +222,7 @@ const PatientSelectComponent = ({
       case 'patientHistory':
         return patientId => {
           const [vaccinationPatientEvent] = UIDatabase.objects('PatientEvent').filtered(
-            "code == 'RV'"
+            "code == 'vaccination'"
           );
           const { id: vaccinationPatientEventID } = vaccinationPatientEvent ?? {};
 
