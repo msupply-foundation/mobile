@@ -51,7 +51,7 @@ export const VaccinationHistory = ({ history }) => {
           data={filtered}
           columns={columns}
           ListEmptyComponent={<EmptyComponent />}
-          keyExtractor={() => 1}
+          keyExtractor={(_, idx) => idx}
         />
       </View>
     </View>

@@ -144,6 +144,7 @@ const PatientSelectComponent = ({
 }) => {
   const withLoadingIndicator = useLoadingIndicator();
   const [isQrModalOpen, toggleQrModal] = useToggle();
+  const [{ history, patient } = {}, setPatientHistory] = useState();
 
   const hapticFeedBackOptions = {
     enableVibrateFallback: true,
@@ -191,7 +192,6 @@ const PatientSelectComponent = ({
     getMorePatients,
   ] = useLocalAndRemotePatients([]);
 
-  const [patientHistory, setPatientHistory] = useState();
   const columns = React.useMemo(() => getColumns(MODALS.VACCINE_PATIENT_LOOKUP), []);
   const { pageTopViewContainer } = globalStyles;
   const keyboardIsOpen = useKeyboardIsOpen();
@@ -222,15 +222,15 @@ const PatientSelectComponent = ({
       case 'patientHistory':
         return patientId => {
           const [vaccinationPatientEvent] =
-            UIDatabase.objects('PatientEvent').filtered("code == 'RV'") ?? {};
+            UIDatabase.objects('PatientEvent').filtered("code == 'vaccination'") ?? {};
           const { id: vaccinationPatientEventID } = vaccinationPatientEvent;
 
-          const patient = data.find(({ id }) => patientId === id);
+          const foundPatient = data.find(({ id }) => patientId === id);
           const patientsPreviousVaccinations = patient?.nameNotes
             ?.filter(({ patientEventID }) => patientEventID === vaccinationPatientEventID)
             .map(({ data: vaccinationNameNotes }) => vaccinationNameNotes);
 
-          setPatientHistory(patientsPreviousVaccinations);
+          setPatientHistory({ patient: foundPatient, history: patientsPreviousVaccinations });
         };
       default:
         return null;
@@ -321,11 +321,11 @@ const PatientSelectComponent = ({
       )}
       <QrScannerModal isOpen={isQrModalOpen} onBarCodeRead={onQrCodeRead} onClose={toggleQrModal} />
       <ModalContainer
-        isVisible={!!patientHistory}
+        isVisible={!!patient}
         onClose={() => setPatientHistory(null)}
-        title={dispensingStrings.vaccination_history}
+        title={`${dispensingStrings.vaccination_history} ${patient?.name}`}
       >
-        <VaccinationHistory history={patientHistory} />
+        <VaccinationHistory history={history} patient={patient} />
       </ModalContainer>
     </FlexView>
   );

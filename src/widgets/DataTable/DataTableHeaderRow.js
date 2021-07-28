@@ -57,12 +57,13 @@ const DataTableHeaderRow = React.memo(({ columns, sortKey, isAscending, onPress,
 DataTableHeaderRow.propTypes = {
   columns: PropTypes.arrayOf(PropTypes.object),
   sortKey: PropTypes.string,
-  isAscending: PropTypes.bool.isRequired,
+  isAscending: PropTypes.bool,
   onPress: PropTypes.func,
   isSortable: PropTypes.bool,
 };
 
 DataTableHeaderRow.defaultProps = {
+  isAscending: false,
   columns: [],
   sortKey: '',
   onPress: null,
