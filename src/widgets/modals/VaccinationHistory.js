@@ -42,7 +42,8 @@ const jsonSchema = {
 };
 
 export const VaccinationHistory = ({ history }) => {
-  const filtered = history.filter(vaccination => validateJsonSchemaData(jsonSchema, vaccination));
+  const filtered =
+    history?.filter(vaccination => validateJsonSchemaData(jsonSchema, vaccination)) ?? [];
 
   return (
     <View style={localStyles.mainContainer}>

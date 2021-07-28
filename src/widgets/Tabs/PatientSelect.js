@@ -144,7 +144,7 @@ const PatientSelectComponent = ({
 }) => {
   const withLoadingIndicator = useLoadingIndicator();
   const [isQrModalOpen, toggleQrModal] = useToggle();
-  const [{ history, patient } = {}, setPatientHistory] = useState();
+  const [{ history, patient } = {}, setPatientHistory] = useState({});
 
   const hapticFeedBackOptions = {
     enableVibrateFallback: true,
@@ -221,12 +221,14 @@ const PatientSelectComponent = ({
     switch (colKey) {
       case 'patientHistory':
         return patientId => {
-          const [vaccinationPatientEvent] =
-            UIDatabase.objects('PatientEvent').filtered("code == 'vaccination'") ?? {};
-          const { id: vaccinationPatientEventID } = vaccinationPatientEvent;
+          const [vaccinationPatientEvent] = UIDatabase.objects('PatientEvent').filtered(
+            "code == 'RV'"
+          );
+          const { id: vaccinationPatientEventID } = vaccinationPatientEvent ?? {};
 
           const foundPatient = data.find(({ id }) => patientId === id);
-          const patientsPreviousVaccinations = patient?.nameNotes
+
+          const patientsPreviousVaccinations = foundPatient?.nameNotes
             ?.filter(({ patientEventID }) => patientEventID === vaccinationPatientEventID)
             .map(({ data: vaccinationNameNotes }) => vaccinationNameNotes);
 
@@ -322,7 +324,7 @@ const PatientSelectComponent = ({
       <QrScannerModal isOpen={isQrModalOpen} onBarCodeRead={onQrCodeRead} onClose={toggleQrModal} />
       <ModalContainer
         isVisible={!!patient}
-        onClose={() => setPatientHistory(null)}
+        onClose={() => setPatientHistory({})}
         title={`${dispensingStrings.vaccination_history} ${patient?.name}`}
       >
         <VaccinationHistory history={history} patient={patient} />
