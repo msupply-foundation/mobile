@@ -19,16 +19,23 @@ const selectValue = (value, selected, all) => {
 
 const deselectValue = (value, selected) => selected.filter(v => v !== value);
 
-export const Checkboxes = ({ disabled, onChange, options, readonly, value: checkboxesValue }) => {
+export const Checkboxes = ({
+  disabled,
+  onChange,
+  options,
+  readonly,
+  value: checkboxesValue,
+  onBlur,
+  id,
+}) => {
   const { enumOptions, enumDisabled } = options;
 
   const _onChange = option => checked => {
-    if (checked) {
-      const all = enumOptions.map(({ value }) => value);
-      onChange(selectValue(option.value, checkboxesValue, all));
-    } else {
-      onChange(deselectValue(option.value, checkboxesValue));
-    }
+    const all = enumOptions.map(({ value }) => value);
+    const newValue = checked
+      ? onChange(selectValue(option.value, checkboxesValue, all))
+      : onChange(deselectValue(option.value, checkboxesValue));
+    onBlur(id, newValue);
   };
 
   const checkboxes = enumOptions.map(option => {
@@ -77,6 +84,8 @@ Checkboxes.propTypes = {
     inline: PropTypes.bool,
   }),
   readonly: PropTypes.bool,
+  onBlur: PropTypes.func.isRequired,
+  id: PropTypes.string.isRequired,
 };
 
 Checkboxes.defaultProps = {

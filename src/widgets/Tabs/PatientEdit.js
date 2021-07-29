@@ -102,7 +102,6 @@ const PatientEditComponent = ({
                 onChange={(formProps, validator) => {
                   updateForm(formProps.formData, validator);
                 }}
-                liveValidate={false}
               >
                 <View />
               </JSONForm>

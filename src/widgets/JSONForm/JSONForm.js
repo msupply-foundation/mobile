@@ -14,7 +14,7 @@ import { JSONFormWidget } from './widgets/index';
 import { JSONFormErrorList } from './JSONFormErrorList';
 import { PageButton } from '../PageButton';
 import { JSONFormContext } from './JSONFormContext';
-import { useDebounce } from '../../hooks';
+import { useDebounce, useIsMounted } from '../../hooks';
 import LoggerService from '../../utilities/logging';
 import { FlexColumn } from '../FlexColumn';
 import { BreachManUnhappy } from '../BreachManUnhappy';
@@ -207,6 +207,16 @@ export const JSONFormComponent = React.forwardRef(
       []
     );
 
+    const mounted = useIsMounted();
+    const [noValidate, setNoValidate] = React.useState(true);
+    const touchedFields = {};
+
+    React.useEffect(() => {
+      if (mounted()) {
+        setNoValidate(false);
+      }
+    }, [mounted]);
+
     const debouncedOnChange = useDebounce(onChange, 500);
 
     return hasSchemaError ? (
@@ -221,6 +231,10 @@ export const JSONFormComponent = React.forwardRef(
             debouncedOnChange(change, validator);
           }}
           formData={formData}
+          onBlur={id => {
+            touchedFields[id] = true;
+          }}
+          noValidate={noValidate}
           validate={(newFormData, errorHandlers) => {
             // Validate the form data, if there are any errors, an `errors` object is set on
             // on the validator object.
@@ -237,12 +251,15 @@ export const JSONFormComponent = React.forwardRef(
               // formData, since errorHandlers has the same shape as formData, use the
               // same pointer.
 
-              if (errorLookup[dataPath]) {
-                if (keyword === 'errorMessage') {
+              const errorKey = `root${dataPath.replace(/\//g, '_')}`;
+              if (touchedFields[errorKey]) {
+                if (errorLookup[dataPath]) {
+                  if (keyword === 'errorMessage') {
+                    errorLookup[dataPath] = message;
+                  }
+                } else {
                   errorLookup[dataPath] = message;
                 }
-              } else {
-                errorLookup[dataPath] = message;
               }
             });
 
