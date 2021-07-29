@@ -132,6 +132,14 @@ def (major, minor, patch) = appVersion.tokenize('.')
 def appVersionCode = ((major.toInteger() * 10000000) + (minor.toInteger() * 100000) + (patch.toInteger() * 100) + (provisional != null ? provisional.toInteger() : 99))
 
 android {
+    packagingOptions {
+       pickFirst '**/armeabi-v7a/libc++_shared.so'
+       pickFirst '**/x86/libc++_shared.so'
+       pickFirst '**/x86_64/libc++_shared.so'
+       pickFirst '**/arm64-v8a/libc++_shared.so'
+       pickFirst '**/libjsc.so'
+    }
+
     ndkVersion rootProject.ext.ndkVersion
 
     compileSdkVersion rootProject.ext.compileSdkVersion
@@ -198,6 +206,13 @@ android {
 }
 
 dependencies {
+    if (enableHermes) {
+        def hermesPath = "../../node_modules/hermes-engine/android/";
+        debugImplementation files(hermesPath + "hermes-debug.aar")
+        releaseImplementation files(hermesPath + "hermes-release.aar")
+    } else {
+        implementation jscFlavor
+    }
     compile project(':react-native-haptic-feedback')
     implementation project(':react-native-ble-plx')
     implementation fileTree(dir: "libs", include: ["*.jar"])
@@ -214,14 +229,6 @@ dependencies {
     }
     debugImplementation("com.facebook.flipper:flipper-fresco-plugin:${FLIPPER_VERSION}") {
         exclude group:'com.facebook.flipper'
-    }
-
-    if (enableHermes) {
-        def hermesPath = "../../node_modules/hermes-engine/android/";
-        debugImplementation files(hermesPath + "hermes-debug.aar")
-        releaseImplementation files(hermesPath + "hermes-release.aar")
-    } else {
-        implementation jscFlavor
     }
 }
 

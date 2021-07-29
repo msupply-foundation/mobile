@@ -67,6 +67,7 @@
     "buffer": "^6.0.3",
     "currency.js": "^2.0.3",
     "jest": "^26.6.3",
+    "jsc-android": "^250230.2.1",
     "json-pointer": "^0.6.1",
     "json2csv": "^5.0.6",
     "lodash.merge": "^4.6.2",
