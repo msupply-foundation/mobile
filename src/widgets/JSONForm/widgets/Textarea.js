@@ -5,10 +5,19 @@ import { DARKER_GREY, LIGHT_GREY } from '../../../globalStyles/colors';
 import { APP_FONT_FAMILY } from '../../../globalStyles/fonts';
 import { useJSONFormOptions } from '../JSONFormContext';
 
-export const Textarea = ({ autofocus, disabled, placeholder, value, onChange, numberOfLines }) => {
+export const Textarea = ({
+  autofocus,
+  disabled,
+  placeholder,
+  value,
+  onChange,
+  numberOfLines,
+  onBlur,
+  id,
+}) => {
   const { focusController } = useJSONFormOptions();
-
   const ref = focusController.useRegisteredRef();
+  const handleBlur = event => onBlur(id, event.nativeEvent.text);
 
   return (
     <TextInput
@@ -28,6 +37,7 @@ export const Textarea = ({ autofocus, disabled, placeholder, value, onChange, nu
       autoFocus={autofocus}
       multiline={true}
       numberOfLines={numberOfLines}
+      onEndEditing={handleBlur}
     />
   );
 };
@@ -43,6 +53,8 @@ Textarea.propTypes = {
   value: PropTypes.string,
   onChange: PropTypes.func.isRequired,
   numberOfLines: PropTypes.number,
+  onBlur: PropTypes.func.isRequired,
+  id: PropTypes.string.isRequired,
 };
 
 Textarea.defaultProps = {

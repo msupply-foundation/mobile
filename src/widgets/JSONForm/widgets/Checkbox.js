@@ -5,11 +5,23 @@ import { StyleSheet } from 'react-native';
 import { SUSSOL_ORANGE, WARMER_GREY } from '../../../globalStyles/colors';
 import { ToggleBar } from '../../index';
 
-export const Checkbox = ({ options: { enumOptions }, value, onChange, disabled, readonly }) => {
+export const Checkbox = ({
+  options: { enumOptions },
+  value,
+  onChange,
+  disabled,
+  readonly,
+  onBlur,
+  id,
+}) => {
+  const handleChange = toggleValue => {
+    onChange(toggleValue);
+    onBlur(id, value);
+  };
   const toggles = enumOptions.map(({ label, value: enumValue }) => ({
     text: label,
     isOn: enumValue === value,
-    onPress: () => onChange(enumValue),
+    onPress: () => handleChange(enumValue),
   }));
 
   return (
@@ -57,6 +69,8 @@ Checkbox.propTypes = {
   options: PropTypes.object.isRequired,
   value: PropTypes.bool.isRequired,
   onChange: PropTypes.func.isRequired,
+  onBlur: PropTypes.func.isRequired,
+  id: PropTypes.string.isRequired,
   disabled: PropTypes.bool.isRequired,
   readonly: PropTypes.bool.isRequired,
 };

@@ -5,10 +5,11 @@ import { DARKER_GREY, LIGHT_GREY } from '../../../globalStyles/colors';
 import { APP_FONT_FAMILY } from '../../../globalStyles/fonts';
 import { useJSONFormOptions } from '../JSONFormContext';
 
-export const Text = ({ autofocus, disabled, placeholder, value, onChange }) => {
+export const Text = ({ autofocus, disabled, placeholder, value, onChange, onBlur, id }) => {
   const { focusController } = useJSONFormOptions();
-
   const ref = focusController.useRegisteredRef();
+  const handleChange = text => onChange(text || undefined);
+  const handleBlur = event => onBlur(id, event.nativeEvent.text);
 
   return (
     <TextInput
@@ -22,11 +23,12 @@ export const Text = ({ autofocus, disabled, placeholder, value, onChange }) => {
       returnKeyType="next"
       autoCapitalize="none"
       autoCorrect={false}
-      onChangeText={newVal => onChange(newVal || undefined)}
+      onChangeText={handleChange}
       onSubmitEditing={() => focusController.next(ref)}
       editable={!disabled}
       blurOnSubmit={false}
       autoFocus={autofocus}
+      onEndEditing={handleBlur}
     />
   );
 };
@@ -41,6 +43,8 @@ Text.propTypes = {
   placeholder: PropTypes.string,
   value: PropTypes.string,
   onChange: PropTypes.func.isRequired,
+  onBlur: PropTypes.func.isRequired,
+  id: PropTypes.string.isRequired,
 };
 
 Text.defaultProps = {
