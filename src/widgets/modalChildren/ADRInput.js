@@ -78,7 +78,7 @@ export const ADRInputComponent = ({ onCancel, onSave, patient, patientHistory })
 
       setADRSchema({ uiSchema, jsonSchema, properties: { type, version: version + 1 } });
     }
-  }, [data, patientId, searched]);
+  }, [data, patientId, searched, items]);
 
   return (
     <>
