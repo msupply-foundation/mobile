@@ -5,7 +5,17 @@ import { Picker } from '@react-native-community/picker';
 
 import { SUSSOL_ORANGE } from '../../../globalStyles/colors';
 
-export const Select = ({ disabled, readonly, onChange, placeholder, options, value, schema }) => {
+export const Select = ({
+  disabled,
+  readonly,
+  onChange,
+  placeholder,
+  options,
+  value,
+  schema,
+  onBlur,
+  id,
+}) => {
   let pickers = options.enumOptions.map(({ label, value: enumValue }) => (
     <Picker.Item key={label} label={label} value={enumValue} color={SUSSOL_ORANGE} />
   ));
@@ -34,6 +44,7 @@ export const Select = ({ disabled, readonly, onChange, placeholder, options, val
         // however the placeholder value is passed by default as an empty string.
         if (chosenValue === '') onChange(undefined);
         else onChange(chosenValue);
+        onBlur(id, chosenValue);
       }}
     >
       {pickers}
@@ -49,9 +60,11 @@ Select.defaultProps = {
 Select.propTypes = {
   options: PropTypes.object.isRequired,
   value: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+  onBlur: PropTypes.func.isRequired,
   onChange: PropTypes.func.isRequired,
   disabled: PropTypes.bool.isRequired,
   readonly: PropTypes.bool,
   placeholder: PropTypes.string.isRequired,
   schema: PropTypes.object.isRequired,
+  id: PropTypes.string.isRequired,
 };
