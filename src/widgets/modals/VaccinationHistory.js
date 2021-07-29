@@ -20,11 +20,9 @@ const EmptyComponent = () => (
 const jsonSchema = {
   type: 'object',
   properties: {
-    bonusDose: {
-      type: 'boolean',
-    },
     refused: {
       type: 'boolean',
+      enum: [false],
     },
     vaccinator: {
       type: 'string',
