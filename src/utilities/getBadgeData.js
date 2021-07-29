@@ -18,7 +18,7 @@ const getBadgeData = routeName => {
       return [
         {
           count: UIDatabase.objects(dataType).filter(
-            sensor => sensor.isInHotBreach || sensor.isInColdBreach
+            sensor => sensor.isActive && (sensor.isInHotBreach || sensor.isInColdBreach)
           ).length,
           title: `${generalStrings.sensors_in_breach}`,
         },

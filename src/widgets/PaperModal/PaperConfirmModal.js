@@ -36,7 +36,7 @@ export const PaperConfirmModal = ({
 );
 
 const localStyles = StyleSheet.create({
-  questionText: { fontSize: 16, color: DARKER_GREY, fontWeight: '700' },
+  questionText: { fontSize: 16, color: DARKER_GREY, fontWeight: '700', textAlign: 'center' },
   cancelText: { textTransform: 'uppercase' },
   confirmText: { textTransform: 'uppercase', color: WHITE },
   confirmButton: { backgroundColor: SUSSOL_ORANGE },

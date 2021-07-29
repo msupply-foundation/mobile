@@ -20,14 +20,17 @@ import {
   selectEditingNameId,
   selectVaccinePatientHistory,
 } from '../selectors/Entities/name';
+import { VaccineSupplementalData } from '../widgets/Tabs/VaccineSupplementalData';
+import { selectSupplementalDataSchemas } from '../selectors/formSchema';
 
-const tabs = [
-  {
-    component: PatientSelect,
-    name: 'patient',
-    title: dispensingStrings.select_the_patient,
-  },
+const allTabs = [
+  { component: PatientSelect, name: 'patient', title: dispensingStrings.select_the_patient },
   { component: PatientEdit, name: 'edit', title: dispensingStrings.edit_the_patient },
+  {
+    component: VaccineSupplementalData,
+    name: 'supplementalData',
+    title: dispensingStrings.edit_supplemental_data,
+  },
   { component: VaccineSelect, name: 'prescription', title: dispensingStrings.finalise },
 ];
 
@@ -37,23 +40,35 @@ export const VaccineDispensingPageComponent = ({
   patientName,
   patientHistory,
   patientId,
-}) => (
-  <>
-    <Wizard useNewStepper captureUncaughtGestures={false} tabs={tabs} />
-    <ModalContainer
-      title={`${dispensingStrings.patient} ${dispensingStrings.history}: ${patientName}`}
-      onClose={closeHistory}
-      isVisible={historyIsOpen}
-    >
-      <PatientHistoryModal
-        isVaccine={true}
-        patientHistory={patientHistory}
-        patientId={patientId}
-        sortKey="prescriptionDate"
-      />
-    </ModalContainer>
-  </>
-);
+  supplementalDataSchema,
+}) => {
+  // Site tab is conditional on form schema presence
+  const tabs = !supplementalDataSchema
+    ? allTabs.filter(tab => tab.name !== 'supplementalData')
+    : allTabs;
+
+  return (
+    <>
+      <Wizard useNewStepper captureUncaughtGestures={false} tabs={tabs} />
+      <ModalContainer
+        title={`${dispensingStrings.patient} ${dispensingStrings.history}: ${patientName}`}
+        onClose={closeHistory}
+        isVisible={historyIsOpen}
+      >
+        <PatientHistoryModal
+          isVaccine={true}
+          patientHistory={patientHistory}
+          patientId={patientId}
+          sortKey="prescriptionDate"
+        />
+      </ModalContainer>
+    </>
+  );
+};
+
+VaccineDispensingPageComponent.defaultProps = {
+  supplementalDataSchema: null,
+};
 
 VaccineDispensingPageComponent.propTypes = {
   historyIsOpen: PropTypes.bool.isRequired,
@@ -61,6 +76,7 @@ VaccineDispensingPageComponent.propTypes = {
   patientName: PropTypes.string.isRequired,
   patientId: PropTypes.string.isRequired,
   patientHistory: PropTypes.array.isRequired,
+  supplementalDataSchema: PropTypes.object,
 };
 
 const stateToProps = state => {
@@ -68,8 +84,10 @@ const stateToProps = state => {
   const patientName = selectFullName(state);
   const patientHistory = selectVaccinePatientHistory(state);
   const patientId = selectEditingNameId(state) ?? '';
+  const supplementalDataSchemas = selectSupplementalDataSchemas();
+  const [supplementalDataSchema] = supplementalDataSchemas;
 
-  return { historyIsOpen, patientName, patientId, patientHistory };
+  return { historyIsOpen, patientName, patientId, patientHistory, supplementalDataSchema };
 };
 
 const dispatchToProps = dispatch => ({

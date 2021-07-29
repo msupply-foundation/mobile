@@ -5,7 +5,7 @@ import { connect } from 'react-redux';
 import { DANGER_RED, FINALISE_GREEN } from '../../globalStyles/index';
 import { Circle } from '../Circle';
 import { WithFlash } from '../WithFlash';
-import { selectIsInDangerByMac } from '../../selectors/Entities/sensor';
+import { selectIsInDangerById } from '../../selectors/Entities/sensor';
 
 export const SensorIsInDangerCircleComponent = ({ isInDanger }) => {
   const backgroundColor = isInDanger ? DANGER_RED : FINALISE_GREEN;
@@ -24,8 +24,8 @@ SensorIsInDangerCircleComponent.propTypes = {
 };
 
 const stateToProps = (state, props) => {
-  const { macAddress } = props;
-  const isInDanger = selectIsInDangerByMac(state, macAddress);
+  const { id } = props;
+  const isInDanger = selectIsInDangerById(state, id);
   return { isInDanger };
 };
 

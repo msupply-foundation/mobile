@@ -134,6 +134,6 @@ const localStyles = StyleSheet.create({
   container: { flex: 1 },
   buttonContainer: { alignItems: 'flex-end' },
   resultList: { marginHorizontal: 5, backgroundColor: 'white' },
-  confirmButton: { ...globalStyles.button, backgroundColor: SUSSOL_ORANGE },
+  confirmButton: { ...globalStyles.button, backgroundColor: SUSSOL_ORANGE, height: 50 },
   confirmButtonText: { color: 'white', fontSize: 20, fontFamily: APP_FONT_FAMILY },
 });

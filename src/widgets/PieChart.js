@@ -37,7 +37,7 @@ export const PieChart = ({ width, height, data }) => {
   };
 
   const widthPadded = width * (1 - padHorizontal);
-  return data.map(({ values }) => (
+  return data.map(({ values, index }) => (
     <VictoryPie
       width={width}
       height={height}
@@ -49,6 +49,7 @@ export const PieChart = ({ width, height, data }) => {
       labels={({ datum }) => `${datum.x} : ${datum.y}`}
       labelComponent={<VictoryLabel style={style} />}
       data={values}
+      key={index}
     />
   ));
 };

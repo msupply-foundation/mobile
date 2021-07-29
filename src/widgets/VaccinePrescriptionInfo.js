@@ -30,6 +30,7 @@ import { Spacer } from './Spacer';
 import { BACKGROUND_COLOR, LIGHT_GREY } from '../globalStyles/colors';
 import { HistoryIcon } from './icons';
 import { IconButton } from './IconButton';
+import { selectCurrentTab } from '../selectors/wizard';
 
 const WithLabel = ({ label, ...props }) => (
   <FlexColumn flex={0}>
@@ -67,18 +68,20 @@ VaccinatorDropDown.propTypes = {
   onChange: PropTypes.func.isRequired,
 };
 
-const Header = ({ onPress }) => (
+const Header = ({ onPress, title }) => (
   <View style={styles.headerContainer}>
-    <Text style={styles.headerText}>{vaccineStrings.vaccine_dispense_step_three_title}</Text>
+    <Text style={styles.headerText}>{title}</Text>
     <IconButton onPress={onPress} Icon={<HistoryIcon color={DARKER_GREY} />} />
   </View>
 );
 
 Header.propTypes = {
+  title: PropTypes.string.isRequired,
   onPress: PropTypes.func.isRequired,
 };
 
 const VaccinePrescriptionInfoComponent = ({
+  currentWizardStep,
   patientName,
   onSelectVaccinator,
   vaccinator,
@@ -89,7 +92,14 @@ const VaccinePrescriptionInfoComponent = ({
   openHistory,
 }) => (
   <Paper
-    Header={<Header onPress={openHistory} />}
+    Header={
+      <Header
+        title={`${vaccineStrings.vaccine_step} ${currentWizardStep + 1} ${
+          vaccineStrings.vaccine_dispense_vaccine_select_title
+        }`}
+        onPress={openHistory}
+      />
+    }
     headerText={vaccineStrings.vaccine_dispense_step_three_title}
     style={{ flex: 2 }}
     contentContainerStyle={{ flex: 1 }}
@@ -145,12 +155,14 @@ const mapStateToProps = state => {
   const hasRefused = selectHasRefused(state);
   const vaccinator = selectSelectedVaccinator(state);
   const foundBonusDose = selectFoundBonusDose(state);
+  const currentWizardStep = selectCurrentTab(state);
 
   return {
     patientName,
     vaccinator,
     hasRefused,
     foundBonusDose,
+    currentWizardStep,
   };
 };
 
@@ -159,6 +171,7 @@ VaccinePrescriptionInfoComponent.defaultProps = {
 };
 
 VaccinePrescriptionInfoComponent.propTypes = {
+  currentWizardStep: PropTypes.number.isRequired,
   patientName: PropTypes.string.isRequired,
   onSelectVaccinator: PropTypes.func.isRequired,
   vaccinator: PropTypes.object,

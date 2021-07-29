@@ -28,7 +28,7 @@ import {
   DollarIcon,
 } from '../widgets/icons';
 import { ROUTES } from '../navigation/constants';
-import { buttonStrings, vaccineStrings, navStrings } from '../localization';
+import { buttonStrings, vaccineStrings, navStrings, generalStrings } from '../localization';
 
 import { SETTINGS_KEYS } from '../settings';
 import { UIDatabase } from '../database';
@@ -61,7 +61,9 @@ import { SUSSOL_ORANGE } from '../globalStyles/colors';
 const exportData = async () => {
   const syncSiteName = UIDatabase.getSetting(SETTINGS_KEYS.SYNC_SITE_NAME);
   const { success, message } = await UIDatabase.exportData(syncSiteName);
-  const toastMessage = success ? 'Exported data file' : `Couldn't export data: ${message}`;
+  const toastMessage = success
+    ? generalStrings.exported_data
+    : `${generalStrings.couldnt_export_data}: ${message}`;
   ToastAndroid.show(toastMessage, ToastAndroid.SHORT);
 };
 

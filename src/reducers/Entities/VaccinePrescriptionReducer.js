@@ -7,10 +7,12 @@ const initialState = () => ({
   hasRefused: false,
   selectedVaccines: [],
   selectedBatches: [],
+  supplementalData: {},
   vaccines: UIDatabase.objects('Vaccine').sorted('name'),
   vaccinator: null,
   bonusDose: false,
   historyIsOpen: false,
+  isSupplementalDataValid: false,
 });
 
 export const VaccinePrescriptionReducer = (state = initialState(), action) => {
@@ -45,6 +47,20 @@ export const VaccinePrescriptionReducer = (state = initialState(), action) => {
       const { prescription, vaccinator } = payload;
 
       return { ...state, creating: prescription, vaccinator };
+    }
+
+    case VACCINE_PRESCRIPTION_ACTIONS.SELECT_SUPPLEMENTAL_DATA: {
+      const { payload } = action;
+      const { supplementalData } = payload;
+
+      return { ...state, supplementalData };
+    }
+
+    case VACCINE_PRESCRIPTION_ACTIONS.UPDATE_SUPPLEMENTAL_DATA: {
+      const { payload } = action;
+      const { supplementalData, isSupplementalDataValid } = payload;
+
+      return { ...state, supplementalData, isSupplementalDataValid };
     }
 
     case VACCINE_PRESCRIPTION_ACTIONS.SELECT_VACCINE: {

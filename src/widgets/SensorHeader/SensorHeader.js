@@ -23,6 +23,7 @@ export const SensorHeaderComponent = ({
   editSensor,
   showCog,
   showTitle,
+  sensorID,
 }) => (
   <>
     <FlexRow flex={1} alignItems="center">
@@ -33,14 +34,14 @@ export const SensorHeaderComponent = ({
           size="ms"
           textStyle={localStyles.paperTitleText}
           containerStyle={{}}
-          Icon={<SensorIsInDangerCircle macAddress={macAddress} />}
+          Icon={<SensorIsInDangerCircle id={sensorID} />}
         >
           {name}
         </TextWithIcon>
       )}
     </FlexRow>
 
-    <LastSensorDownload macAddress={macAddress} />
+    <LastSensorDownload id={sensorID} />
     <TextWithIcon
       containerStyle={localStyles.headerTextWithIcon}
       size="s"
@@ -67,6 +68,7 @@ SensorHeaderComponent.defaultProps = {
   name: '',
   showCog: false,
   showTitle: false,
+  sensorID: '',
 };
 
 SensorHeaderComponent.propTypes = {
@@ -76,6 +78,7 @@ SensorHeaderComponent.propTypes = {
   editSensor: PropTypes.func.isRequired,
   showCog: PropTypes.bool,
   showTitle: PropTypes.bool,
+  sensorID: PropTypes.string,
 };
 
 const localStyles = StyleSheet.create({
@@ -99,7 +102,7 @@ const stateToProps = (state, props) => {
   const sensorState = byId[sensorID];
   const { batteryLevel, name } = sensorState ?? {};
 
-  return { batteryLevel, name, macAddress };
+  return { batteryLevel, name, macAddress, sensorID };
 };
 
 const dispatchToProps = (dispatch, props) => {

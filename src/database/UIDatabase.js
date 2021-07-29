@@ -133,10 +133,11 @@ class UIDatabase {
       await RNFS.mkdir(exportFolder);
       await RNFS.copyFile(realmPath, `${exportFolder}/${copyFileName}.realm`);
     } catch (error) {
-      return false;
+      const { message } = error;
+      return { success: false, message };
     }
 
-    return true;
+    return { success: true };
   }
 
   /**

@@ -14,6 +14,7 @@ export const MILLISECONDS_PER_HOUR = MILLISECONDS_PER_MINUTE * MINUTES_PER_HOUR;
 export const MILLISECONDS_PER_DAY = MILLISECONDS_PER_HOUR * HOURS_PER_DAY;
 
 export const NUMBER_OF_DAYS_IN_A_MONTH = 365 / 12;
+export const PATIENT_CODE_LENGTH = 8;
 
 export const NUMBER_SEQUENCE_KEYS = {
   CUSTOMER_INVOICE_NUMBER: 'customer_invoice_serial_number',
@@ -22,7 +23,6 @@ export const NUMBER_SEQUENCE_KEYS = {
   REQUISITION_REQUESTER_REFERENCE: 'requisition_requester_reference',
   STOCKTAKE_SERIAL_NUMBER: 'stocktake_serial_number',
   SUPPLIER_INVOICE_NUMBER: 'supplier_invoice_serial_number',
-  PATIENT_CODE: 'patient_code',
 };
 
 export const NAME_TYPE_KEYS = {

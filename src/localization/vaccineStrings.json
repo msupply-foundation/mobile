@@ -2,9 +2,11 @@
   "gb": {
     "no_vaccine_stock": "You have no vaccine stock to dispense!",
     "vaccines": "Vaccines",
+    "vaccine_step": "Step:",
     "vaccine_dispense_step_one_title": "Step: 1 Select a patient",
     "vaccine_dispense_step_two_title": "Step: 2 Edit the patients details",
-    "vaccine_dispense_step_three_title": "Step: 3 Select the vaccine",
+    "vaccine_dispense_vaccine_select_title": "Select the vaccine",
+    "vaccine_dispense_supplemental_data_title": "Step: 3 Enter additional vaccination details",
     "vaccinator": "Vaccinator",
     "logging_delayed_until": "Logging delayed until",
     "hot_consecutive_breach": "Hot consecutive breach",

@@ -20,8 +20,9 @@ import { ReportCell } from './ReportCell';
 export const ReportRow = ({ isHeader, rowData, rowIndex }) => {
   const headerStyle = isHeader ? localStyles.header : null;
   const rowStyle = StyleSheet.flatten([localStyles.container, headerStyle]);
-  const cellsToRender = rowData.map(cell => (
-    <ReportCell key={rowIndex} even={rowIndex % 2 === 0}>
+  const cellsToRender = rowData.map((cell, cellIndex) => (
+    // eslint-disable-next-line react/no-array-index-key
+    <ReportCell key={`${rowIndex}_${cellIndex}`} even={rowIndex % 2 === 0}>
       {cell}
     </ReportCell>
   ));

@@ -5,6 +5,7 @@
  */
 
 import React from 'react';
+import { ActivityIndicator } from 'react-native';
 import { Svg } from 'react-native-svg';
 import { VictoryAxis, VictoryChart, VictoryLine, VictoryBar } from 'victory-native';
 import PropTypes from 'prop-types';
@@ -90,50 +91,64 @@ export const VaccineBarChart = ({
   });
 
   return (
-    <FlexView onLayout={setDimensions}>
-      <Svg>
-        <VictoryChart
-          width={width}
-          height={height}
-          minDomain={chartMinDomain}
-          maxDomain={chartMaxDomain}
-          padding={{ top: 20, bottom: 50, right: 10, left: 50 }}
-        >
-          <VictoryAxis
-            offsetX={CHART_CONSTANTS.AXIS_OFFSET}
-            dependentAxis
-            style={chartStyles.axisY}
-            tickFormat={temperatureTickFormatter}
-          />
-          <VictoryAxis
-            offsetY={CHART_CONSTANTS.AXIS_OFFSET}
-            tickFormat={timestampTickFormatter}
-            style={chartStyles.axisX}
-            tickCount={CHART_CONSTANTS.MAX_TICK_COUNTS}
-          />
+    <FlexView
+      onLayout={setDimensions}
+      style={{ width: '100%', height: '100%' }}
+      alignItems="center"
+      justifyContent="center"
+    >
+      {!width || !height ? (
+        <ActivityIndicator size="large" color={SUSSOL_ORANGE} />
+      ) : (
+        <Svg>
+          <VictoryChart
+            width={width}
+            height={height}
+            minDomain={chartMinDomain}
+            maxDomain={chartMaxDomain}
+            padding={{ top: 20, bottom: 50, right: 10, left: 50 }}
+          >
+            <VictoryAxis
+              offsetX={CHART_CONSTANTS.AXIS_OFFSET}
+              dependentAxis
+              style={chartStyles.axisY}
+              tickFormat={temperatureTickFormatter}
+            />
+            <VictoryAxis
+              offsetY={CHART_CONSTANTS.AXIS_OFFSET}
+              tickFormat={timestampTickFormatter}
+              style={chartStyles.axisX}
+              tickCount={CHART_CONSTANTS.MAX_TICK_COUNTS}
+            />
 
-          <VictoryLine data={upperBoundData} style={chartStyles.maxBoundaryLine} />
-          <VictoryLine data={lowerBoundData} style={chartStyles.minBoundaryLine} />
-          <VictoryBar
-            data={barData}
-            y="hotY"
-            y0="hotY0"
-            style={chartStyles.hotBars}
-            barRatio={0.9}
-            alignment="start"
-            onPress={onPressBreach}
-          />
-          <VictoryBar data={barData} style={chartStyles.midBars} barRatio={0.9} alignment="start" />
-          <VictoryBar
-            data={barData}
-            y="coldY"
-            y0="coldY0"
-            style={chartStyles.coldBars}
-            barRatio={0.9}
-            alignment="start"
-          />
-        </VictoryChart>
-      </Svg>
+            <VictoryLine data={upperBoundData} style={chartStyles.maxBoundaryLine} />
+            <VictoryLine data={lowerBoundData} style={chartStyles.minBoundaryLine} />
+            <VictoryBar
+              data={barData}
+              y="hotY"
+              y0="hotY0"
+              style={chartStyles.hotBars}
+              barRatio={0.9}
+              alignment="start"
+              onPress={onPressBreach}
+            />
+            <VictoryBar
+              data={barData}
+              style={chartStyles.midBars}
+              barRatio={0.9}
+              alignment="start"
+            />
+            <VictoryBar
+              data={barData}
+              y="coldY"
+              y0="coldY0"
+              style={chartStyles.coldBars}
+              barRatio={0.9}
+              alignment="start"
+            />
+          </VictoryChart>
+        </Svg>
+      )}
     </FlexView>
   );
 };

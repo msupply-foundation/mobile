@@ -33,6 +33,7 @@ import {
   buttonStrings,
   dispensingStrings,
   generalStrings,
+  modalStrings,
 } from '../../localization';
 import globalStyles, { APP_FONT_FAMILY } from '../../globalStyles';
 import { DARKER_GREY } from '../../globalStyles/colors';
@@ -40,6 +41,11 @@ import { AfterInteractions } from '../AfterInteractions';
 import { Paper } from '../Paper';
 import { VaccinePrescriptionInfo } from '../VaccinePrescriptionInfo';
 import { useNavigationFocus } from '../../hooks/useNavigationFocus';
+import { selectWasPatientVaccinatedWithinOneDay } from '../../selectors/Entities/name';
+import { PaperModalContainer } from '../PaperModal/PaperModalContainer';
+import { PaperConfirmModal } from '../PaperModal/PaperConfirmModal';
+import { useToggle } from '../../hooks/useToggle';
+import { PageButton } from '../PageButton';
 
 const ListEmptyComponent = () => (
   <FlexView flex={1} justifyContent="center" alignItems="center">
@@ -75,8 +81,11 @@ const VaccineSelectComponent = ({
   vaccines,
   okAndRepeat,
   selectDefaultVaccine,
+  wasPatientVaccinatedWithinOneDay,
 }) => {
   const { pageTopViewContainer } = globalStyles;
+  const [confirmDoubleDoseModalOpen, toggleConfirmDoubleDoseModal] = useToggle();
+  const [confirmAndRepeatDoubleDoseModalOpen, toggleConfirmAndRepeatDoubleDoseModal] = useToggle();
   const vaccineColumns = React.useMemo(() => getColumns(TABS.ITEM), []);
   const batchColumns = React.useMemo(() => getColumns(TABS.VACCINE_BATCH), []);
   const disabledVaccineRows = React.useMemo(
@@ -94,6 +103,7 @@ const VaccineSelectComponent = ({
     [vaccines]
   );
   const runWithLoadingIndicator = useLoadingIndicator();
+
   const confirmPrescription = React.useCallback(() => runWithLoadingIndicator(onConfirm), [
     onConfirm,
   ]);
@@ -102,6 +112,16 @@ const VaccineSelectComponent = ({
     () => runWithLoadingIndicator(okAndRepeat),
     [okAndRepeat]
   );
+
+  const onModalClose = confirmDoubleDoseModalOpen
+    ? toggleConfirmDoubleDoseModal
+    : toggleConfirmAndRepeatDoubleDoseModal;
+
+  const onModalConfirm = confirmDoubleDoseModalOpen
+    ? confirmPrescription
+    : confirmAndRepeatPrescription;
+
+  const isModalOpen = confirmDoubleDoseModalOpen || confirmAndRepeatDoubleDoseModalOpen;
 
   const navigation = useNavigation();
   useNavigationFocus(navigation, selectDefaultVaccine);
@@ -147,19 +167,36 @@ const VaccineSelectComponent = ({
 
       <FlexRow flex={1} alignItems="flex-end" justifyContent="flex-end">
         <PageButtonWithOnePress text={buttonStrings.cancel} onPress={onCancelPrescription} />
-        <PageButtonWithOnePress
+        <PageButton
+          debounceTimer={1000}
           text={buttonStrings.confirm}
           style={{ marginLeft: 'auto' }}
           isDisabled={!selectedBatches && !hasRefused}
-          onPress={confirmPrescription}
+          onPress={
+            wasPatientVaccinatedWithinOneDay ? toggleConfirmDoubleDoseModal : confirmPrescription
+          }
         />
-        <PageButtonWithOnePress
+        <PageButton
+          debounceTimer={1000}
           text={generalStrings.ok_and_next}
           style={{ marginLeft: 5 }}
           isDisabled={!selectedBatches && !hasRefused}
-          onPress={confirmAndRepeatPrescription}
+          onPress={
+            wasPatientVaccinatedWithinOneDay
+              ? toggleConfirmAndRepeatDoubleDoseModal
+              : confirmAndRepeatPrescription
+          }
         />
       </FlexRow>
+      <PaperModalContainer isVisible={isModalOpen} onClose={onModalClose}>
+        <PaperConfirmModal
+          questionText={modalStrings.confirm_double_dose}
+          confirmText={modalStrings.confirm}
+          cancelText={modalStrings.cancel}
+          onConfirm={onModalConfirm}
+          onCancel={onModalClose}
+        />
+      </PaperModalContainer>
     </FlexView>
   );
 };
@@ -198,6 +235,7 @@ const mapStateToProps = state => {
   const vaccines = selectVaccines(state);
   const [selectedVaccine] = selectedVaccines;
   const vaccinator = selectSelectedVaccinator(state);
+  const wasPatientVaccinatedWithinOneDay = selectWasPatientVaccinatedWithinOneDay(state);
 
   return {
     vaccinator,
@@ -207,6 +245,7 @@ const mapStateToProps = state => {
     selectedRows,
     selectedVaccine,
     vaccines,
+    wasPatientVaccinatedWithinOneDay,
   };
 };
 
@@ -229,6 +268,7 @@ VaccineSelectComponent.propTypes = {
   selectedRows: PropTypes.object,
   selectedBatches: PropTypes.array,
   selectedVaccine: PropTypes.object,
+  wasPatientVaccinatedWithinOneDay: PropTypes.bool.isRequired,
   vaccines: PropTypes.oneOfType([PropTypes.array, PropTypes.object]).isRequired,
 };
 

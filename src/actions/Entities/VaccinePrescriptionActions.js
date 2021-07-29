@@ -5,19 +5,25 @@ import { UIDatabase, createRecord } from '../../database';
 import {
   selectFoundBonusDose,
   selectHasRefused,
+  selectLastSupplementalData,
   selectSelectedBatches,
+  selectSelectedSupplementalData,
   selectSelectedVaccinator,
 } from '../../selectors/Entities/vaccinePrescription';
 import { selectEditingNameId } from '../../selectors/Entities/name';
 import { NameActions } from './NameActions';
 import { NameNoteActions } from './NameNoteActions';
 import { goBack, gotoVaccineDispensingPage } from '../../navigation/actions';
+import { selectSupplementalDataSchemas } from '../../selectors/formSchema';
+import { validateJsonSchemaData } from '../../utilities/ajvValidator';
 
 export const VACCINE_PRESCRIPTION_ACTIONS = {
   CREATE: 'VACCINE_PRESCRIPTION/create',
   SET_REFUSAL: 'VACCINE_PRESCRIPTION/setRefusal',
   RESET: 'VACCINE_PRESCRIPTION/reset',
   SELECT_VACCINE: 'VACCINE_PRESCRIPTION/selectVaccine',
+  SELECT_SUPPLEMENTAL_DATA: 'VACCINE_PRESCRIPTION/selectSupplementalData',
+  UPDATE_SUPPLEMENTAL_DATA: 'VACCINE_PRESCRIPTION/updateSupplementalData',
   SELECT_BATCH: 'VACCINE_PRESCRIPTION/selectBatch',
   SELECT_VACCINATOR: 'VACCINE_PRESCRIPTION/selectVaccinator',
   SET_BONUS_DOSE: 'VACCINE_PRESCRIPTION/setBonusDose',
@@ -95,6 +101,16 @@ const selectDefaultVaccine = () => ({
   payload: { selectedVaccines: [getDefaultVaccine()], selectedBatches: [getRecommendedBatch()] },
 });
 
+const selectSupplementalData = (supplementalData, isSupplementalDataValid) => ({
+  type: VACCINE_PRESCRIPTION_ACTIONS.SELECT_SUPPLEMENTAL_DATA,
+  payload: { supplementalData, isSupplementalDataValid },
+});
+
+const updateSupplementalData = (supplementalData, validator) => ({
+  type: VACCINE_PRESCRIPTION_ACTIONS.UPDATE_SUPPLEMENTAL_DATA,
+  payload: { supplementalData, isSupplementalDataValid: validator(supplementalData) },
+});
+
 const selectVaccine = vaccine => ({
   type: VACCINE_PRESCRIPTION_ACTIONS.SELECT_VACCINE,
   payload: { vaccine, batch: getRecommendedBatch(vaccine) },
@@ -119,14 +135,21 @@ const setRefusal = hasRefused => ({
   },
 });
 
-const createPrescription = (patient, currentUser, selectedBatches, vaccinator) => {
+const createPrescription = (
+  patient,
+  currentUser,
+  selectedBatches,
+  vaccinator,
+  supplementalData
+) => {
   UIDatabase.write(() => {
     const prescription = createRecord(
       UIDatabase,
       'CustomerInvoice',
       patient,
       currentUser,
-      'dispensary'
+      'dispensary',
+      supplementalData
     );
 
     selectedBatches.forEach(itemBatch => {
@@ -151,6 +174,22 @@ const createRefusalNameNote = name => {
   UIDatabase.write(() => UIDatabase.create('NameNote', newNameNote));
 };
 
+const createSupplementaryData = () => (dispatch, getState) => {
+  // Create a supplementaryData object which is seeded with the data that was last
+  // entered against a prescription
+  const lastSupplementalData = selectLastSupplementalData();
+
+  // Get the schema and perform initial validation
+  const [supplementalDataSchema = {}] = selectSupplementalDataSchemas(getState());
+  const { jsonSchema } = supplementalDataSchema;
+
+  const isValid = validateJsonSchemaData(jsonSchema, lastSupplementalData);
+
+  if (isValid) {
+    dispatch(selectSupplementalData(lastSupplementalData, isValid));
+  }
+};
+
 const confirm = () => (dispatch, getState) => {
   const { user } = getState();
   const { currentUser } = user;
@@ -159,6 +198,7 @@ const confirm = () => (dispatch, getState) => {
   const patientID = selectEditingNameId(getState());
   const selectedBatches = selectSelectedBatches(getState());
   const vaccinator = selectSelectedVaccinator(getState());
+  const supplementalData = selectSelectedSupplementalData(getState());
 
   if (hasBonusDoses) {
     UIDatabase.write(() => {
@@ -193,7 +233,7 @@ const confirm = () => (dispatch, getState) => {
   if (hasRefused) {
     createRefusalNameNote(patient);
   } else {
-    createPrescription(patient, currentUser, selectedBatches, vaccinator);
+    createPrescription(patient, currentUser, selectedBatches, vaccinator, supplementalData);
   }
 };
 
@@ -220,8 +260,10 @@ export const VaccinePrescriptionActions = {
   cancel,
   confirm,
   create,
+  createSupplementaryData,
   reset,
   selectBatch,
+  selectSupplementalData,
   selectVaccine,
   setRefusal,
   selectVaccinator,
@@ -229,4 +271,5 @@ export const VaccinePrescriptionActions = {
   setBonusDose,
   toggleHistory,
   selectDefaultVaccine,
+  updateSupplementalData,
 };

@@ -62,7 +62,7 @@ export const FridgeDetailPageComponent = ({
   onChangeToDate,
   onChangeFromDate,
 }) => {
-  const [chartType, setChartType] = useState('line');
+  const [chartType, setChartType] = useState('bar');
 
   const minDate = new Date(minimumDate);
   const maxDate = new Date(maximumDate);

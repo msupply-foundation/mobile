@@ -67,6 +67,7 @@
     "outpatient": "Outpatient",
     "select_the_patient": "Select the patient",
     "edit_the_patient": "Edit patient details",
+    "edit_supplemental_data": "Edit additional details",
     "refused_vaccine": "Refused vaccine",
     "validation_failed": "Some required fields are not completed."
   },

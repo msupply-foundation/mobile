@@ -4,6 +4,7 @@ import { UIDatabase } from '../../database';
 import { selectSpecificEntityState } from './index';
 import { DATE_FORMAT } from '../../utilities/constants';
 import { PREFERENCE_KEYS } from '../../database/utilities/preferenceConstants';
+import { MILLISECONDS_PER_DAY } from '../../database/utilities/constants';
 
 export const selectEditingNameId = state => {
   const NameState = selectSpecificEntityState(state, 'name');
@@ -86,4 +87,11 @@ export const selectVaccinePatientHistory = state => {
   const baseQueryString = 'type != "cash_in" AND type != "cash_out"';
   const fullQuery = `(${inQuery}) AND ${baseQueryString} AND itemBatch.item.isVaccine == true`;
   return inQuery ? UIDatabase.objects('TransactionBatch').filtered(fullQuery).slice() : [];
+};
+
+export const selectWasPatientVaccinatedWithinOneDay = state => {
+  const history = selectVaccinePatientHistory(state);
+  const oneDayAgo = new Date().getTime() - MILLISECONDS_PER_DAY;
+
+  return !!history.filter(historyRecord => historyRecord.confirmDate.getTime() > oneDayAgo).length;
 };
