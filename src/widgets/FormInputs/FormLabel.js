@@ -14,8 +14,8 @@ import { SUSSOL_ORANGE, APP_FONT_FAMILY, APP_GENERAL_FONT_SIZE } from '../../glo
 
 export const FormLabel = ({ isRequired, value, textStyle, isRequiredStyle }) => (
   <FlexRow flex={1} alignItems="center">
-    <Text style={textStyle}>{value}</Text>
-    {(isRequired && <Text style={isRequiredStyle}>*</Text>) || null}
+    <Text style={[localStyles.textStyle, textStyle]}>{value}</Text>
+    {(!!isRequired && <Text style={isRequiredStyle}>*</Text>) || null}
   </FlexRow>
 );
 

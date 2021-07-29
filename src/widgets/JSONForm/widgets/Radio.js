@@ -7,20 +7,24 @@ import { RadioButton, RadioButtonInput, RadioButtonLabel } from 'react-native-si
 import { APP_FONT_FAMILY } from '../../../globalStyles/fonts';
 import { GREY, SUSSOL_ORANGE } from '../../../globalStyles/colors';
 
-export const Radio = ({ options, value, disabled, readonly, onChange }) => {
+export const Radio = ({ options, value, disabled, readonly, onChange, onBlur, id }) => {
   const { enumOptions, enumDisabled } = options;
   const row = options ? options.inline : false;
 
   const radioButtons = enumOptions.map((option, i) => {
     const itemDisabled = enumDisabled && enumDisabled.indexOf(option.value) !== -1;
     const itemSelected = value === option.value;
+    const handleChange = changedValue => {
+      onChange(changedValue);
+      onBlur(id, changedValue);
+    };
     return (
       <RadioButton labelHorizontal={true} key={option.value}>
         <RadioButtonInput
           obj={option}
           index={i}
           isSelected={itemSelected}
-          onPress={onChange}
+          onPress={handleChange}
           buttonInnerColor={SUSSOL_ORANGE}
           buttonOuterColor={itemSelected ? SUSSOL_ORANGE : GREY}
           disabled={disabled || itemDisabled || readonly}
@@ -32,7 +36,7 @@ export const Radio = ({ options, value, disabled, readonly, onChange }) => {
           obj={option}
           index={i}
           labelHorizontal={row}
-          onPress={onChange}
+          onPress={handleChange}
           labelStyle={styles.label}
         />
       </RadioButton>
@@ -49,7 +53,7 @@ const styles = StyleSheet.create({
 
 Radio.propTypes = {
   disabled: PropTypes.bool,
-  value: PropTypes.oneOf([PropTypes.string, PropTypes.boolean]),
+  value: PropTypes.oneOfType([PropTypes.string, PropTypes.bool]),
   onChange: PropTypes.func.isRequired,
   options: PropTypes.shape({
     enumOptions: PropTypes.arrayOf(PropTypes.any),
@@ -57,6 +61,8 @@ Radio.propTypes = {
     inline: PropTypes.bool,
   }),
   readonly: PropTypes.bool,
+  onBlur: PropTypes.func.isRequired,
+  id: PropTypes.string.isRequired,
 };
 
 Radio.defaultProps = {

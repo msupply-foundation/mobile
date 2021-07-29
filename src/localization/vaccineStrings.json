@@ -68,7 +68,8 @@
     "E_INVALID_MAC_FORMAT": "Error: invalid mac address format",
     "is_paused": "PAUSED",
     "pause": "Pause",
-    "resume": "Resume"
+    "resume": "Resume",
+    "refusal_reason": "Reason for refusal"
   },
   "fr": {},
   "gil": {},

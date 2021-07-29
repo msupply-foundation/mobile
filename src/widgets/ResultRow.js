@@ -39,7 +39,7 @@ export const ResultRow = React.memo(
         >
           {renderLeftText ? renderLeftText(data.item) : data.item.toString()}
         </Text>
-        {renderRightText && (
+        {!!renderRightText && (
           <Text
             style={[
               localStyles.text,

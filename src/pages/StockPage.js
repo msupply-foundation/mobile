@@ -91,6 +91,7 @@ export const Stock = ({
           onChangeText={onFilterData}
           value={searchTerm}
           onFocusOrBlur={selectedRow && onDeselectRow}
+          // eslint-disable-next-line max-len
           placeholder={`${generalStrings.search_by} ${generalStrings.code} ${generalStrings.or} ${generalStrings.name}`}
         />
       </View>

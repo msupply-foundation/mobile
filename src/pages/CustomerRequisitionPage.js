@@ -309,7 +309,7 @@ export const CustomerRequisition = ({
     return (
       <View style={verticalContainer}>
         <Buttons />
-        {program && (
+        {!!program && (
           <ToggleBar
             toggles={[
               {
@@ -350,6 +350,7 @@ export const CustomerRequisition = ({
           <SearchBar
             onChangeText={onFilterData}
             value={searchTerm}
+            // eslint-disable-next-line max-len
             placeholder={`${generalStrings.search_by} ${placeholderStrings.name} ${generalStrings.or} ${placeholderStrings.code}`}
           />
         </View>
@@ -378,7 +379,7 @@ export const CustomerRequisition = ({
         dispatch={dispatch}
         currentValue={modalValue}
       />
-      {datePickerIsOpen && (
+      {!!datePickerIsOpen && (
         <DateTimePicker
           onChange={datePickerCallback}
           mode="date"

@@ -44,7 +44,7 @@ export const TimeEditor = ({ label, time, onPress, textInputStyle, stepAmount, s
           </Pressable>
         }
       />
-      {timePickerIsOpen && (
+      {!!timePickerIsOpen && (
         <DateTimePicker value={time} mode="time" display="spinner" onChange={onPickTime} />
       )}
     </>

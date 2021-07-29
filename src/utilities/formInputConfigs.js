@@ -31,6 +31,7 @@ import { DATE_FORMAT } from './constants';
 export const FORM_INPUT_TYPES = {
   TEXT: 'text',
   DATE: 'date',
+  DATE_OF_BIRTH: 'dob',
   DROPDOWN: 'dropdown',
   TOGGLE: 'toggle',
   SLIDER: 'slider',
@@ -50,6 +51,7 @@ const FORM_INPUT_KEYS = {
   GENDER: 'gender',
   IS_ACTIVE: 'isActive',
   LAST_NAME: 'lastName',
+  MIDDLE_NAME: 'middleName',
   NATIONALITY: 'nationality',
   PHONE: 'phoneNumber',
   POLICY_NUMBER_FAMILY: 'policyNumberFamily',
@@ -76,6 +78,15 @@ const FORM_INPUT_CONFIGS = seedObject => ({
     isEditable: true,
   },
 
+  [FORM_INPUT_KEYS.MIDDLE_NAME]: {
+    type: FORM_INPUT_TYPES.TEXT,
+    initialValue: '',
+    key: 'middleName',
+    isRequired: false,
+    label: formInputStrings.middle_name,
+    isEditable: true,
+  },
+
   [FORM_INPUT_KEYS.LAST_NAME]: {
     type: FORM_INPUT_TYPES.TEXT,
     initialValue: '',
@@ -93,6 +104,7 @@ const FORM_INPUT_CONFIGS = seedObject => ({
     validator: input => input.length > 0 && input.length < 50,
     isRequired: true,
     label: formInputStrings.description,
+    // eslint-disable-next-line max-len
     invalidMessage: `${formInputStrings.must_not_be_empty} ${formInputStrings.and} ${formInputStrings.less_than_50_characters}`,
     isEditable: true,
   },
@@ -103,11 +115,12 @@ const FORM_INPUT_CONFIGS = seedObject => ({
     validator: input => input.length > 0 && input.length < 20,
     isRequired: true,
     label: formInputStrings.code,
+    // eslint-disable-next-line max-len
     invalidMessage: `${formInputStrings.must_not_be_empty} ${formInputStrings.and} ${formInputStrings.less_than_20_characters}`,
     isEditable: true,
   },
   [FORM_INPUT_KEYS.DATE_OF_BIRTH]: {
-    type: FORM_INPUT_TYPES.DATE,
+    type: FORM_INPUT_TYPES.DATE_OF_BIRTH,
     initialValue: new Date(),
     key: 'dateOfBirth',
     invalidMessage: formInputStrings.must_be_a_date,
@@ -328,6 +341,7 @@ const FORM_INPUT_CONFIGS = seedObject => ({
 const FORM_CONFIGS = {
   patient: [
     FORM_INPUT_KEYS.LAST_NAME,
+    FORM_INPUT_KEYS.MIDDLE_NAME,
     FORM_INPUT_KEYS.FIRST_NAME,
     FORM_INPUT_KEYS.DATE_OF_BIRTH,
     FORM_INPUT_KEYS.EMAIL,

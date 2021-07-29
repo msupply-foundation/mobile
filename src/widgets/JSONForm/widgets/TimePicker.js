@@ -11,11 +11,14 @@ import { DARKER_GREY, LIGHT_GREY } from '../../../globalStyles/colors';
 
 const regex = new RegExp('^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$');
 
-export const TimePicker = ({ disabled, value, onChange, placeholder, readonly }) => {
+export const TimePicker = ({ disabled, value, onChange, placeholder, readonly, onBlur, id }) => {
   const { focusController } = useJSONFormOptions();
   const ref = focusController.useRegisteredRef();
-
   const initialValue = regex.test(value) ? moment(value, 'hh:mm').toDate() : new Date();
+  const handleChange = dateString => {
+    onChange(dateString);
+    onBlur(id, dateString);
+  };
 
   return (
     <FlexRow>
@@ -28,7 +31,7 @@ export const TimePicker = ({ disabled, value, onChange, placeholder, readonly })
         value={value}
         ref={ref}
         onSubmitEditing={() => focusController.next(ref)}
-        onChangeText={date => onChange(date)}
+        onChangeText={handleChange}
         returnKeyType="next"
         autoCapitalize="none"
         keyboardType="numeric"
@@ -39,7 +42,7 @@ export const TimePicker = ({ disabled, value, onChange, placeholder, readonly })
         isDisabled={readonly || disabled}
         initialValue={initialValue}
         onDateChanged={date => {
-          onChange(moment(date).format('HH:mm'));
+          handleChange(moment(date).format('HH:mm'));
         }}
       />
     </FlexRow>
@@ -56,4 +59,6 @@ TimePicker.propTypes = {
   onChange: PropTypes.func.isRequired,
   placeholder: PropTypes.string.isRequired,
   readonly: PropTypes.bool.isRequired,
+  onBlur: PropTypes.func.isRequired,
+  id: PropTypes.string.isRequired,
 };

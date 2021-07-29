@@ -34,7 +34,7 @@ const mapDispatchToProps = dispatch => {
 };
 
 export const BackButtonComponent = ({ title, onBack }) =>
-  RootNavigator.canGoBack() && (
+  !!RootNavigator.canGoBack() && (
     <TouchableOpacity onPress={onBack}>
       <FlexRow flex={1} justifyContent="center" alignItems="center">
         <BackIcon />

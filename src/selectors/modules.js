@@ -3,6 +3,11 @@
  * Sustainable Solutions (NZ) Ltd. 2020
  */
 
+export const selectUsingDispensary = ({ modules }) => {
+  const { usingDispensary } = modules;
+  return usingDispensary;
+};
+
 export const selectUsingPayments = ({ modules }) => {
   const { usingPayments } = modules;
   return usingPayments;

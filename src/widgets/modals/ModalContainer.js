@@ -68,7 +68,7 @@ export const ModalContainer = ({
           </FlexView>
         )}
         <FlexView flex={1} style={closeButtonContainer}>
-          {onClose && !noCancel && <CloseButton />}
+          {!!onClose && !noCancel && <CloseButton />}
         </FlexView>
       </View>
     ),

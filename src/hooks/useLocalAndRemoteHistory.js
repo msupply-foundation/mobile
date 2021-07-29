@@ -12,7 +12,7 @@ const initialState = (initialValue = []) => ({
   data: initialValue,
   loading: false,
   error: false,
-  searchedWithNoResults: true,
+  searched: false,
 });
 
 const reducer = (state, action) => {
@@ -24,27 +24,33 @@ const reducer = (state, action) => {
       const { data } = payload;
       const { data: initialData } = state;
       const localIds = initialData.map(history => history.id);
-      const newData = (data ?? []).map(history => ({
-        ...history,
-        isRemote: localIds.includes(history.id) ? '' : '✓',
-      }));
-      return { ...state, data: newData, loading: false, searchedWithNoResults: false };
+
+      // Filter out local entries before merging
+      const additionalRemoteRecords = data
+        .filter(record => !localIds.includes(record.id))
+        .map(remoteHistory => ({
+          ...remoteHistory,
+          isRemote: '✓',
+        }));
+      const newData = initialData.concat(additionalRemoteRecords);
+
+      return { ...state, data: newData, loading: false, searched: true };
     }
     case 'fetch_start': {
       const { loading } = state;
 
       if (loading) return state;
-      return { ...state, loading: true, searchedWithNoResults: false, noMore: false };
+      return { ...state, loading: true, searched: false, noMore: false };
     }
     case 'fetch_no_results': {
-      return { ...state, data: [], searchedWithNoResults: true, loading: false };
+      return { ...state, data: [], searched: true, loading: false };
     }
 
     case 'fetch_error': {
       const { payload } = action;
       const { error } = payload;
 
-      return { ...state, error, loading: false, searchedWithNoResults: false };
+      return { ...state, error, loading: false, searched: true };
     }
 
     case 'clear': {
@@ -64,12 +70,12 @@ const reducer = (state, action) => {
  * having to track multiple.
  */
 export const useLocalAndRemotePatientHistory = ({
-  isVaccine,
+  isVaccineDispensingModal,
   patientId,
   sortKey,
   initialValue = [],
 }) => {
-  const [{ data, loading, searchedWithNoResults, error }, dispatch] = useReducer(
+  const [{ data, loading, searched, error }, dispatch] = useReducer(
     reducer,
     initialValue,
     initialState
@@ -106,8 +112,10 @@ export const useLocalAndRemotePatientHistory = ({
   }, [fetchError]);
 
   const searchOnline = () => {
-    const responseHandler = getPatientHistoryResponseProcessor({ isVaccine, sortKey });
-
+    const responseHandler = getPatientHistoryResponseProcessor({
+      isVaccineDispensingModal,
+      sortKey,
+    });
     refresh();
     dispatch({ type: 'fetch_start' });
     fetch(
@@ -119,5 +127,5 @@ export const useLocalAndRemotePatientHistory = ({
 
   const throttledSearchOnline = useThrottled(searchOnline, 500, []);
 
-  return [{ data, loading, searchedWithNoResults, error }, throttledSearchOnline];
+  return [{ data, loading, searched, error }, throttledSearchOnline];
 };

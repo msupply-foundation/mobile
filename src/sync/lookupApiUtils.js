@@ -203,7 +203,7 @@ const processResponse = response => {
 };
 
 export const getPatientHistoryResponseProcessor = ({
-  isVaccine,
+  isVaccineDispensingModal,
   sortKey,
   isAscending = true,
 }) => response => {
@@ -218,7 +218,8 @@ export const getPatientHistoryResponseProcessor = ({
         itemLine,
         medicineAdministrator,
       }) => {
-        const { item } = itemLine;
+        const receivedItemLine = itemLine || { item: { doses: 0, code: 'N/A' } };
+        const { item } = receivedItemLine;
         const { code: itemCode, doses } = item;
         const prescriber = clinician
           ? `${clinician.first_name} ${clinician.last_name}`.trim()
@@ -227,7 +228,7 @@ export const getPatientHistoryResponseProcessor = ({
           ? `${medicineAdministrator.first_name} ${medicineAdministrator.last_name}`.trim()
           : generalStrings.not_available;
 
-        if (isVaccine && !item.is_vaccine) return;
+        if (isVaccineDispensingModal && !item?.is_vaccine) return;
         const confirmDate = parseDate(confirm_date);
 
         patientHistory.push({
@@ -240,6 +241,7 @@ export const getPatientHistoryResponseProcessor = ({
           prescriber,
           totalQuantity,
           vaccinator,
+          prescriberOrVaccinator: !isVaccineDispensingModal && vaccinator ? vaccinator : prescriber,
         });
       }
     )
@@ -257,14 +259,13 @@ export const processPatientResponse = response => {
       code,
       barcode,
       phone: phoneNumber,
-      bill_address1: billAddress1,
-      bill_address2: billAddress2,
-      bill_address3: billAddress3,
-      bill_address4: billAddress4,
+      bill_address1: addressOne,
+      bill_address2: addressTwo,
       bill_postal_zip_code: billPostalZipCode,
       email: emailAddress,
       supplying_store_id: supplyingStoreId,
       first: firstName,
+      middle: middleName,
       last: lastName,
       date_of_birth,
       nameInsuranceJoin,
@@ -278,14 +279,13 @@ export const processPatientResponse = response => {
       barcode,
       code,
       phoneNumber,
-      billAddress1,
-      billAddress2,
-      billAddress3,
-      billAddress4,
+      addressOne,
+      addressTwo,
       billPostalZipCode,
       emailAddress,
       supplyingStoreId,
       firstName,
+      middleName,
       lastName,
       nationality: UIDatabase.get('Nationality', nationality_ID),
       ethnicity: UIDatabase.get('Ethnicity', ethnicity_ID),

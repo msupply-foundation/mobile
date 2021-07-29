@@ -130,7 +130,7 @@ const Menu = ({
           <InfoBadge routeName={ROUTES.CUSTOMER_REQUISITIONS}>
             <MenuButton text={navStrings.customer_requisitions} onPress={toCustomerRequisitions} />
           </InfoBadge>
-          {usingDispensary && <MenuButton text={navStrings.dispensary} onPress={toDispensary} />}
+          {!!usingDispensary && <MenuButton text={navStrings.dispensary} onPress={toDispensary} />}
         </View>
       </View>
     ),
@@ -175,7 +175,7 @@ const Menu = ({
         <ModulesImage style={image} />
 
         <View>
-          {usingVaccines && (
+          {!!usingVaccines && (
             <InfoBadge routeName={ROUTES.VACCINES}>
               <IconMenuButton
                 label={navStrings.vaccines}
@@ -184,7 +184,7 @@ const Menu = ({
               />
             </InfoBadge>
           )}
-          {hasVaccines && usingDispensary && (
+          {!!hasVaccines && !!usingDispensary && (
             <IconMenuButton
               label={navStrings.vaccine_dispensary}
               onPress={() => {
@@ -195,14 +195,14 @@ const Menu = ({
               Icon={<SyringeIcon />}
             />
           )}
-          {usingDashboard && (
+          {!!usingDashboard && (
             <IconMenuButton
               label={navStrings.dashboard}
               onPress={toDashboard}
               Icon={<LineChartIcon color={SUSSOL_ORANGE} />}
             />
           )}
-          {usingCashRegister && (
+          {!!usingCashRegister && (
             <IconMenuButton
               label={navStrings.cash_register}
               onPress={toCashRegister}
@@ -219,9 +219,9 @@ const Menu = ({
     () => (
       <View style={styles.bottomRow}>
         <IconButton Icon={<PowerIcon />} label={navStrings.log_out} onPress={logout} />
-        {isInAdminMode && <MenuButton text="Realm Explorer" onPress={toRealmExplorer} />}
-        {isInAdminMode && <MenuButton text="Export Data" onPress={exportData} />}
-        {isAdmin && (
+        {!!isInAdminMode && <MenuButton text="Realm Explorer" onPress={toRealmExplorer} />}
+        {!!isInAdminMode && <MenuButton text="Export Data" onPress={exportData} />}
+        {!!isAdmin && (
           <IconButton Icon={<CogIcon />} label={buttonStrings.settings} onPress={toSettings} />
         )}
       </View>

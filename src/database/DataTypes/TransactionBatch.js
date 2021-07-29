@@ -63,6 +63,14 @@ export class TransactionBatch extends Realm.Object {
   }
 
   /**
+   * Returns either the prescriber name or the vaccinator
+   * @return {String}
+   */
+  get prescriberOrVaccinator() {
+    return this.vaccinator || this.prescriber;
+  }
+
+  /**
    * Get total quantity of this batch.
    *
    * @return  {number}

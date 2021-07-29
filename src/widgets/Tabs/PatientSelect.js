@@ -5,14 +5,14 @@
  * Sustainable Solutions (NZ) Ltd. 2021
  */
 
-import React from 'react';
+import React, { useCallback, useState } from 'react';
 import PropTypes from 'prop-types';
 
 import { ActivityIndicator, Keyboard, StyleSheet, Text, ToastAndroid, View } from 'react-native';
 import ReactNativeHapticFeedback from 'react-native-haptic-feedback';
 
 import { batch, connect } from 'react-redux';
-
+import { ModalContainer, VaccinationHistory } from '../modals';
 import { FormControl } from '../FormControl';
 import { PageButton } from '../PageButton';
 import { FlexRow } from '../FlexRow';
@@ -40,7 +40,6 @@ import globalStyles, { DARK_GREY } from '../../globalStyles';
 import { NameNoteActions } from '../../actions/Entities/NameNoteActions';
 import { AfterInteractions } from '../AfterInteractions';
 import { generateUUID, UIDatabase } from '../../database/index';
-import { SimpleTable } from '../SimpleTable';
 import { useKeyboardIsOpen } from '../../hooks/useKeyboardIsOpen';
 import { Paper } from '../Paper';
 import { selectCompletedForm } from '../../selectors/form';
@@ -58,6 +57,7 @@ import {
   processPatientResponse,
 } from '../../sync/lookupApiUtils';
 import { SETTINGS_KEYS } from '../../settings/index';
+import { DataTable, DataTableRow, DataTableHeaderRow } from '../DataTable';
 
 const getMessage = (noResults, error) => {
   if (noResults) return generalStrings.could_not_find_patient;
@@ -144,6 +144,7 @@ const PatientSelectComponent = ({
 }) => {
   const withLoadingIndicator = useLoadingIndicator();
   const [isQrModalOpen, toggleQrModal] = useToggle();
+  const [{ history, patient } = {}, setPatientHistory] = useState({});
 
   const hapticFeedBackOptions = {
     enableVibrateFallback: true,
@@ -191,7 +192,12 @@ const PatientSelectComponent = ({
     getMorePatients,
   ] = useLocalAndRemotePatients([]);
 
-  const columns = React.useMemo(() => getColumns(MODALS.PATIENT_LOOKUP), []);
+  const columns = React.useMemo(() => {
+    if (UIDatabase.get('PatientEvent', 'vaccination', 'code')) {
+      return getColumns(MODALS.VACCINE_PATIENT_LOOKUP);
+    }
+    return getColumns(MODALS.PATIENT_LOOKUP);
+  }, []);
   const { pageTopViewContainer } = globalStyles;
   const keyboardIsOpen = useKeyboardIsOpen();
 
@@ -210,6 +216,60 @@ const PatientSelectComponent = ({
     const responseJson = await response.json();
     return processPatientResponse({ ...response, json: responseJson });
   };
+
+  const renderHeader = useCallback(
+    () => <DataTableHeaderRow columns={columns} isSortable={false} />,
+    [columns]
+  );
+
+  const getCallback = colKey => {
+    switch (colKey) {
+      case 'patientHistory':
+        return patientId => {
+          const [vaccinationPatientEvent] = UIDatabase.objects('PatientEvent').filtered(
+            "code == 'vaccination'"
+          );
+          const { id: vaccinationPatientEventID } = vaccinationPatientEvent ?? {};
+
+          const foundPatient = data.find(({ id }) => patientId === id);
+
+          const patientsPreviousVaccinations = foundPatient?.nameNotes
+            ?.filter(({ patientEventID }) => patientEventID === vaccinationPatientEventID)
+            .map(({ data: vaccinationNameNotes }) => vaccinationNameNotes);
+
+          setPatientHistory({ patient: foundPatient, history: patientsPreviousVaccinations });
+        };
+      default:
+        return null;
+    }
+  };
+
+  const renderRow = useCallback(
+    listItem => {
+      const { item, index } = listItem;
+      const keyExtractor = ({ id }) => id;
+
+      return (
+        <DataTableRow
+          rowData={data[index]}
+          getCallback={getCallback}
+          rowKey={keyExtractor(item)}
+          columns={columns}
+          onPress={name => {
+            // Only show a spinner when the name doesn't exist in the database, as we need to
+            // send a request to the server to add a name store join.
+            if (UIDatabase.get('Name', name?.id)) {
+              selectPatient(name);
+            } else {
+              withLoadingIndicator(() => selectPatient(name));
+            }
+          }}
+          rowIndex={index}
+        />
+      );
+    },
+    [data]
+  );
 
   return (
     <FlexView style={pageTopViewContainer}>
@@ -241,16 +301,9 @@ const PatientSelectComponent = ({
             </View>
 
             <View style={localStyles.listContainer}>
-              <SimpleTable
-                selectRow={name => {
-                  // Only show a spinner when the name doesn't exist in the database, as we need to
-                  // send a request to the server to add a name store join.
-                  if (UIDatabase.get('Name', name?.id)) {
-                    selectPatient(name);
-                  } else {
-                    withLoadingIndicator(() => selectPatient(name));
-                  }
-                }}
+              <DataTable
+                renderHeader={renderHeader}
+                renderRow={renderRow}
                 onEndReached={() => getMorePatients(completedForm)}
                 data={data}
                 columns={columns}
@@ -274,6 +327,13 @@ const PatientSelectComponent = ({
         </FlexRow>
       )}
       <QrScannerModal isOpen={isQrModalOpen} onBarCodeRead={onQrCodeRead} onClose={toggleQrModal} />
+      <ModalContainer
+        isVisible={!!patient}
+        onClose={() => setPatientHistory({})}
+        title={`${dispensingStrings.vaccination_history} ${patient?.name}`}
+      >
+        <VaccinationHistory history={history} patient={patient} />
+      </ModalContainer>
     </FlexView>
   );
 };
@@ -288,7 +348,6 @@ const mapDispatchToProps = dispatch => {
 
       if (selectedPatient) {
         dispatch(NameNoteActions.createSurveyNameNote(selectedPatient));
-        dispatch(VaccinePrescriptionActions.createSupplementaryData());
         dispatch(WizardActions.nextTab());
       }
     });

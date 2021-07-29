@@ -52,9 +52,9 @@ SpacedChildren.propTypes = {
 
 export const WithSpace = ({ space, vertical, horizontal, before, after, children }) => (
   <>
-    {before && <Spacer space={space} vertical={vertical} horizontal={horizontal} />}
+    {!!before && <Spacer space={space} vertical={vertical} horizontal={horizontal} />}
     {children}
-    {after && <Spacer space={space} vertical={vertical} horizontal={horizontal} />}
+    {!!after && <Spacer space={space} vertical={vertical} horizontal={horizontal} />}
   </>
 );
 

@@ -17,6 +17,9 @@ export const COLUMN_TYPES = {
 };
 
 export const COLUMN_KEYS = {
+  DOSES_DIFFERENCE: 'dosesDifference',
+  COUNTED_DOSES: 'countedDoses',
+  SNAPSHOT_DOSES: 'snapshotDoses',
   ADVERSE_DRUG_EFFECT: 'adverseDrugEffect',
   EDIT: 'edit',
   BATTERY_LEVEL: 'batteryLevelString',
@@ -56,6 +59,7 @@ export const COLUMN_KEYS = {
   PAYMENT_TYPE_TITLE: 'paymentTypeDescription',
   PRESCRIBER_EDIT: 'prescriberEdit',
   PRESCRIBER: 'prescriber',
+  PRESCRIBER_OR_VACCINATOR: 'prescriberOrVaccinator',
   PRESCRIPTION_DATE: 'confirmDate',
   PRICE: 'price',
   PROGRAM: 'programName',
@@ -87,9 +91,14 @@ export const COLUMN_KEYS = {
   NEGATIVE_ADJUSTMENTS: 'negativeAdjustments',
   CLOSING_STOCK: 'stockOnHand',
   VACCINATOR: 'vaccinator',
+  VACCINE_DATE: 'vaccineDate',
 };
 
 export const COLUMN_NAMES = {
+  DOSES_DIFFERENCE: 'dosesDifference',
+  COUNTED_DOSES: 'countedDoses',
+  SNAPSHOT_DOSES: 'snapshotDoses',
+  VACCINE_DATE: 'vaccineDate',
   VACCINATOR: 'vaccinator',
   EDITABLE_DOSES: 'editableDoses',
   ADVERSE_DRUG_EFFECT: 'adverseDrugEffect',
@@ -158,6 +167,7 @@ export const COLUMN_NAMES = {
   PAYMENT_TYPE: 'paymentType',
   PRESCRIBER_EDIT: 'prescriberEdit',
   PRESCRIBER: 'prescriber',
+  PRESCRIBER_OR_VACCINATOR: 'prescriberOrVaccinator',
   PRESCRIPTION_DATE: 'prescriptionDate',
   PRICE: 'price',
   PROGRAM: 'program',

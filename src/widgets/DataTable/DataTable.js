@@ -6,7 +6,13 @@
 
 import PropTypes from 'prop-types';
 import React, { useMemo, useRef, useCallback } from 'react';
-import { StyleSheet, VirtualizedList, VirtualizedListPropTypes, Keyboard } from 'react-native';
+import {
+  View,
+  StyleSheet,
+  VirtualizedList,
+  VirtualizedListPropTypes,
+  Keyboard,
+} from 'react-native';
 import RefContext from './RefContext';
 import { DATA_TABLE_DEFAULTS } from './constants';
 import { KeyboardSpacing } from '../KeyboardSpacing';
@@ -106,17 +112,19 @@ const DataTable = React.memo(
 
     return (
       <RefContext.Provider value={contextValue}>
-        {renderHeader && renderHeader()}
-        <VirtualizedList
-          ref={virtualizedListRef}
-          keyboardDismissMode="none"
-          data={data}
-          keyboardShouldPersistTaps="always"
-          style={style}
-          ListFooterComponent={<KeyboardSpacing />}
-          renderItem={renderItem}
-          {...otherProps}
-        />
+        <View style={{ flex: 1 }}>
+          {renderHeader && renderHeader()}
+          <VirtualizedList
+            ref={virtualizedListRef}
+            keyboardDismissMode="none"
+            data={data}
+            keyboardShouldPersistTaps="always"
+            style={style}
+            ListFooterComponent={<KeyboardSpacing />}
+            renderItem={renderItem}
+            {...otherProps}
+          />
+        </View>
       </RefContext.Provider>
     );
   }

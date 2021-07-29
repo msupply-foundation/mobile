@@ -42,7 +42,7 @@ export const SimpleLabel = React.memo(
     const { labelStyle, textStyle, containerStyle } = styles;
     return (
       <View style={containerStyle}>
-        {usingLabel && (
+        {!!usingLabel && (
           <Text
             numberOfLines={numberOfLines}
             ellipsizeMode="tail"
@@ -56,7 +56,7 @@ export const SimpleLabel = React.memo(
             {`${label}  `}
           </Text>
         )}
-        {usingText && (
+        {!!usingText && (
           <Text
             numberOfLines={numberOfLines}
             ellipsizeMode="tail"

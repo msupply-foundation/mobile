@@ -48,6 +48,8 @@ import { NameNoteActions } from '../actions/Entities/NameNoteActions';
 import { createDefaultName } from '../actions/Entities/NameActions';
 import { SUSSOL_ORANGE } from '../globalStyles/colors';
 import { ADRInput } from '../widgets/modalChildren/ADRInput';
+import { selectUsingDispensary } from '../selectors/modules';
+import { selectHaveVaccineStock } from '../selectors/Entities/vaccinePrescription';
 
 const Dispensing = ({
   data,
@@ -111,6 +113,9 @@ const Dispensing = ({
   isADRModalOpen,
   createADR,
   cancelCreatingADR,
+
+  // Vaccines
+  isVaccineDispensingEnabled,
 }) => {
   // Custom hook to refresh data on this page when becoming the head of the stack again.
   useNavigationFocus(navigation, refreshData);
@@ -278,6 +283,7 @@ const Dispensing = ({
           patientHistory={patientHistory}
           patientId={currentPatient?.id || ''}
           sortKey="itemName"
+          vaccineDispensingEnabled={isVaccineDispensingEnabled}
         />
       </ModalContainer>
       <ModalContainer
@@ -296,7 +302,7 @@ const Dispensing = ({
         isVisible={isADRModalOpen}
         onClose={cancelCreatingADR}
       >
-        <ADRInput />
+        <ADRInput patientHistory={patientHistory} />
       </ModalContainer>
     </>
   );
@@ -342,6 +348,7 @@ const mapStateToProps = state => {
   const { sortKey, isAscending, searchTerm, columns } = dispensary;
 
   const isLookupModalOpen = selectLookupModalOpen(state);
+  const isVaccineDispensingEnabled = selectUsingDispensary(state) && selectHaveVaccineStock();
 
   const { currentPatient } = patient;
   const { currentPrescriber } = prescriber;
@@ -389,6 +396,8 @@ const mapStateToProps = state => {
     canEditInsurancePolicy,
     isCreatingInsurancePolicy,
     patientHistory,
+    // Vaccines
+    isVaccineDispensingEnabled,
   };
 };
 
@@ -440,6 +449,7 @@ Dispensing.defaultProps = {
   currentPrescriber: null,
   selectedInsurancePolicy: null,
   canEditPrescriber: false,
+  isVaccineDispensingEnabled: false,
 };
 
 Dispensing.propTypes = {
@@ -484,4 +494,5 @@ Dispensing.propTypes = {
   createADR: PropTypes.func.isRequired,
   cancelCreatingADR: PropTypes.func.isRequired,
   patientHistory: PropTypes.array.isRequired,
+  isVaccineDispensingEnabled: PropTypes.bool,
 };
