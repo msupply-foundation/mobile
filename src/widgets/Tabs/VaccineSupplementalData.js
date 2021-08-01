@@ -55,7 +55,6 @@ const VaccineSupplementalDataComponent = ({
             onChange={(changed, validator) => {
               onFormUpdate(changed.formData, validator);
             }}
-            liveValidate={false}
           >
             <View />
           </JSONForm>

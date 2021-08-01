@@ -137,7 +137,7 @@ const PaymentSummaryComponent = ({
     <ScrollView>
       <FlexView style={localStyles.container}>
         <Text style={localStyles.title}>{dispensingStrings.payment}</Text>
-        {usingInsurance && (
+        {!!usingInsurance && (
           <FlexRow flex={1}>
             <DropDown
               headerValue={dispensingStrings.select_a_policy}
@@ -156,7 +156,7 @@ const PaymentSummaryComponent = ({
           </FlexRow>
         )}
 
-        {usingPaymentTypes && (
+        {!!usingPaymentTypes && (
           <DropDown
             headerValue={dispensingStrings.select_a_payment_type}
             values={paymentTypeTitles}
@@ -201,14 +201,14 @@ const PaymentSummaryComponent = ({
             bold
           />
 
-          {usingInsurance && (
+          {!!usingInsurance && (
             <NumberLabelRow
               text={dispensingStrings.insurance_discount_rate}
               isPercentage
               number={discountRate}
             />
           )}
-          {usingInsurance && (
+          {!!usingInsurance && (
             <NumberLabelRow
               text={dispensingStrings.insurance_discount_amount}
               number={discountAmount.format()}

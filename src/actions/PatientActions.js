@@ -44,6 +44,7 @@ const patientUpdate = patientDetails => async (dispatch, getState) => {
     barcode: currentBarcode,
     name: currentName,
     firstName: currentFirstName,
+    middleName: currentMiddleName,
     lastName: currentLastName,
     dateOfBirth: currentDateOfBirth,
     emailAddress: currentEmailAddress,
@@ -62,8 +63,6 @@ const patientUpdate = patientDetails => async (dispatch, getState) => {
     id: currentBillAddressId,
     line1: currentLine1,
     line2: currentLine2,
-    line3: currentLine3,
-    line4: currentLine4,
     zipCode: currentZipCode,
   } = currentBillingAddress ?? {};
 
@@ -72,14 +71,13 @@ const patientUpdate = patientDetails => async (dispatch, getState) => {
     code: patientCode,
     barcode: patientBarcode,
     firstName: patientFirstName,
+    middleName: patientMiddleName,
     lastName: patientLastName,
     dateOfBirth: patientDateOfBirth,
     emailAddress: patientEmailAddress,
     phoneNumber: patientPhoneNumber,
-    billAddress1: patientLine1,
-    billAddress2: patientLine2,
-    billAddress3: patientLine3,
-    billAddress4: patientLine4,
+    addressOne: patientLine1,
+    addressTwo: patientLine2,
     billPostalZipCode: patientPostalZipCode,
     country: patientCountry,
     supplyingStoreId: patientSupplyingStoreId,
@@ -92,16 +90,15 @@ const patientUpdate = patientDetails => async (dispatch, getState) => {
   const code = patientCode ?? currentCode;
   const barcode = patientBarcode ?? currentBarcode;
   const firstName = patientFirstName ?? currentFirstName;
+  const middleName = patientMiddleName ?? currentMiddleName;
   const lastName = patientLastName ?? currentLastName;
   const name = `${lastName}, ${firstName}` || currentName;
   const dateOfBirth = patientDateOfBirth ?? currentDateOfBirth;
   const emailAddress = patientEmailAddress ?? currentEmailAddress;
   const phoneNumber = patientPhoneNumber ?? currentPhoneNumber;
   const billAddressId = currentBillAddressId;
-  const billAddress1 = patientLine1 ?? currentLine1;
-  const billAddress2 = patientLine2 ?? currentLine2;
-  const billAddress3 = patientLine3 ?? currentLine3;
-  const billAddress4 = patientLine4 ?? currentLine4;
+  const addressOne = patientLine1 ?? currentLine1;
+  const addressTwo = patientLine2 ?? currentLine2;
   const billPostalZipCode = patientPostalZipCode ?? currentZipCode;
   const country = patientCountry ?? currentCountry;
   const female = patientFemale ?? currentFemale;
@@ -115,16 +112,15 @@ const patientUpdate = patientDetails => async (dispatch, getState) => {
     code,
     barcode,
     firstName,
+    middleName,
     lastName,
     name,
     dateOfBirth,
     emailAddress,
     phoneNumber,
     billAddressId,
-    billAddress1,
-    billAddress2,
-    billAddress3,
-    billAddress4,
+    addressOne,
+    addressTwo,
     billPostalZipCode,
     country,
     female,

@@ -24,10 +24,10 @@ export const getVersion = async settings => {
   // If app version not correctly retrieved from local storage, check settings.
   if (!fromVersion || fromVersion.length === 0) {
     fromVersion = settings.get(SETTINGS_KEYS.APP_VERSION);
-    
+
     // If app version not in settings or storage, assume new installation.
     fromVersion = packageJson.version;
-  
+
     // Migrate app version from settings to local storage.
     await AsyncStorage.setItem(APP_VERSION_KEY, fromVersion);
   }
@@ -50,19 +50,17 @@ export const getMigrationTasks = async (database, settings) => {
         compareVersions(toVersion, migration.version) >= 0
     ) ?? [];
 
-  const migrationTasks = migrations.map(migration => {
-    return [
-      ...migration.getTasks(),
-      // Append task to update app version.
-      {
-        description: `Update version to ${migration.version}`,
-        execute: async () => {
-          AsyncStorage.setItem(APP_VERSION_KEY, migration.version);
-          settings.set(SETTINGS_KEYS.APP_VERSION, migration.version);
-        },
+  const migrationTasks = migrations.map(migration => [
+    ...migration.getTasks(),
+    // Append task to update app version.
+    {
+      description: `Update version to ${migration.version}`,
+      execute: async () => {
+        AsyncStorage.setItem(APP_VERSION_KEY, migration.version);
+        settings.set(SETTINGS_KEYS.APP_VERSION, migration.version);
       },
-    ];
-  });
+    },
+  ]);
 
   return migrationTasks.flat();
 };
@@ -77,7 +75,8 @@ const getMigrations = (database, settings) => [
       {
         description: 'Adding SYNC_IS_INITIALISED setting.',
         execute: () => {
-          // 1.0.30 added the setting 'SYNC_IS_INITIALISED', where it previously relied on 'SYNC_URL'.
+          // 1.0.30 added the setting 'SYNC_IS_INITIALISED', where it previously relied on
+          // 'SYNC_URL'.
           const syncURL = settings.get(SETTINGS_KEYS.SYNC_URL);
           if (syncURL && syncURL.length > 0) {
             settings.set(SETTINGS_KEYS.SYNC_IS_INITIALISED, 'true');
@@ -123,8 +122,9 @@ const getMigrations = (database, settings) => [
             settings.set(SETTINGS_KEYS.SUPPLYING_STORE_NAME_ID, 'E5D7BB38571C1F428AF397240EEB285F');
             settings.set(SETTINGS_KEYS.SUPPLYING_STORE_ID, '6CFDCD1916B098478422A489625AB9E7');
           }
-          // Migration for v2 API request requisitions, set |otherStoreName| to main supplying store
-          // name for all existing requisitions (expect no response requisitions at this stage).
+          // Migration for v2 API request requisitions, set |otherStoreName| to main supplying
+          // store name for all existing requisitions (expect no response requisitions at this
+          // stage).
           const supplyingStoreId = settings.get(SETTINGS_KEYS.SUPPLYING_STORE_NAME_ID);
           if (!supplyingStoreId || supplyingStoreId === '') {
             throw new Error('Supplying Store Name ID missing from Settings');
@@ -146,9 +146,9 @@ const getMigrations = (database, settings) => [
             );
           });
 
-          // Previous versions did not add requisitions, transactions, or stocktakes to the sync queue
-          // when they were finalised, causing them to have not been synced to the server in finalised
-          // form. Find all of these, and set them to resync.
+          // Previous versions did not add requisitions, transactions, or stocktakes to the sync
+          // queue when they were finalised, causing them to have not been synced to the server in
+          // finalised form. Find all of these, and set them to resync.
           database.write(() => {
             // Requisitions
             const finalisedRequisitions = database
@@ -178,9 +178,10 @@ const getMigrations = (database, settings) => [
       {
         description: 'Fixing TransactionBatch deletion bug.',
         execute: () => {
-          // If we try to delete a 'TransactionBatch' with a parent transaction with 'confirmed' status,
-          // then a 'TransactionBatch' destructor will try to revert stock on related 'ItemBatch'
-          // objects. To prevent this, the status of these transactions is temporarily changed.
+          // If we try to delete a 'TransactionBatch' with a parent transaction with 'confirmed'
+          // status, then a 'TransactionBatch' destructor will try to revert stock on related
+          // 'ItemBatch' objects. To prevent this, the status of these transactions is temporarily
+          // changed.
           const deleteBatches = (inventoryAdjustment, batchesToDelete) => {
             const currentStatus = inventoryAdjustment.status;
             database.write(() => {
@@ -331,16 +332,16 @@ const getMigrations = (database, settings) => [
     ],
   },
   {
-    version: '8.1.1',
+    version: '8.2.2',
     getTasks: () => {
-      let tasks = [];
+      const tasks = [];
 
       const requisitionItems = database
         .objects('RequisitionItem')
         .filtered('item != null && itemName == $0 || itemName == $1', '', undefined);
 
       const batchSize = 10000;
-      let taskCount = Math.ceil(requisitionItems.length / batchSize);
+      const taskCount = Math.ceil(requisitionItems.length / batchSize);
 
       for (let i = 1; i <= taskCount; i++) {
         tasks.push({

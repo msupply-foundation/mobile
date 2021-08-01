@@ -141,7 +141,7 @@ const PrescriptionConfirmationComponent = ({
         </FlexColumn>
 
         <FlexColumn flex={1}>
-          {usingPayments && <PaymentSummary />}
+          {!!usingPayments && <PaymentSummary />}
 
           <FlexRow justifyContent="flex-end">
             <PageButtonWithOnePress

@@ -49,8 +49,8 @@ export const IconButton = ({
     >
       <>
         {!right && Icon}
-        {label && <Text style={internalLabelStyle}>{label}</Text>}
-        {right && Icon}
+        {!!label && <Text style={internalLabelStyle}>{label}</Text>}
+        {!!right && Icon}
       </>
     </Container>
   );

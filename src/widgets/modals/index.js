@@ -10,3 +10,4 @@ export { DemoUserModal } from './DemoUserModal';
 export { FinaliseModal } from './FinaliseModal';
 export { LoginModal } from './LoginModal';
 export { ModalContainer } from './ModalContainer';
+export { VaccinationHistory } from './VaccinationHistory';

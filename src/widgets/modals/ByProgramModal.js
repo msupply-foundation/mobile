@@ -142,8 +142,8 @@ export const ByProgramModal = ({ settings, database, transactionType, onConfirm 
     }
     return getAllPrograms(settings, database);
   };
-  const getSuppliers = () => database.objects('InternalSupplier');
-  const getCustomers = () => database.objects('Customer');
+  const getSuppliers = () => database.objects('InternalSupplier').slice();
+  const getCustomers = () => database.objects('Customer').slice();
   const getOrderTypes = () => program && program.getStoreTagObject(tags).orderTypes;
   const getPeriods = () => {
     if (!(program && orderType)) return null;

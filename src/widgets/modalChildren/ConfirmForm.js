@@ -45,7 +45,7 @@ export const ConfirmForm = props => {
 
   return (
     <>
-      {!noCancel && onCancel && (
+      {!noCancel && !!onCancel && (
         <TouchableOpacity onPress={onCancel} style={defaultStyles.closeButton}>
           <Icon name="md-close" style={defaultStyles.closeIcon} />
         </TouchableOpacity>
@@ -53,7 +53,7 @@ export const ConfirmForm = props => {
       <View style={defaultStyles.contentContainer}>
         <Text style={textStyle}>{questionText}</Text>
         <View style={[defaultStyles.buttonContainer, buttonContainerStyle]}>
-          {!noCancel && onCancel && (
+          {!noCancel && !!onCancel && (
             <OnePressButton
               style={[globalStyles.button, cancelButtonStyle]}
               textStyle={[globalStyles.buttonText, buttonTextStyle]}
@@ -61,7 +61,7 @@ export const ConfirmForm = props => {
               onPress={onCancel}
             />
           )}
-          {onConfirm && (
+          {!!onConfirm && (
             <OnePressButton
               style={[globalStyles.button, confirmButtonStyle]}
               textStyle={[globalStyles.buttonText, buttonTextStyle]}

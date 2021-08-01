@@ -28,6 +28,7 @@ import { FormActions } from '../actions/FormActions';
 import { ModalContainer } from './modals';
 import { ConfirmForm } from './modalChildren';
 import { useDebounce } from '../hooks/useDebounce';
+import { FormDOBInput } from './FormInputs/FormDOBInput';
 
 /**
  * Component which will manage and control a set of user inputs of a form.
@@ -124,6 +125,23 @@ const FormControlComponent = ({
                 invalidMessage={invalidMessage}
                 isDisabled={!isEditable || isDisabled}
                 autoFocus={shouldAutoFocus && index === 0}
+              />
+            );
+          }
+          case FORM_INPUT_TYPES.DATE_OF_BIRTH: {
+            return (
+              <FormDOBInput
+                ref={refs[index]}
+                key={key}
+                isRequired={isRequired}
+                label={label}
+                value={initialValue}
+                onChangeDate={value => debouncedUpdateForm(key, value)}
+                onValidate={validator}
+                invalidMessage={invalidMessage}
+                onSubmit={nextFocus(index, key)}
+                isDisabled={isDisabled}
+                autoFocus={index === 0}
               />
             );
           }

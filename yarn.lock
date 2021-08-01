@@ -1387,10 +1387,10 @@
   dependencies:
     deep-assign "^3.0.0"
 
-"@react-native-community/checkbox@^0.5.7":
-  version "0.5.7"
-  resolved "https://registry.yarnpkg.com/@react-native-community/checkbox/-/checkbox-0.5.7.tgz#ac818de88736acc1a4539188f2d435cf5e845ae1"
-  integrity sha512-CiHBAMWy5fsFIHLd1pf8frlWrLT8DnCXUSxdlGKazHm7srQSReKH4R5absShjmYOHRo9raWEnKZO/cm7MUDHZg==
+"@react-native-community/checkbox@^0.5.8":
+  version "0.5.8"
+  resolved "https://registry.yarnpkg.com/@react-native-community/checkbox/-/checkbox-0.5.8.tgz#a1b50635fd76a07fb53eb4a98120347cb6e75da4"
+  integrity sha512-2ppw40sSqBKSPz75l8rDCvpcvQb/78MtvB5BDtovsJE1kXoUJP4eVLuyLo+LfYdSK9qLD4Llt4bIulr1SI9UIQ==
 
 "@react-native-community/cli-debugger-ui@^5.0.1-alpha.1":
   version "5.0.1-alpha.1"
@@ -8379,6 +8379,11 @@ react-native-bluetooth-status@^1.5.1:
   integrity sha512-d+7NvFhLh3FRJOWWrJQjDwg/X9KILViEwLW2BBocIBsWGdFoZR51oXUKkR/FpMZ03AQiedKMDOTbP9nKBIVIEg==
   dependencies:
     "@cs125/wait-until" "^0.0.3"
+
+react-native-bunyan@^1.8.12:
+  version "1.8.12"
+  resolved "https://registry.yarnpkg.com/react-native-bunyan/-/react-native-bunyan-1.8.12.tgz#87dc5382f3de8a1fe16873acffe3770ac51c0222"
+  integrity sha512-Gwt8ITf90gZjQCiEWPkAMZNT/i9nIEU3jFy4rE4T4oEu0rigdNrYP24LTAPVSw17HFPgmaOCk3gHT7kOQ0Pc4A==
 
 react-native-camera@^3.44.0:
   version "3.44.0"

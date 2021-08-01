@@ -70,7 +70,7 @@ const requestLocation = () => async (dispatch, getState) => {
   const locationPermission = PermissionSelectors.location(getState());
 
   const result = !locationPermission
-    ? (await request(PERMISSIONS.ANDROID.ACCESS_COARSE_LOCATION)) === RESULTS.GRANTED
+    ? (await request(PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION)) === RESULTS.GRANTED
     : true;
 
   dispatch(setLocation(result));
@@ -80,7 +80,7 @@ const requestLocation = () => async (dispatch, getState) => {
 
 const checkPermissions = () => async dispatch => {
   const promises = [
-    check(PERMISSIONS.ANDROID.ACCESS_COARSE_LOCATION),
+    check(PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION),
     check(PERMISSIONS.ANDROID.WRITE_EXTERNAL_STORAGE),
     BluetoothStatus.state(),
     SystemSetting.isLocationEnabled(),

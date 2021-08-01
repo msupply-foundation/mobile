@@ -41,7 +41,7 @@ export const SyncStateComponent = ({
 
   return (
     <Container onPress={onOpenSyncModal} style={globalStyles.navBarRightContainer}>
-      {showText && (
+      {!!showText && (
         <Text style={globalStyles.navBarText}>{hasError ? errorText : syncMessage}</Text>
       )}
       <SyncIcon isActive={!hasError} />

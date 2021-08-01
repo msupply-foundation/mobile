@@ -5,6 +5,7 @@ import { UIDatabase } from '../../database';
 const initialState = () => ({
   creating: undefined,
   hasRefused: false,
+  refusalReason: '',
   selectedVaccines: [],
   selectedBatches: [],
   supplementalData: {},
@@ -51,9 +52,9 @@ export const VaccinePrescriptionReducer = (state = initialState(), action) => {
 
     case VACCINE_PRESCRIPTION_ACTIONS.SELECT_SUPPLEMENTAL_DATA: {
       const { payload } = action;
-      const { supplementalData } = payload;
+      const { supplementalData, isSupplementalDataValid } = payload;
 
-      return { ...state, supplementalData };
+      return { ...state, supplementalData, isSupplementalDataValid };
     }
 
     case VACCINE_PRESCRIPTION_ACTIONS.UPDATE_SUPPLEMENTAL_DATA: {
@@ -99,6 +100,13 @@ export const VaccinePrescriptionReducer = (state = initialState(), action) => {
       }
 
       return { ...state, hasRefused, selectedVaccines, selectedBatches };
+    }
+
+    case VACCINE_PRESCRIPTION_ACTIONS.SET_REFUSAL_REASON: {
+      const { payload } = action;
+      const { refusalReason } = payload;
+
+      return { ...state, refusalReason };
     }
 
     case VACCINE_PRESCRIPTION_ACTIONS.SET_BONUS_DOSE: {

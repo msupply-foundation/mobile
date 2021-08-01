@@ -58,7 +58,7 @@ export const DatePickerButton = ({
   return (
     <>
       {button}
-      {datePickerIsOpen && (
+      {!!datePickerIsOpen && (
         <DateTimePicker
           maximumDate={maximumDate}
           minimumDate={minimumDate}

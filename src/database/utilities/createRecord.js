@@ -239,7 +239,7 @@ const createNameNote = (database, { id, data, patientEventID, nameID, entryDate 
  * Creates a new patient record. Patient details passed can be in the shape:
  *  {
  *    id, barcode, code, firstName, lastName, name, dateOfBirth, emailAddress, phoneNumber,
- *    billAddress1, billAddress2, billAddress3, billAddress4, billPostalZipCode,
+ *    addressOne, addressTwo, addressThree, addressFour, billPostalZipCode,
  *    country, female, supplyingStoreId, isActive
  *  }
  */
@@ -249,16 +249,17 @@ const createPatient = (database, patientDetails) => {
     barcode: patientBarcode,
     code: patientCode,
     firstName: patientFirstName,
+    middleName: patientMiddleName,
     lastName: patientLastName,
     name: patientName,
     dateOfBirth: patientDateOfBirth,
     emailAddress: patientEmailAddress,
     phoneNumber: patientPhoneNumber,
     billAddressId: addressId,
-    billAddress1: line1,
-    billAddress2: line2,
-    billAddress3: line3,
-    billAddress4: line4,
+    addressOne: line1,
+    addressTwo: line2,
+    addressThree: line3,
+    addressFour: line4,
     billPostalZipCode: zipCode,
     country: patientCountry,
     female: patientFemale,
@@ -273,6 +274,7 @@ const createPatient = (database, patientDetails) => {
   const code = patientCode || getPatientUniqueCode(database);
   const barcode = patientBarcode || `*${code}*`;
   const firstName = patientFirstName ?? '';
+  const middleName = patientMiddleName ?? '';
   const lastName = patientLastName ?? '';
   const name = patientName || `${patientLastName}, ${patientFirstName}`;
   const dateOfBirth = patientDateOfBirth ?? null;
@@ -307,6 +309,7 @@ const createPatient = (database, patientDetails) => {
   const patient = database.update('Name', {
     id,
     firstName,
+    middleName,
     lastName,
     name,
     barcode,

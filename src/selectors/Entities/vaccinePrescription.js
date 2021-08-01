@@ -70,6 +70,12 @@ export const selectHasRefused = state => {
   return hasRefused;
 };
 
+export const selectRefusalReason = state => {
+  const VaccinePrescriptionState = selectSpecificEntityState(state, 'vaccinePrescription');
+  const { refusalReason } = VaccinePrescriptionState;
+  return refusalReason;
+};
+
 export const selectSelectedVaccinator = state => {
   const VaccinePrescriptionState = selectSpecificEntityState(state, 'vaccinePrescription');
   const { vaccinator } = VaccinePrescriptionState;

@@ -29,12 +29,10 @@ const EmptyComponent = () => (
 );
 
 const LoadingIndicator = ({ loading }) =>
-  loading && (
+  !!loading && (
     <FlexView flex={1} justifyContent="center" alignItems="center" style={{ marginTop: 20 }}>
       <Text style={localStyles.text}>{dispensingStrings.fetching_history}</Text>
-      {loading && (
-        <ActivityIndicator color={SUSSOL_ORANGE} size="small" style={{ marginTop: 10 }} />
-      )}
+      <ActivityIndicator color={SUSSOL_ORANGE} size="small" style={{ marginTop: 10 }} />
     </FlexView>
   );
 
@@ -42,19 +40,36 @@ LoadingIndicator.propTypes = {
   loading: PropTypes.bool.isRequired,
 };
 
-const getColumnKey = (isVaccine, canViewHistory) => {
-  if (canViewHistory && isVaccine) return MODALS.VACCINE_HISTORY_LOOKUP;
-  if (!canViewHistory && isVaccine) return MODALS.VACCINE_HISTORY;
-  if (canViewHistory && !isVaccine) return MODALS.PATIENT_HISTORY_LOOKUP;
+const getColumnKey = (isVaccine, vaccineDispensingEnabled, canViewHistory) => {
+  // Vaccine Dispensing History
+  if (isVaccine) {
+    return canViewHistory ? MODALS.VACCINE_HISTORY_LOOKUP : MODALS.VACCINE_HISTORY;
+  }
 
-  return MODALS.PATIENT_HISTORY;
+  // Regular Dispensing History
+  if (!canViewHistory) {
+    return MODALS.PATIENT_HISTORY;
+  }
+
+  return vaccineDispensingEnabled
+    ? MODALS.PATIENT_HISTORY_LOOKUP_WITH_VACCINES
+    : MODALS.PATIENT_HISTORY_LOOKUP;
 };
 
-export const PatientHistoryModal = ({ isVaccine, patientId, patientHistory, sortKey }) => {
+export const PatientHistoryModal = ({
+  isVaccine,
+  patientId,
+  patientHistory,
+  sortKey,
+  vaccineDispensingEnabled,
+}) => {
   const canViewHistory = UIDatabase.getPreference(PREFERENCE_KEYS.CAN_VIEW_ALL_PATIENTS_HISTORY);
-  const columns = React.useMemo(() => getColumns(getColumnKey(isVaccine, canViewHistory)), []);
+  const columns = React.useMemo(
+    () => getColumns(getColumnKey(isVaccine, vaccineDispensingEnabled, canViewHistory)),
+    []
+  );
   const [{ data, loading, error }, fetchOnline] = useLocalAndRemotePatientHistory({
-    isVaccine,
+    isVaccineDispensingModal: isVaccine,
     patientId,
     initialValue: patientHistory,
     sortKey,
@@ -88,6 +103,7 @@ const localStyles = {
 
 PatientHistoryModal.defaultProps = {
   isVaccine: false,
+  vaccineDispensingEnabled: false,
 };
 
 PatientHistoryModal.propTypes = {
@@ -95,4 +111,5 @@ PatientHistoryModal.propTypes = {
   patientId: PropTypes.string.isRequired,
   patientHistory: PropTypes.array.isRequired,
   sortKey: PropTypes.string.isRequired,
+  vaccineDispensingEnabled: PropTypes.bool,
 };

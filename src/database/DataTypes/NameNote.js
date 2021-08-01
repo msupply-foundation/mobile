@@ -25,6 +25,7 @@ export class NameNote extends Realm.Object {
       entryDate: this.entryDate?.getTime(),
       data: this.data,
       nameID: this.name?.id,
+      note: this.note,
       patientEventID: this.patientEvent?.id,
     };
   }
@@ -38,6 +39,7 @@ NameNote.schema = {
     entryDate: { type: 'date', default: new Date() },
     _data: { type: 'string', optional: true },
     name: 'Name',
+    note: { type: 'string', optional: true },
     patientEvent: 'PatientEvent',
   },
 };

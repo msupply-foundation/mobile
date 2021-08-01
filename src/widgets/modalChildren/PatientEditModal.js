@@ -9,7 +9,7 @@ import { FlexRow } from '../FlexRow';
 import { JSONForm } from '../JSONForm/JSONForm';
 import { NameNoteActions } from '../../actions/Entities/NameNoteActions';
 import { selectNameNoteIsValid, selectCreatingNameNote } from '../../selectors/Entities/nameNote';
-import { selectCompletedForm } from '../../selectors/form';
+import { selectCompletedForm, selectCanSaveForm } from '../../selectors/form';
 import { PatientActions } from '../../actions/PatientActions';
 import globalStyles, { SUSSOL_ORANGE } from '../../globalStyles';
 import { generalStrings, modalStrings } from '../../localization/index';
@@ -23,51 +23,59 @@ export const PatientEditModalComponent = ({
   surveyForm,
   onUpdateForm,
   nameNoteIsValid,
-}) => (
-  <FlexRow style={{ flexDirection: 'column' }} flex={1}>
-    <FlexRow flex={1}>
-      <FormControl
-        canSave={surveySchema ? nameNoteIsValid : true}
-        isDisabled={isDisabled}
-        onSave={onSaveForm}
-        onCancel={onCancel}
-        inputConfig={inputConfig}
-        showCancelButton={false}
-        showSaveButton={false}
-      />
-      {surveySchema && surveyForm && (
-        <View style={styles.formContainer}>
-          <JSONForm
-            surveySchema={surveySchema}
-            formData={surveyForm}
-            onChange={({ formData }, validator) => {
-              onUpdateForm(formData, validator);
-            }}
-          >
-            <></>
-          </JSONForm>
+  canSaveForm,
+}) => {
+  let canSave = canSaveForm;
+  if (canSave) {
+    canSave = surveySchema && surveyForm ? nameNoteIsValid : !isDisabled;
+  }
+
+  return (
+    <FlexRow style={{ flexDirection: 'column' }} flex={1}>
+      <FlexRow flex={1}>
+        <FormControl
+          canSave={surveySchema ? nameNoteIsValid : true}
+          isDisabled={isDisabled}
+          onSave={onSaveForm}
+          onCancel={onCancel}
+          inputConfig={inputConfig}
+          showCancelButton={false}
+          showSaveButton={false}
+        />
+        {!!surveySchema && !!surveyForm && (
+          <View style={styles.formContainer}>
+            <JSONForm
+              surveySchema={surveySchema}
+              formData={surveyForm}
+              onChange={({ formData }, validator) => {
+                onUpdateForm(formData, validator);
+              }}
+            >
+              <></>
+            </JSONForm>
+          </View>
+        )}
+      </FlexRow>
+      <FlexRow flex={0} style={{ justifyContent: 'center' }}>
+        <View style={styles.buttonsRow}>
+          <PageButton
+            onPress={onSaveForm}
+            style={styles.saveButton}
+            isDisabled={!canSave}
+            textStyle={styles.saveButtonTextStyle}
+            text={generalStrings.save}
+          />
+          <PageButton
+            onPress={onCancel}
+            style={styles.cancelButton}
+            textStyle={styles.cancelButtonTextStyle}
+            text={modalStrings.cancel}
+          />
         </View>
-      )}
+      </FlexRow>
     </FlexRow>
-    <FlexRow flex={0} style={{ justifyContent: 'center' }}>
-      <View style={styles.buttonsRow}>
-        <PageButton
-          onPress={onSaveForm}
-          style={styles.saveButton}
-          isDisabled={surveySchema && surveyForm ? !nameNoteIsValid : isDisabled}
-          textStyle={styles.saveButtonTextStyle}
-          text={generalStrings.save}
-        />
-        <PageButton
-          onPress={onCancel}
-          style={styles.cancelButton}
-          textStyle={styles.cancelButtonTextStyle}
-          text={modalStrings.cancel}
-        />
-      </View>
-    </FlexRow>
-  </FlexRow>
-);
+  );
+};
 
 const styles = StyleSheet.create({
   buttonsRow: { flex: 1, marginTop: 10, flexDirection: 'row-reverse' },
@@ -114,6 +122,7 @@ PatientEditModalComponent.propTypes = {
   nameNoteIsValid: PropTypes.bool,
   surveySchema: PropTypes.object,
   onUpdateForm: PropTypes.func.isRequired,
+  canSaveForm: PropTypes.bool.isRequired,
 };
 
 const mergeProps = (stateProps, dispatchProps, ownProps) => {
@@ -138,8 +147,9 @@ const stateToProps = state => {
   const nameNoteIsValid = selectNameNoteIsValid(state);
   const nameNote = selectCreatingNameNote(state);
   const completedForm = selectCompletedForm(state);
+  const canSaveForm = selectCanSaveForm(state);
 
-  return { completedForm, nameNoteIsValid, surveyForm: nameNote?.data ?? null };
+  return { canSaveForm, completedForm, nameNoteIsValid, surveyForm: nameNote?.data ?? null };
 };
 
 const dispatchToProps = dispatch => ({
