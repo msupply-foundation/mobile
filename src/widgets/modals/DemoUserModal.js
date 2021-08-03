@@ -18,8 +18,8 @@ import { authStrings, generalStrings, demoUserModalStrings } from '../../localiz
 
 import globalStyles, { SUSSOL_ORANGE, GREY, WARM_GREY } from '../../globalStyles';
 import { ModalContainer } from './ModalContainer';
-import { APP_FONT_FAMILY } from '../../globalStyles/fonts';
 import { FormPasswordInput } from '../FormInputs/FormPasswordInput';
+import { AuthFormView } from '../AuthFormView';
 
 const STATUS = {
   SUBMIT: 'submit',
@@ -135,7 +135,7 @@ export class DemoUserModal extends React.Component {
         swipeToClose={true}
       >
         <View style={[globalStyles.verticalContainer, { flex: 1 }]}>
-          <View style={[globalStyles.authFormContainer]}>
+          <AuthFormView>
             <View style={localStyles.closeButtonContainer}>
               <TouchableOpacity onPress={onClose} style={localStyles.closeButton}>
                 <Icon name="close" style={localStyles.closeIcon} />
@@ -207,7 +207,7 @@ export class DemoUserModal extends React.Component {
                 isDisabled={!this.canAttemptSubmit}
               />
             </View>
-          </View>
+          </AuthFormView>
           <ModalContainer isVisible={status === STATUS.SUBMITTED}>
             <ConfirmForm
               isOpen={status === STATUS.SUBMITTED}
