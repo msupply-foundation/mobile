@@ -80,6 +80,8 @@
     "or": "or",
     "description": "description",
     "expiry_date": "Expiry date",
+    "doses": "Doses",
+    "vials": "Vials",
     "quantity": "Quantity",
     "to": "to",
     "batch_name": "Batch name",
