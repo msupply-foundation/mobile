@@ -9,9 +9,12 @@ import React from 'react';
  */
 export const withOnePress = WrappedComponent =>
   class extends React.Component {
-    state = { hasBeenPressed: false };
-
     static propTypes = WrappedComponent.propTypes;
+
+    constructor(props) {
+      super(props);
+      this.state = { hasBeenPressed: false };
+    }
 
     onPress = (...args) => {
       const { hasBeenPressed } = this.state;
