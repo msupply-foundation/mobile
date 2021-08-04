@@ -68,11 +68,11 @@ export const selectNewConfigThresholds = state => {
     COLD_CUMULATIVE: coldCumulativeConfig = {},
   } = newConfigs;
 
-  const coldConsecutiveThreshold = (hotConsecutiveConfig.minimumTemperature ?? 0) - 0.1;
-  const hotConsecutiveThreshold = (coldConsecutiveConfig.maximumTemperature ?? 0) + 0.1;
+  const coldConsecutiveThreshold = (hotConsecutiveConfig.minimumTemperature ?? 0) - 0.5;
+  const hotConsecutiveThreshold = (coldConsecutiveConfig.maximumTemperature ?? 0) + 0.5;
 
-  const coldCumulativeThreshold = (hotCumulativeConfig.minimumTemperature ?? 0) - 0.1;
-  const hotCumulativeThreshold = (coldCumulativeConfig.maximumTemperature ?? 0) + 0.1;
+  const coldCumulativeThreshold = (hotCumulativeConfig.minimumTemperature ?? 0) - 0.5;
+  const hotCumulativeThreshold = (coldCumulativeConfig.maximumTemperature ?? 0) + 0.5;
 
   return {
     coldConsecutiveThreshold,
