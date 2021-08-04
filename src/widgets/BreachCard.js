@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 
 import { Text, StyleSheet } from 'react-native';
-import { DARKER_GREY, APP_FONT_FAMILY, COLD_BREACH_BLUE, DANGER_RED } from '../globalStyles';
+import { DARKER_GREY, GREY, APP_FONT_FAMILY, COLD_BREACH_BLUE, DANGER_RED } from '../globalStyles';
 
 import {
   selectAverageTemperature,
@@ -32,6 +32,7 @@ const BreachCardComponent = ({ config }) => {
       textStyle = localStyles.hotText;
       break;
     case 'text':
+      icon = config.icon;
       textStyle = [localStyles.hotText, { color: DARKER_GREY }];
       text = message;
       break;
@@ -63,6 +64,7 @@ BreachCardComponent.propTypes = {
     breachCount: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
     headerText: PropTypes.string,
     message: PropTypes.string,
+    icon: PropTypes.element,
   }).isRequired,
 };
 
@@ -94,6 +96,7 @@ const stateToProps = (state, props) => {
           headerText: vaccineStrings.average_temperature,
           message: selectAverageTemperature(state),
           type: 'text',
+          icon: <Text style={[localStyles.hotText, { color: GREY, fontSize: 30 }]}>°C</Text>,
         },
       };
     case 'COLD_CONSECUTIVE':
