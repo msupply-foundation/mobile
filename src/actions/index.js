@@ -16,5 +16,7 @@ export { DOWNLOAD_ACTIONS, SensorDownloadActions } from './Bluetooth/SensorDownl
 export { BLINK_ACTIONS, SensorBlinkActions } from './Bluetooth/SensorBlinkActions';
 export { SCAN_ACTIONS, SensorScanActions } from './Bluetooth/SensorScanActions';
 export { UPDATE_ACTIONS, SensorUpdateActions } from './Bluetooth/SensorUpdateActions';
+export { PRESCRIPTION_ACTIONS, PrescriptionActions } from './PrescriptionActions';
+export { FINALISE_ACTIONS, FinaliseActions } from './FinaliseActions';
 
 export * from './Entities';

@@ -12,20 +12,14 @@ export class DemoSiteRequest {
   async createActivationURL(username, email, password, repeatPassword) {
     this.validateFields(username, email, password, repeatPassword);
 
-    let responseJson;
-    try {
-      // eslint-disable-next-line no-undef
-      const response = await fetch(DEMO_SITE_URL, {
-        method: 'POST',
-        body: JSON.stringify({ username, email, password }),
-      });
-      responseJson = await response.json();
-      if (responseJson.error) throw new Error(responseJson.error);
-      return responseJson;
-    } catch (error) {
-      // Pass error up
-      throw error;
-    }
+    // eslint-disable-next-line no-undef
+    const response = await fetch(DEMO_SITE_URL, {
+      method: 'POST',
+      body: JSON.stringify({ username, email, password }),
+    });
+    const responseJson = await response.json();
+    if (responseJson.error) throw new Error(responseJson.error);
+    return responseJson;
   }
 
   validateFields(username, email, password, repeatPassword) {
