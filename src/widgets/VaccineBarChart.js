@@ -40,8 +40,14 @@ export const VaccineBarChart = ({
     maxDomain,
   ]);
 
-  const upperBoundData = maxLine.map(point => ({ x: point.timestamp, y: breachBoundaries.upper }));
-  const lowerBoundData = minLine.map(point => ({ x: point.timestamp, y: breachBoundaries.lower }));
+  const upperBreachLimit = maxLine.map(point => ({
+    x: point.timestamp,
+    y: breachBoundaries.upper,
+  }));
+  const lowerBreachLimit = minLine.map(point => ({
+    x: point.timestamp,
+    y: breachBoundaries.lower,
+  }));
   const barData = minLine.map(minPoint => {
     const maxPoint = maxLine.find(max => max.timestamp === minPoint.timestamp);
 
@@ -121,8 +127,8 @@ export const VaccineBarChart = ({
               tickCount={CHART_CONSTANTS.MAX_TICK_COUNTS}
             />
 
-            <VictoryLine data={upperBoundData} style={chartStyles.maxBoundaryLine} />
-            <VictoryLine data={lowerBoundData} style={chartStyles.minBoundaryLine} />
+            <VictoryLine data={upperBreachLimit} style={chartStyles.maxBoundaryLine} />
+            <VictoryLine data={lowerBreachLimit} style={chartStyles.minBoundaryLine} />
             <VictoryBar
               data={barData}
               y="hotY"
