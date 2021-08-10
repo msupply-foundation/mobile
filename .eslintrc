@@ -5,11 +5,15 @@
     "fetch": false
   },
   "parser": "@typescript-eslint/parser",
+  "parserOptions": {
+    "project": "./tsconfig.json"
+  },
   "plugins": ["@typescript-eslint", "prettier"],
   "rules": {
     "arrow-body-style": ["error", "as-needed"],
     "arrow-parens": ["error", "as-needed"],
-    "comma-dangle": [
+    "comma-dangle": "off",
+    "@typescript-eslint/comma-dangle": [
       "error",
       {
         "arrays": "always-multiline",
@@ -38,6 +42,7 @@
     "react/jsx-filename-extension": [1, { "extensions": [".js", ".jsx", ".ts", ".tsx"] }],
     "react/jsx-one-expression-per-line": "off",
     "react/jsx-props-no-spreading": "off",
+    "react/static-property-placement": ["warn", "property assignment"],
     "strict": "off",
     // disable the rule for js files (its enabled for ts files in overrides)
     "@typescript-eslint/explicit-module-boundary-types": "off"
