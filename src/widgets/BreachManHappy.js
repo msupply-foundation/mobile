@@ -1,5 +1,6 @@
 /* eslint-disable max-len */
 import * as React from 'react';
+import PropTypes from 'prop-types';
 import Svg, {
   Defs,
   LinearGradient,
@@ -225,3 +226,8 @@ export const BreachManHappy = ({ width = 100, height = 80 }) => (
     </G>
   </Svg>
 );
+
+BreachManHappy.propTypes = {
+  width: PropTypes.number.isRequired,
+  height: PropTypes.number.isRequired,
+};

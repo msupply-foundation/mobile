@@ -26,12 +26,10 @@ export const VaccineLineChart = ({
   x,
   y,
   breaches,
+  breachBoundaries,
   onPressBreach,
 }) => {
   const [width, height, setDimensions] = useLayoutDimensions();
-
-  const maxBoundary = React.useCallback(() => maxDomain, []);
-  const minBoundary = React.useCallback(() => minDomain, []);
 
   const chartMinDomain = React.useMemo(() => ({ y: minDomain - CHART_CONSTANTS.DOMAIN_OFFSET }), [
     minDomain,
@@ -39,6 +37,15 @@ export const VaccineLineChart = ({
   const chartMaxDomain = React.useMemo(() => ({ y: maxDomain + CHART_CONSTANTS.DOMAIN_OFFSET }), [
     maxDomain,
   ]);
+
+  const upperBreachLimit = maxLine.map(point => ({
+    x: point.timestamp,
+    y: breachBoundaries.upper,
+  }));
+  const lowerBreachLimit = minLine.map(point => ({
+    x: point.timestamp,
+    y: breachBoundaries.lower,
+  }));
 
   return (
     <FlexView
@@ -85,8 +92,8 @@ export const VaccineLineChart = ({
               x={x}
               style={chartStyles.maxLine}
             />
-            <VictoryLine data={maxLine} y={maxBoundary} x={x} style={chartStyles.maxBoundaryLine} />
-            <VictoryLine data={minLine} y={minBoundary} x={x} style={chartStyles.minBoundaryLine} />
+            <VictoryLine data={upperBreachLimit} style={chartStyles.maxBoundaryLine} />
+            <VictoryLine data={lowerBreachLimit} style={chartStyles.minBoundaryLine} />
 
             <VictoryScatter data={maxLine} y={y} x={x} style={chartStyles.maxScatterPlot} />
             <VictoryScatter data={minLine} y={y} x={x} style={chartStyles.minScatterPlot} />
@@ -119,6 +126,7 @@ VaccineLineChart.propTypes = {
   maxLine: PropTypes.array.isRequired,
   onPressBreach: PropTypes.func,
   breaches: PropTypes.oneOfType([PropTypes.array, PropTypes.object]),
+  breachBoundaries: PropTypes.object.isRequired,
 };
 
 const chartStyles = {
