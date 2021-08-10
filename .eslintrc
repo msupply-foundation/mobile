@@ -1,10 +1,6 @@
 {
   "env": { "jest": true },
-  "extends": [
-    "airbnb",
-    "plugin:@typescript-eslint/eslint-recommended",
-    "plugin:@typescript-eslint/recommended"
-  ],
+  "extends": ["airbnb-typescript"],
   "globals": {
     "fetch": false
   },
