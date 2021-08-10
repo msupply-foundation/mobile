@@ -53,7 +53,7 @@ export const modalStrings = new LocalizedStrings(
 export const navStrings = new LocalizedStrings(
   navStringsJSON as GlobalStringsGB<typeof navStringsJSON>
 );
-export const paegInfoStrings = new LocalizedStrings(
+export const pageInfoStrings = new LocalizedStrings(
   pageInfoStringsJSON as GlobalStringsGB<typeof pageInfoStringsJSON>
 );
 export const programStrings = new LocalizedStrings(
