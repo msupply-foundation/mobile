@@ -17,7 +17,56 @@ import { version as appVersion } from '../../package.json';
 
 const { THIS_STORE_NAME_ID, APP_VERSION } = SETTINGS_KEYS;
 
-const translateToCoreDatabaseType = (type: string) => {
+export type RealmDatabaseType =
+  | 'ADRForm'
+  | 'ActiveLocation'
+  | 'CashTransaction'
+  | 'CashTransactionName'
+  | 'CashTransactionReason'
+  | 'Customer'
+  | 'CustomerCredit'
+  | 'CustomerInvoice'
+  | 'CustomerTransaction'
+  | 'ExternalSupplier'
+  | 'InternalSupplier'
+  | 'MedicineAdministrator'
+  | 'NegativeAdjustmentReason'
+  | 'OpenVialWastageReason'
+  | 'PCDEvents'
+  | 'Patient'
+  | 'PatientSurveyForm'
+  | 'Payment'
+  | 'Policy'
+  | 'PositiveAdjustmentReason'
+  | 'Prescription'
+  | 'PrescriptionCategory'
+  | 'Provider'
+  | 'Receipt'
+  | 'RequestRequisition'
+  | 'RequisitionReason'
+  | 'ResponseRequisition'
+  | 'Supplier'
+  | 'SupplierCreditCategory'
+  | 'SupplierInvoice'
+  | 'SupplierTransaction'
+  | 'Vaccine'
+  | 'Item';
+
+export type CoreDatabaseType =
+  | 'Transaction'
+  | 'Name'
+  | 'Options'
+  | 'Requisition'
+  | 'InsurancePolicy'
+  | 'InsuranceProvider'
+  | 'TransactionCategory'
+  | 'PatientEvent'
+  | 'Item'
+  | 'FormSchema'
+  | 'MedicineAdministrator'
+  | 'Location';
+
+const translateToCoreDatabaseType = (type: RealmDatabaseType): CoreDatabaseType => {
   switch (type) {
     case 'CashTransaction':
     case 'CustomerCredit':
@@ -188,7 +237,7 @@ class UIDatabase {
     return { success: true };
   }
 
-  objects(type: string) {
+  objects(type: RealmDatabaseType) {
     const results = this.database.objects(translateToCoreDatabaseType(type));
     const thisStoreNameIdSetting = this.database
       .objects('Setting')
