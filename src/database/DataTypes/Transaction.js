@@ -590,6 +590,7 @@ export class Transaction extends Realm.Object {
       id: this.id,
       serialNumber: this.serialNumber,
       comment: this.comment,
+      customData: this.customData,
       entryDate: this.entryDate?.getTime(),
       type: this.type,
       status: this.status,

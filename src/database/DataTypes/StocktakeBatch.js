@@ -203,6 +203,14 @@ export class StocktakeBatch extends Realm.Object {
     return this.itemBatch?.isVaccine ?? false;
   }
 
+  get dosesDifference() {
+    return this.difference * this.dosesPerVial;
+  }
+
+  get snapshotDoses() {
+    return this.snapshotTotalQuantity * this.dosesPerVial;
+  }
+
   get doses() {
     return this.countedTotalQuantity * this.dosesPerVial;
   }

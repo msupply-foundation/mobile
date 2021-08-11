@@ -9,9 +9,13 @@ import { FlexRow } from '../../FlexRow';
 import { useJSONFormOptions } from '../JSONFormContext';
 import { DARKER_GREY, LIGHT_GREY } from '../../../globalStyles/colors';
 
-export const DatePicker = ({ disabled, value, onChange, placeholder, readonly }) => {
+export const DatePicker = ({ disabled, value, onChange, placeholder, readonly, onBlur, id }) => {
   const { focusController } = useJSONFormOptions();
   const ref = focusController.useRegisteredRef();
+  const handleChange = dateString => {
+    onChange(dateString);
+    onBlur(id, dateString);
+  };
 
   return (
     <FlexRow>
@@ -24,7 +28,7 @@ export const DatePicker = ({ disabled, value, onChange, placeholder, readonly })
         value={value}
         ref={ref}
         onSubmitEditing={() => focusController.next(ref)}
-        onChangeText={date => onChange(date)}
+        onChangeText={handleChange}
         returnKeyType="next"
         autoCapitalize="none"
         keyboardType="numeric"
@@ -33,7 +37,7 @@ export const DatePicker = ({ disabled, value, onChange, placeholder, readonly })
       <DatePickerButton
         isDisabled={readonly || disabled}
         initialValue={new Date()}
-        onDateChanged={date => onChange(moment(date).format('YYYY-MM-DD'))}
+        onDateChanged={date => handleChange(moment(date).format('YYYY-MM-DD'))}
       />
     </FlexRow>
   );
@@ -49,4 +53,6 @@ DatePicker.propTypes = {
   onChange: PropTypes.func.isRequired,
   placeholder: PropTypes.string.isRequired,
   readonly: PropTypes.bool.isRequired,
+  onBlur: PropTypes.func.isRequired,
+  id: PropTypes.string.isRequired,
 };

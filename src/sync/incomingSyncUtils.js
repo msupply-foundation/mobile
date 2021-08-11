@@ -594,12 +594,14 @@ export const createOrUpdateRecord = (database, settings, recordType, record) => 
         thisStoresPatient,
         isPatient,
         firstName: record.first,
+        middleName: record.middle,
         lastName: record.last,
         dateOfBirth: parseDate(record.date_of_birth),
         nationality: database.getOrCreate('Nationality', record.nationality_ID),
         occupation: database.getOrCreate('Occupation', record.occupation_ID),
         ethnicity: database.getOrCreate('Ethnicity', record.ethnicity_ID),
         createdDate: parseDate(record.created_date),
+        female: parseBoolean(record.female),
       };
 
       if (isPatient) internalRecord.isVisible = true;
@@ -1153,6 +1155,7 @@ export const createOrUpdateRecord = (database, settings, recordType, record) => 
         entryDate: parseDate(record.entry_date),
         _data: record.data,
         name: database.getOrCreate('Name', record.name_ID),
+        note: record.note,
       });
       break;
     }

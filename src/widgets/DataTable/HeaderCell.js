@@ -65,7 +65,7 @@ const HeaderCell = React.memo(
     return (
       <Container style={internalContainerStyle} onPress={onPressCell} {...otherProps}>
         <Text style={textStyle}>{title}</Text>
-        {sortable && <Icon />}
+        {!!sortable && <Icon />}
       </Container>
     );
   }

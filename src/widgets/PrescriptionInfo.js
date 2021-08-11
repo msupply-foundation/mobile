@@ -74,16 +74,16 @@ const PrescriptionInfoComponent = ({
       <FlexColumn alignItems="flex-start" flex={1}>
         <FlexRow justifyContent="flex-start" alignItems="center" flex={1} reverse>
           <FlexView flex={3} justifyContent="flex-end" alignItems="flex-end">
-            {prescriptionPrescriber && (
+            {!!prescriptionPrescriber && (
               <SimpleLabel label={dispensingStrings.prescriber} size="small" labelAlign="right" />
             )}
-            {prescriptionPrescriber && (
+            {!!prescriptionPrescriber && (
               <SimpleLabel text={prescriberName} size="medium" textAlign="right" />
             )}
           </FlexView>
 
           <FlexRow flex={1}>
-            {prescriptionPrescriber && (
+            {!!prescriptionPrescriber && (
               <CircleButton
                 IconComponent={canEditPrescriber ? PencilIcon : BookIcon}
                 onPress={prescriberEditCallback}

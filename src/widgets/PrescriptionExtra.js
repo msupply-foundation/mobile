@@ -65,7 +65,7 @@ const PrescriptionExtraComponent = ({
 
   return (
     <View style={localStyles.container}>
-      {usingPatientTypes && (
+      {!!usingPatientTypes && (
         <DropDown
           headerValue={dispensingStrings.select_a_patient_type}
           values={PATIENT_TYPES}
@@ -73,7 +73,7 @@ const PrescriptionExtraComponent = ({
           onValueChange={onUpdatePatientType}
         />
       )}
-      {usingPrescriptionCategories && (
+      {!!usingPrescriptionCategories && (
         <DropDown
           headerValue={dispensingStrings.select_a_prescription_category}
           values={prescriptionCategoryNames}

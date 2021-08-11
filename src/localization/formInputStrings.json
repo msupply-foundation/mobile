@@ -20,6 +20,7 @@
     "location_type": "Location type",
     "less_than_20_characters": "less than 20 characters",
     "less_than_50_characters": "less than 50 characters",
+    "middle_name": "Middle name",
     "must_be_a_date": "Must be a date before today, in the format DD/MM/YYYY",
     "must_be_between_0_and_50": "Must be between 0 and 50 characters.",
     "must_be": "Must be",

@@ -21,7 +21,7 @@ export const TextEditor = ({
   const internalTextInput = [textInputStyle, sizeAdjustment];
   return (
     <FlexRow flex={0} alignItems="center" style={{ ...containerStyle }}>
-      {isSmall && <Text style={labelStyle}>{label}</Text>}
+      {!!isSmall && <Text style={labelStyle}>{label}</Text>}
       <TextInput {...textInputProps} selectTextOnFocus style={internalTextInput} />
     </FlexRow>
   );

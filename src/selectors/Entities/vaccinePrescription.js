@@ -70,6 +70,12 @@ export const selectHasRefused = state => {
   return hasRefused;
 };
 
+export const selectRefusalReason = state => {
+  const VaccinePrescriptionState = selectSpecificEntityState(state, 'vaccinePrescription');
+  const { refusalReason } = VaccinePrescriptionState;
+  return refusalReason;
+};
+
 export const selectSelectedVaccinator = state => {
   const VaccinePrescriptionState = selectSpecificEntityState(state, 'vaccinePrescription');
   const { vaccinator } = VaccinePrescriptionState;
@@ -98,4 +104,29 @@ export const selectSelectedSupplementalData = state => {
   const { supplementalData } = VaccinePrescriptionState;
 
   return supplementalData;
+};
+
+export const selectSupplementalDataIsValid = state => {
+  const VaccinePrescriptionState = selectSpecificEntityState(state, 'vaccinePrescription');
+  const { isSupplementalDataValid } = VaccinePrescriptionState;
+
+  return isSupplementalDataValid;
+};
+
+export const selectLastSupplementalData = () => {
+  const inQuery = UIDatabase.objects('Transaction')
+    .filtered("type == 'customer_invoice' AND customData != null")
+    .map(({ id }) => `transaction.id == "${id}"`)
+    .join(' OR ');
+  const fullQuery = `(${inQuery}) AND itemBatch.item.isVaccine == true`;
+
+  if (inQuery) {
+    const result = UIDatabase.objects('TransactionBatch')
+      .filtered(fullQuery)
+      .sorted('transaction.entryDate', true)
+      .slice();
+    return result.length ? JSON.parse(result[0].transaction.customData) : null;
+  }
+
+  return null;
 };

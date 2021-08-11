@@ -57,8 +57,8 @@ export const AutocompleteSelector = ({
   const filterArrayData = () =>
     options.filter(
       optionItem =>
-        optionItem[primaryFilterProperty]?.toLowerCase()?.includes(queryText) ||
-        optionItem[secondaryFilterProperty]?.toLowerCase()?.includes(queryText)
+        optionItem[primaryFilterProperty]?.toLowerCase()?.includes(queryText?.toLowerCase()) ||
+        optionItem[secondaryFilterProperty]?.toLowerCase()?.includes(queryText.toLowerCase())
     );
 
   /**

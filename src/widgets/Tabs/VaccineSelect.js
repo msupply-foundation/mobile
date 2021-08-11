@@ -7,7 +7,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { useNavigation } from '@react-navigation/native';
-import { Text, StyleSheet } from 'react-native';
+import { Dimensions, Text, StyleSheet, TextInput, View } from 'react-native';
 import { batch, connect } from 'react-redux';
 import { TABS } from '../constants';
 import { FlexRow } from '../FlexRow';
@@ -35,8 +35,8 @@ import {
   generalStrings,
   modalStrings,
 } from '../../localization';
-import globalStyles, { APP_FONT_FAMILY } from '../../globalStyles';
-import { DARKER_GREY } from '../../globalStyles/colors';
+import globalStyles, { APP_FONT_FAMILY, APP_GENERAL_FONT_SIZE } from '../../globalStyles';
+import { DARKER_GREY, SUSSOL_ORANGE } from '../../globalStyles/colors';
 import { AfterInteractions } from '../AfterInteractions';
 import { Paper } from '../Paper';
 import { VaccinePrescriptionInfo } from '../VaccinePrescriptionInfo';
@@ -69,18 +69,19 @@ const ListEmptyComponent = () => (
  * @prop {array}  vaccines              List of vaccine items.
  */
 const VaccineSelectComponent = ({
+  hasRefused,
+  okAndRepeat,
   onCancelPrescription,
   onConfirm,
+  onRefusalReason,
   onSelectBatch,
   onSelectVaccine,
-  hasRefused,
-  selectedBatches,
+  selectDefaultVaccine,
   selectedBatchRows,
+  selectedBatches,
   selectedRows,
   selectedVaccine,
   vaccines,
-  okAndRepeat,
-  selectDefaultVaccine,
   wasPatientVaccinatedWithinOneDay,
 }) => {
   const { pageTopViewContainer } = globalStyles;
@@ -117,9 +118,15 @@ const VaccineSelectComponent = ({
     ? toggleConfirmDoubleDoseModal
     : toggleConfirmAndRepeatDoubleDoseModal;
 
-  const onModalConfirm = confirmDoubleDoseModalOpen
-    ? confirmPrescription
-    : confirmAndRepeatPrescription;
+  const onModalConfirm = () => {
+    onModalClose();
+
+    if (confirmDoubleDoseModalOpen) {
+      confirmPrescription();
+    } else {
+      confirmAndRepeatPrescription();
+    }
+  };
 
   const isModalOpen = confirmDoubleDoseModalOpen || confirmAndRepeatDoubleDoseModalOpen;
 
@@ -130,40 +137,62 @@ const VaccineSelectComponent = ({
     <FlexView style={pageTopViewContainer}>
       <VaccinePrescriptionInfo />
 
-      <FlexRow flex={8}>
-        <Paper
-          headerText={vaccineStrings.vaccines}
-          contentContainerStyle={{ flex: 1 }}
-          style={{ flex: 1 }}
-        >
-          <AfterInteractions placeholder={null}>
-            <SimpleTable
-              columns={vaccineColumns}
-              data={vaccines}
-              disabledRows={disabledVaccineRows}
-              selectedRows={selectedRows}
-              selectRow={onSelectVaccine}
-            />
-          </AfterInteractions>
-        </Paper>
+      {hasRefused ? (
+        <FlexRow flex={8}>
+          <Paper contentContainerStyle={{ flex: 1, padding: 20 }} style={{ flex: 1 }}>
+            <View style={localStyles.flexColumn}>
+              <Text style={localStyles.textStyle}>{vaccineStrings.refusal_reason}</Text>
+              <TextInput
+                autoCapitalize="none"
+                autoCorrect={false}
+                multiline={true}
+                numberOfLines={2}
+                onChangeText={onRefusalReason}
+                placeholderTextColor={SUSSOL_ORANGE}
+                returnKeyType="next"
+                selectTextOnFocus
+                style={localStyles.textInput}
+                underlineColorAndroid={DARKER_GREY}
+              />
+            </View>
+          </Paper>
+        </FlexRow>
+      ) : (
+        <FlexRow flex={8}>
+          <Paper
+            headerText={vaccineStrings.vaccines}
+            contentContainerStyle={{ flex: 1 }}
+            style={{ flex: 1 }}
+          >
+            <AfterInteractions placeholder={null}>
+              <SimpleTable
+                columns={vaccineColumns}
+                data={vaccines}
+                disabledRows={disabledVaccineRows}
+                selectedRows={selectedRows}
+                selectRow={onSelectVaccine}
+              />
+            </AfterInteractions>
+          </Paper>
 
-        <Paper
-          headerText={dispensingStrings.available_batches}
-          contentContainerStyle={{ flex: 1 }}
-          style={{ flex: 1 }}
-        >
-          <AfterInteractions placeholder={null}>
-            <SimpleTable
-              columns={batchColumns}
-              data={selectedVaccine?.batchesWithStock.sorted('expiryDate') ?? []}
-              disabledRows={disabledBatchRows}
-              selectedRows={selectedBatchRows}
-              selectRow={onSelectBatch}
-              ListEmptyComponent={<ListEmptyComponent />}
-            />
-          </AfterInteractions>
-        </Paper>
-      </FlexRow>
+          <Paper
+            headerText={dispensingStrings.available_batches}
+            contentContainerStyle={{ flex: 1 }}
+            style={{ flex: 1 }}
+          >
+            <AfterInteractions placeholder={null}>
+              <SimpleTable
+                columns={batchColumns}
+                data={selectedVaccine?.batchesWithStock.sorted('expiryDate') ?? []}
+                disabledRows={disabledBatchRows}
+                selectedRows={selectedBatchRows}
+                selectRow={onSelectBatch}
+                ListEmptyComponent={<ListEmptyComponent />}
+              />
+            </AfterInteractions>
+          </Paper>
+        </FlexRow>
+      )}
 
       <FlexRow flex={1} alignItems="flex-end" justifyContent="flex-end">
         <PageButtonWithOnePress text={buttonStrings.cancel} onPress={onCancelPrescription} />
@@ -202,7 +231,7 @@ const VaccineSelectComponent = ({
 };
 
 const mapDispatchToProps = dispatch => {
-  const onRefuse = value => dispatch(VaccinePrescriptionActions.setRefusal(value));
+  const onRefusalReason = value => dispatch(VaccinePrescriptionActions.setRefusalReason(value));
   const onCancelPrescription = () => dispatch(VaccinePrescriptionActions.cancel());
   const onSelectBatch = itemBatch => dispatch(VaccinePrescriptionActions.selectBatch(itemBatch));
   const onSelectVaccine = vaccine => dispatch(VaccinePrescriptionActions.selectVaccine(vaccine));
@@ -219,7 +248,7 @@ const mapDispatchToProps = dispatch => {
     okAndRepeat,
     onCancelPrescription,
     onConfirm,
-    onRefuse,
+    onRefusalReason,
     onSelectBatch,
     onSelectVaccine,
     selectDefaultVaccine,
@@ -257,19 +286,20 @@ VaccineSelectComponent.defaultProps = {
 };
 
 VaccineSelectComponent.propTypes = {
-  selectDefaultVaccine: PropTypes.func.isRequired,
+  hasRefused: PropTypes.bool.isRequired,
   okAndRepeat: PropTypes.func.isRequired,
   onCancelPrescription: PropTypes.func.isRequired,
   onConfirm: PropTypes.func.isRequired,
+  onRefusalReason: PropTypes.func.isRequired,
   onSelectBatch: PropTypes.func.isRequired,
   onSelectVaccine: PropTypes.func.isRequired,
-  hasRefused: PropTypes.bool.isRequired,
+  selectDefaultVaccine: PropTypes.func.isRequired,
   selectedBatchRows: PropTypes.object,
-  selectedRows: PropTypes.object,
   selectedBatches: PropTypes.array,
+  selectedRows: PropTypes.object,
   selectedVaccine: PropTypes.object,
-  wasPatientVaccinatedWithinOneDay: PropTypes.bool.isRequired,
   vaccines: PropTypes.oneOfType([PropTypes.array, PropTypes.object]).isRequired,
+  wasPatientVaccinatedWithinOneDay: PropTypes.bool.isRequired,
 };
 
 export const VaccineSelect = connect(mapStateToProps, mapDispatchToProps)(VaccineSelectComponent);
@@ -280,6 +310,16 @@ const localStyles = StyleSheet.create({
     textAlignVertical: 'center',
     fontSize: 12,
     color: DARKER_GREY,
+    fontFamily: APP_FONT_FAMILY,
+  },
+  textInput: {
+    fontSize: Dimensions.get('window').width / 80,
+    fontFamily: APP_FONT_FAMILY,
+    textAlignVertical: 'top',
+  },
+  flexColumn: { flex: 1, flexDirection: 'column' },
+  textStyle: {
+    fontSize: APP_GENERAL_FONT_SIZE,
     fontFamily: APP_FONT_FAMILY,
   },
 });

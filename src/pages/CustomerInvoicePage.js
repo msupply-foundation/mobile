@@ -160,6 +160,7 @@ export const CustomerInvoice = ({
           <SearchBar
             onChangeText={onFilterData}
             value={searchTerm}
+            // eslint-disable-next-line max-len
             placeholder={`${generalStrings.search_by} ${generalStrings.item_name} ${generalStrings.or} ${generalStrings.item_code}`}
           />
         </View>

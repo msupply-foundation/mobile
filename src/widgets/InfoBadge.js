@@ -41,7 +41,7 @@ const InfoBadgeComponent = ({
 
   const popoverText = useCallback(
     (item, key) =>
-      (item.count > 0 || item.text) && (
+      (item.count > 0 || !!item.text) && (
         <Text style={badgeTextStyle} key={key}>
           {`${item.title}: ${item.count || item.text}`}
         </Text>

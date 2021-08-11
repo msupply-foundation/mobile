@@ -151,7 +151,7 @@ export const FormDateInput = React.forwardRef(
             />
           </FlexRow>
 
-          {datePickerOpen && (
+          {!!datePickerOpen && (
             <DateTimePicker
               onChange={onChangeDates}
               mode="date"

@@ -22,7 +22,7 @@ export const Paper = ({
   if (height) internalContainerStyle = [internalContainerStyle, localStyles.container, { height }];
 
   const InternalHeader =
-    Header || (headerText && <Text style={localStyles.headerText}>{headerText}</Text>);
+    Header || (!!headerText && <Text style={localStyles.headerText}>{headerText}</Text>);
 
   const internalHeaderContainerStyle = InternalHeader && [
     localStyles.headerContainer,

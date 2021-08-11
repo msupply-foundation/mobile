@@ -53,7 +53,7 @@ export const DateEditor = ({
           </Pressable>
         }
       />
-      {datePickerIsOpen && (
+      {!!datePickerIsOpen && (
         <DateTimePicker
           minimumDate={minimumDate}
           maximumDate={maximumDate}

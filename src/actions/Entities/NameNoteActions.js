@@ -1,35 +1,16 @@
-import Ajv from 'ajv';
 import { generateUUID } from 'react-native-database';
 import merge from 'lodash.merge';
 import moment from 'moment';
 import { createRecord, UIDatabase } from '../../database/index';
 import { selectCreatingNameNote } from '../../selectors/Entities/nameNote';
 import { selectSurveySchemas } from '../../selectors/formSchema';
-
-const ajvErrors = require('ajv-errors');
-
-const ajvOptions = {
-  errorDataPath: 'property',
-  allErrors: true,
-  multipleOfPrecision: 8,
-  schemaId: 'auto',
-  jsonPointers: true,
-};
+import { validateJsonSchemaData } from '../../utilities/ajvValidator';
 
 export const NAME_NOTE_ACTIONS = {
   SELECT: 'NAME_NOTE/select',
   RESET: 'NAME_NOTE/reset',
   UPDATE_DATA: 'NAME_NOTE/updateData',
   CREATE: 'NAME_NOTE/create',
-};
-
-const ajv = new Ajv(ajvOptions);
-ajvErrors(ajv);
-
-const validateData = (jsonSchema, data) => {
-  if (!jsonSchema) return true;
-  const result = ajv.validate(jsonSchema, data);
-  return result;
 };
 
 const createDefaultNameNote = (nameID = '') => {
@@ -84,7 +65,7 @@ const createSurveyNameNote = patient => (dispatch, getState) => {
   // the seed has any fields which are required to be filled.
   const [surveySchema = {}] = selectSurveySchemas(getState);
   const { jsonSchema } = surveySchema;
-  const isValid = validateData(jsonSchema, newNameNote.data);
+  const isValid = validateJsonSchemaData(jsonSchema, newNameNote.data);
 
   dispatch(select(newNameNote, isValid));
 };

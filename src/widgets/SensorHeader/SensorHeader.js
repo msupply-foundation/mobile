@@ -27,7 +27,7 @@ export const SensorHeaderComponent = ({
 }) => (
   <>
     <FlexRow flex={1} alignItems="center">
-      {showTitle && (
+      {!!showTitle && (
         <TextWithIcon
           left
           text={name}
@@ -52,7 +52,7 @@ export const SensorHeaderComponent = ({
 
     <ExportTemperatureDataButton macAddress={macAddress} />
     <BlinkSensorButton macAddress={macAddress} />
-    {showCog && (
+    {!!showCog && (
       <IconButton
         Icon={<CogIcon color={BLACK} />}
         onPress={editSensor}
