@@ -17,7 +17,22 @@ import { version as appVersion } from '../../package.json';
 
 const { THIS_STORE_NAME_ID, APP_VERSION } = SETTINGS_KEYS;
 
+export type CoreDatabaseType =
+  | 'Transaction'
+  | 'Name'
+  | 'Options'
+  | 'Requisition'
+  | 'InsurancePolicy'
+  | 'InsuranceProvider'
+  | 'TransactionCategory'
+  | 'PatientEvent'
+  | 'Item'
+  | 'FormSchema'
+  | 'MedicineAdministrator'
+  | 'Location';
+
 export type RealmDatabaseType =
+  | CoreDatabaseType
   | 'ADRForm'
   | 'ActiveLocation'
   | 'CashTransaction'
@@ -51,20 +66,6 @@ export type RealmDatabaseType =
   | 'SupplierTransaction'
   | 'Vaccine'
   | 'Item';
-
-export type CoreDatabaseType =
-  | 'Transaction'
-  | 'Name'
-  | 'Options'
-  | 'Requisition'
-  | 'InsurancePolicy'
-  | 'InsuranceProvider'
-  | 'TransactionCategory'
-  | 'PatientEvent'
-  | 'Item'
-  | 'FormSchema'
-  | 'MedicineAdministrator'
-  | 'Location';
 
 const translateToCoreDatabaseType = (type: RealmDatabaseType): CoreDatabaseType => {
   switch (type) {
