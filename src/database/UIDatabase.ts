@@ -6,7 +6,7 @@
  */
 
 import RNFS from 'react-native-fs';
-
+import { RealmDatabaseType, CoreDatabaseType } from './types';
 import { Database, Settings } from 'react-native-database';
 import { SETTINGS_KEYS } from '../settings';
 import { PREFERENCE_TYPE_KEYS } from './utilities/constants';
@@ -16,56 +16,6 @@ import { schema } from './schema';
 import { version as appVersion } from '../../package.json';
 
 const { THIS_STORE_NAME_ID, APP_VERSION } = SETTINGS_KEYS;
-
-export type CoreDatabaseType =
-  | 'Transaction'
-  | 'Name'
-  | 'Options'
-  | 'Requisition'
-  | 'InsurancePolicy'
-  | 'InsuranceProvider'
-  | 'TransactionCategory'
-  | 'PatientEvent'
-  | 'Item'
-  | 'FormSchema'
-  | 'MedicineAdministrator'
-  | 'Location';
-
-export type RealmDatabaseType =
-  | CoreDatabaseType
-  | 'ADRForm'
-  | 'ActiveLocation'
-  | 'CashTransaction'
-  | 'CashTransactionName'
-  | 'CashTransactionReason'
-  | 'Customer'
-  | 'CustomerCredit'
-  | 'CustomerInvoice'
-  | 'CustomerTransaction'
-  | 'ExternalSupplier'
-  | 'InternalSupplier'
-  | 'MedicineAdministrator'
-  | 'NegativeAdjustmentReason'
-  | 'OpenVialWastageReason'
-  | 'PCDEvents'
-  | 'Patient'
-  | 'PatientSurveyForm'
-  | 'Payment'
-  | 'Policy'
-  | 'PositiveAdjustmentReason'
-  | 'Prescription'
-  | 'PrescriptionCategory'
-  | 'Provider'
-  | 'Receipt'
-  | 'RequestRequisition'
-  | 'RequisitionReason'
-  | 'ResponseRequisition'
-  | 'Supplier'
-  | 'SupplierCreditCategory'
-  | 'SupplierInvoice'
-  | 'SupplierTransaction'
-  | 'Vaccine'
-  | 'Item';
 
 const translateToCoreDatabaseType = (type: RealmDatabaseType): CoreDatabaseType => {
   switch (type) {
@@ -189,7 +139,7 @@ class UIDatabase {
       await RNFS.mkdir(exportFolder);
       await RNFS.copyFile(realmPath, `${exportFolder}/${copyFileName}.realm`);
     } catch (error) {
-      const { message } = error;
+      const { message } = error as Error;
       return { success: false, message };
     }
 
