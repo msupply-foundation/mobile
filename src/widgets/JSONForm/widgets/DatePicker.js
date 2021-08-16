@@ -8,6 +8,7 @@ import { DatePickerButton } from '../../DatePickerButton';
 import { FlexRow } from '../../FlexRow';
 import { useJSONFormOptions } from '../JSONFormContext';
 import { DARKER_GREY, LIGHT_GREY } from '../../../globalStyles/colors';
+import { DATE_FORMAT } from '../../../utilities/constants';
 
 export const DatePicker = ({ disabled, value, onChange, placeholder, readonly, onBlur, id }) => {
   const { focusController } = useJSONFormOptions();
@@ -37,7 +38,7 @@ export const DatePicker = ({ disabled, value, onChange, placeholder, readonly, o
       <DatePickerButton
         isDisabled={readonly || disabled}
         initialValue={new Date()}
-        onDateChanged={date => handleChange(moment(date).format('YYYY-MM-DD'))}
+        onDateChanged={date => handleChange(moment(date).format(DATE_FORMAT.DD_MM_YYYY))}
       />
     </FlexRow>
   );
