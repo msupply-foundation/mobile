@@ -5,8 +5,8 @@
 
 import DeviceInfo from 'react-native-device-info';
 
-import { authenticateAsync, getAuthHeader, hashPassword } from 'sussol-utilities';
-
+import { getAuthHeader, hashPassword } from 'sussol-utilities';
+import { authenticateAsync } from './Helpers';
 import packageJson from '../../package.json';
 
 import { SERVER_COMPATIBILITIES } from '../sync/constants';
