@@ -18,6 +18,7 @@ export const PRESCRIPTION_ACTIONS = {
   OPEN_COMMENT_MODAL: 'Prescription/openCommentModal',
   CLOSE_COMMENT_MODAL: 'Prescription/closeCommentModal',
   DELETE: 'Prescription/delete',
+  RELOAD_ITEMS: 'Prescription/reloadItems',
 };
 
 const deletePrescription = () => ({ type: PRESCRIPTION_ACTIONS.DELETE });
@@ -192,6 +193,8 @@ const addItem = itemID => (dispatch, getState) => {
   dispatch(refresh());
 };
 
+const reloadItems = () => ({ type: PRESCRIPTION_ACTIONS.RELOAD_ITEMS });
+
 export const PrescriptionActions = {
   addItem,
   assignPrescriber,
@@ -207,4 +210,5 @@ export const PrescriptionActions = {
   editTransactionCategory,
   cancelPrescription,
   deletePrescription,
+  reloadItems,
 };

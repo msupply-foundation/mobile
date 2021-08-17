@@ -7,15 +7,28 @@ import { ROUTES } from '../navigation/constants';
 import { UIDatabase } from '../database';
 import { PRESCRIPTION_ACTIONS } from '../actions/PrescriptionActions';
 
-const initialState = () => ({
+const fetchItems = () => UIDatabase.objects('Item').filtered('isVaccine != true').slice();
+
+export type PrescriptionState = {
+  currentTab: number;
+  transaction: unknown | null;
+  items: unknown[];
+  itemSearchTerm: string;
+  commentModalOpen: boolean;
+};
+
+const initialState = (): PrescriptionState => ({
   currentTab: 0,
   transaction: null,
-  items: UIDatabase.objects('Item').filtered('isVaccine != true'),
+  items: fetchItems(),
   itemSearchTerm: '',
   commentModalOpen: false,
 });
 
-export const PrescriptionReducer = (state = initialState(), action) => {
+export const PrescriptionReducer = (
+  state: PrescriptionState = initialState(),
+  action: any
+): PrescriptionState => {
   const { type } = action;
 
   switch (type) {
@@ -50,6 +63,13 @@ export const PrescriptionReducer = (state = initialState(), action) => {
 
     case PRESCRIPTION_ACTIONS.DELETE:
       return { ...state, transaction: null };
+
+    case PRESCRIPTION_ACTIONS.RELOAD_ITEMS: {
+      return {
+        ...state,
+        items: fetchItems(),
+      };
+    }
 
     default: {
       return state;
