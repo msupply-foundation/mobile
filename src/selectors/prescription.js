@@ -48,26 +48,6 @@ export const selectItems = ({ prescription }) => {
   return items;
 };
 
-export const selectFilteredAndSortedItems = createSelector(
-  [selectItemSearchTerm, selectItems],
-  (itemSearchTerm, items) => {
-    // Filter the items by the entered search term.
-    const filteredItems = items.filtered(
-      'name CONTAINS[c] $0 || code CONTAINS[c] $0',
-      itemSearchTerm
-    );
-
-    // Keep the items sorted alphabetically.
-    const sortedItems = filteredItems.sorted('name');
-
-    // Split the items by quantity - showing out-of-stock items at the end of the list.
-    const itemsWithStock = sortedItems.filtered('ANY batches.numberOfPacks > 0').slice();
-    const itemsWithoutStock = sortedItems.filtered('ALL batches.numberOfPacks == 0').slice();
-
-    return [...itemsWithStock, ...itemsWithoutStock];
-  }
-);
-
 export const selectNumberOfItems = ({ prescription }) => {
   const { transaction } = prescription || {};
   return transaction?.items.length || 0;
