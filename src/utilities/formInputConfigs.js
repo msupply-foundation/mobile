@@ -121,7 +121,7 @@ const FORM_INPUT_CONFIGS = seedObject => ({
   },
   [FORM_INPUT_KEYS.DATE_OF_BIRTH]: {
     type: FORM_INPUT_TYPES.DATE_OF_BIRTH,
-    initialValue: new Date(),
+    initialValue: '',
     key: 'dateOfBirth',
     invalidMessage: formInputStrings.must_be_a_date,
     isRequired: true,

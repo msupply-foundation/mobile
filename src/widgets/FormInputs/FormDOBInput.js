@@ -16,7 +16,7 @@ import { FormLabel } from './FormLabel';
 import { FormInvalidMessage } from './FormInvalidMessage';
 import { DATE_FORMAT } from '../../utilities/constants';
 
-const calculateAge = dob => moment().diff(dob, 'years', true).toFixed(0);
+const calculateAge = dob => (!dob ? '' : `${Math.floor(moment().diff(dob, 'years', true))}`);
 
 const Action = {
   toggleDatePicker: 'toggleDatePicker',
@@ -31,9 +31,9 @@ const Action = {
 const initialState = (seedDate, isValid) => ({
   isValid, // If the date is a valid date
   datePickerOpen: false,
-  pickerValue: seedDate.toDate(),
+  pickerValue: seedDate?.toDate() || new Date(),
   ageValue: calculateAge(seedDate),
-  textInputValue: seedDate.format(DATE_FORMAT.DD_MM_YYYY),
+  textInputValue: seedDate ? seedDate.format(DATE_FORMAT.DD_MM_YYYY) : '',
 });
 
 const reducer = (state, action) => {
@@ -161,7 +161,7 @@ export const FormDOBInput = React.forwardRef(
     const [
       { datePickerOpen, isValid, pickerValue, ageValue, textInputValue },
       { toggleDatePicker, onPickDate, onTypeDate, onTypeAge },
-    ] = useDobInput(moment(value ?? new Date()), onChangeDate, onValidate);
+    ] = useDobInput(value ? moment(value) : undefined, onChangeDate, onValidate);
 
     return (
       <>
