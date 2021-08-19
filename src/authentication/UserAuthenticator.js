@@ -5,7 +5,8 @@
 
 import DeviceInfo from 'react-native-device-info';
 
-import { authenticateAsync, AUTH_ERROR_CODES, hashPassword } from 'sussol-utilities';
+import { hashPassword } from 'sussol-utilities';
+import { AUTH_ERROR_CODES, authenticateAsync } from './Helpers';
 
 import { SETTINGS_KEYS } from '../settings';
 
@@ -64,19 +65,22 @@ export class UserAuthenticator {
         authenticateAsync(authURL, username, passwordHash, { ...this.extraHeaders }),
         createConnectionTimeoutPromise(),
       ]);
+      if (userJson && userJson.error) {
+        throw new Error(userJson.error);
+      }
       if (!userJson || !userJson.UserID) {
         throw new Error('Unexpected response from server');
-      } else {
-        // Success, save user to database.
-        this.database.write(() => {
-          user = this.database.update('User', {
-            id: userJson.UserID,
-            username,
-            passwordHash,
-            isAdmin: userJson.isAdmin || false,
-          });
-        });
       }
+
+      // Success, save user to database.
+      this.database.write(() => {
+        user = this.database.update('User', {
+          id: userJson.UserID,
+          username,
+          passwordHash,
+          isAdmin: userJson.isAdmin || false,
+        });
+      });
     } catch (error) {
       // If there was an error with connection, check against locally cached credentials.
       if (error.message === CONNECTION_FAILURE && user) {
