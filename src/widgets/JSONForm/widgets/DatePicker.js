@@ -1,4 +1,3 @@
-/* eslint-disable no-console */
 import React from 'react';
 import { TextInput } from 'react-native';
 import moment from 'moment';
