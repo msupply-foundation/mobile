@@ -58,6 +58,10 @@ export class SyncAuthenticator {
       ...this.extraHeaders,
     });
 
+    if (responseJson.error) {
+      throw new Error(responseJson.error);
+    }
+
     const { version: appVersion } = packageJson;
     const [majorAppVersion] = appVersion.split('.');
     const { ServerVersion: serverVersion } = responseJson;
