@@ -36,7 +36,7 @@ const initialState = () => {
     UIDatabase.getPreference(PREFERENCE_KEYS.CAN_EDIT_PATIENTS_FROM_ANY_STORE)
   );
 
-  const usingModules = usingDashboard || usingDispensary || usingVaccines || usingCashRegister;
+  const usingModules = usingDashboard || usingVaccines || usingCashRegister;
 
   return {
     usingAdverseDrugReactions,
