@@ -98,7 +98,10 @@ const Menu = ({
     width: 175,
     textAlign: 'center',
   };
-  const containerStyle = { ...container, ...(usingModules ? moduleContainer : originalContainer) };
+  const containerStyle = {
+    ...container,
+    ...(usingModules || hasVaccines ? moduleContainer : originalContainer),
+  };
 
   const isFocused = useIsFocused();
 
@@ -187,11 +190,13 @@ const Menu = ({
           {!!hasVaccines && !!usingDispensary && (
             <IconMenuButton
               label={navStrings.vaccine_dispensary}
-              onPress={() => {
-                selectHaveVaccineStock()
-                  ? toVaccineDispensingPage()
-                  : ToastAndroid.show(vaccineStrings.no_vaccine_stock, ToastAndroid.SHORT);
-              }}
+              onPress={
+                () =>
+                  selectHaveVaccineStock()
+                    ? toVaccineDispensingPage()
+                    : ToastAndroid.show(vaccineStrings.no_vaccine_stock, ToastAndroid.SHORT)
+                // eslint-disable-next-line react/jsx-curly-newline
+              }
               Icon={<SyringeIcon />}
             />
           )}
@@ -260,7 +265,7 @@ const Menu = ({
 
   return (
     <View style={{ ...appBackground }}>
-      {usingModules ? <ModuleLayout /> : <OriginalLayout />}
+      {usingModules || hasVaccines ? <ModuleLayout /> : <OriginalLayout />}
       <AdminRow />
     </View>
   );
