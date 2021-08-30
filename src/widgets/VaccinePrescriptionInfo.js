@@ -28,8 +28,6 @@ import {
 } from '../selectors/Entities/vaccinePrescription';
 import { Spacer } from './Spacer';
 import { BACKGROUND_COLOR, LIGHT_GREY } from '../globalStyles/colors';
-import { HistoryIcon } from './icons';
-import { IconButton } from './IconButton';
 import { selectCurrentTab } from '../selectors/wizard';
 
 const WithLabel = ({ label, ...props }) => (
@@ -68,16 +66,14 @@ VaccinatorDropDown.propTypes = {
   onChange: PropTypes.func.isRequired,
 };
 
-const Header = ({ onPress, title }) => (
+const Header = ({ title }) => (
   <View style={styles.headerContainer}>
     <Text style={styles.headerText}>{title}</Text>
-    <IconButton onPress={onPress} Icon={<HistoryIcon color={DARKER_GREY} />} />
   </View>
 );
 
 Header.propTypes = {
   title: PropTypes.string.isRequired,
-  onPress: PropTypes.func.isRequired,
 };
 
 const VaccinePrescriptionInfoComponent = ({
@@ -89,7 +85,6 @@ const VaccinePrescriptionInfoComponent = ({
   hasRefused,
   onFoundBonusDose,
   foundBonusDose,
-  openHistory,
 }) => (
   <Paper
     Header={
@@ -97,7 +92,6 @@ const VaccinePrescriptionInfoComponent = ({
         title={`${vaccineStrings.vaccine_step} ${currentWizardStep + 1} ${
           vaccineStrings.vaccine_dispense_vaccine_select_title
         }`}
-        onPress={openHistory}
       />
     }
     headerText={vaccineStrings.vaccine_dispense_step_three_title}
@@ -145,9 +139,8 @@ const mapDispatchToProps = dispatch => {
     dispatch(VaccinePrescriptionActions.selectVaccinator(vaccinator));
   const onRefuse = value => dispatch(VaccinePrescriptionActions.setRefusal(value));
   const onFoundBonusDose = value => dispatch(VaccinePrescriptionActions.setBonusDose(value));
-  const openHistory = () => dispatch(VaccinePrescriptionActions.toggleHistory(true));
 
-  return { onSelectVaccinator, onRefuse, onFoundBonusDose, openHistory };
+  return { onSelectVaccinator, onRefuse, onFoundBonusDose };
 };
 
 const mapStateToProps = state => {
@@ -179,7 +172,6 @@ VaccinePrescriptionInfoComponent.propTypes = {
   hasRefused: PropTypes.bool.isRequired,
   onFoundBonusDose: PropTypes.func.isRequired,
   foundBonusDose: PropTypes.bool.isRequired,
-  openHistory: PropTypes.func.isRequired,
 };
 
 const styles = StyleSheet.create({
