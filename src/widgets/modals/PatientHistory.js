@@ -40,7 +40,7 @@ LoadingIndicator.propTypes = {
   loading: PropTypes.bool.isRequired,
 };
 
-const getColumnKey = (isVaccine, vaccineDispensingEnabled, canViewHistory) => {
+const getColumnKey = (isVaccine, canViewHistory) => {
   // Vaccine Dispensing History
   if (isVaccine) {
     return canViewHistory ? MODALS.VACCINE_HISTORY_LOOKUP : MODALS.VACCINE_HISTORY;
@@ -51,23 +51,19 @@ const getColumnKey = (isVaccine, vaccineDispensingEnabled, canViewHistory) => {
     return MODALS.PATIENT_HISTORY;
   }
 
-  return vaccineDispensingEnabled
-    ? MODALS.PATIENT_HISTORY_LOOKUP_WITH_VACCINES
-    : MODALS.PATIENT_HISTORY_LOOKUP;
+  return MODALS.PATIENT_HISTORY_LOOKUP_WITH_VACCINES;
 };
 
-export const PatientHistoryModal = ({
-  isVaccine,
-  patientId,
-  patientHistory,
-  sortKey,
-  vaccineDispensingEnabled,
-}) => {
+export const PatientHistoryModal = ({ isVaccine, patientId, patientHistory, sortKey }) => {
   const canViewHistory = UIDatabase.getPreference(PREFERENCE_KEYS.CAN_VIEW_ALL_PATIENTS_HISTORY);
-  const columns = React.useMemo(
-    () => getColumns(getColumnKey(isVaccine, vaccineDispensingEnabled, canViewHistory)),
-    []
+  const patientsSyncEverywhere = !UIDatabase.getPreference(
+    PREFERENCE_KEYS.NEW_PATIENTS_VISIBLE_THIS_STORE_ONLY
   );
+
+  const isRemoteFetchRequired =
+    canViewHistory || (canViewHistory && !patientsSyncEverywhere && isVaccine);
+
+  const columns = React.useMemo(() => getColumns(getColumnKey(isVaccine, canViewHistory)), []);
   const [{ data, loading, error }, fetchOnline] = useLocalAndRemotePatientHistory({
     isVaccineDispensingModal: isVaccine,
     patientId,
@@ -75,7 +71,7 @@ export const PatientHistoryModal = ({
     sortKey,
   });
 
-  if (canViewHistory) {
+  if (isRemoteFetchRequired) {
     useEffect(fetchOnline, [patientId]);
     useEffect(
       () =>
@@ -103,7 +99,6 @@ const localStyles = {
 
 PatientHistoryModal.defaultProps = {
   isVaccine: false,
-  vaccineDispensingEnabled: false,
 };
 
 PatientHistoryModal.propTypes = {
@@ -111,5 +106,4 @@ PatientHistoryModal.propTypes = {
   patientId: PropTypes.string.isRequired,
   patientHistory: PropTypes.array.isRequired,
   sortKey: PropTypes.string.isRequired,
-  vaccineDispensingEnabled: PropTypes.bool,
 };
