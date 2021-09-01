@@ -7,6 +7,7 @@ import DeviceInfo from 'react-native-device-info';
 
 import { hashPassword } from 'sussol-utilities';
 import { AUTH_ERROR_CODES, authenticateAsync } from './Helpers';
+import LoggerService from '../utilities/logging';
 
 import { SETTINGS_KEYS } from '../settings';
 
@@ -17,6 +18,8 @@ const { CONNECTION_FAILURE, INVALID_PASSWORD } = AUTH_ERROR_CODES;
 const AUTH_ENDPOINT = '/sync/v3/user';
 
 const CONNECTION_TIMEOUT_PERIOD = 10 * 1000; // 10 second timeout for authenticating connection.
+
+const logger = LoggerService.createLogger('Authentication');
 
 export class UserAuthenticator {
   constructor(database, settings) {
@@ -82,6 +85,8 @@ export class UserAuthenticator {
         });
       });
     } catch (error) {
+      logger.error(error);
+
       // If there was an error with connection, check against locally cached credentials.
       if (error.message === CONNECTION_FAILURE && user) {
         if (user.username === username && user.passwordHash === passwordHash) {
@@ -126,6 +131,7 @@ const createConnectionTimeoutPromise = () =>
   new Promise((resolve, reject) => {
     const id = setTimeout(() => {
       clearTimeout(id);
+      logger.error('UserAuthenticator: connection timeout');
       reject(new Error(CONNECTION_FAILURE));
     }, CONNECTION_TIMEOUT_PERIOD);
   });

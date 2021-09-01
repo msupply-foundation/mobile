@@ -10,6 +10,7 @@ import moment from 'moment';
 import querystring from 'querystring';
 import Bugsnag from '@bugsnag/react-native';
 import { getAuthHeader, AUTH_ERROR_CODES } from 'sussol-utilities';
+import LoggerService from '../utilities/logging';
 
 import { UIDatabase } from '../database';
 import { createRecord, parseBoolean, parseDate, parseNumber } from '../database/utilities';
@@ -55,6 +56,8 @@ class BugsnagError extends Error {
     });
   }
 }
+
+const logger = LoggerService.createLogger('Authentication');
 
 export const getServerURL = () => UIDatabase.getSetting(SETTINGS_KEYS.SYNC_URL);
 
@@ -196,6 +199,7 @@ const processResponse = response => {
   switch (status) {
     case 400:
     default:
+      logger.error('lookupApiUtils::processResponse returned an error');
       throw new Error(ERROR_CODES.CONNECTION_FAILURE);
     case 401:
       throw new BugsnagError(ERROR_CODES.INVALID_PASSWORD, { url, headers });

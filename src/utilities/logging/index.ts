@@ -1,10 +1,12 @@
 import RNFS from 'react-native-fs';
 import moment from 'moment';
-import Bugsnag from '@bugsnag/react-native';
+import Bugsnag, { NotifiableError } from '@bugsnag/react-native';
 import { LoggerService } from './Service';
 import { logDir, logFileName, logFileDate, logFileSeparator } from './Transport';
 import { SETTINGS_KEYS } from '../../settings';
 import { UIDatabase } from '../../database/index';
+
+export type Action = (message: string | Error, details?: Record<string, unknown>) => void;
 
 const logFileFilter = file => file?.includes(`${logFileSeparator}${logFileName}`);
 
@@ -30,7 +32,7 @@ export const tidyLogFiles = async () => {
   } catch (error) {
     const storeCode = UIDatabase.getSetting(SETTINGS_KEYS.THIS_STORE_CODE);
     const syncUrl = UIDatabase.getSetting(SETTINGS_KEYS.SYNC_URL);
-    Bugsnag.notify(error, content => {
+    Bugsnag.notify(error as NotifiableError, (content: any) => {
       content.storeCode = storeCode;
       content.syncUrl = syncUrl;
     });
