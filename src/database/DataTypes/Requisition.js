@@ -500,7 +500,7 @@ Requisition.schema = {
     otherStoreName: { type: 'Name', optional: true },
     customData: { type: 'string', optional: true },
     createdDate: { type: 'date', default: new Date() },
-    isRemoteOrder: { type: 'bool', default: true },
+    isRemoteOrder: { type: 'bool', default: false },
   },
 };
 
