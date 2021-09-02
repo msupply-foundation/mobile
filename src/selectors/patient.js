@@ -7,7 +7,11 @@ import currency from '../localization/currency';
 import { UIDatabase } from '../database';
 import { sortDataBy } from '../utilities';
 import { PREFERENCE_KEYS } from '../database/utilities/preferenceConstants';
+import { selectVaccinePatientHistory } from './Entities/name';
 
+// Returns all of a patient's history
+// Regular prescriptions fetched via transaction lookup
+// Vaccine history fetched via name note lookup
 export const selectPatientHistory = ({ patient }) => {
   const { currentPatient } = patient;
   const { transactions } = currentPatient;
@@ -17,8 +21,13 @@ export const selectPatientHistory = ({ patient }) => {
   const inQuery = transactions.map(({ id }) => `transaction.id == "${id}"`).join(' OR ');
   const baseQueryString =
     'type != "cash_in" AND type != "cash_out" AND transaction.status == "finalised"';
-  const fullQuery = `(${inQuery}) AND ${baseQueryString}`;
-  return inQuery ? UIDatabase.objects('TransactionBatch').filtered(fullQuery) : [];
+  const fullQuery = `(${inQuery}) AND ${baseQueryString} AND itemBatch.item.isVaccine == false`;
+  const dispensingTransactions = inQuery
+    ? UIDatabase.objects('TransactionBatch').filtered(fullQuery)
+    : [];
+  const vaccineTransactions = selectVaccinePatientHistory(currentPatient);
+
+  return [...dispensingTransactions, ...vaccineTransactions];
 };
 
 export const selectSortedPatientHistory = ({ patient }) => {
