@@ -23,11 +23,27 @@ const reducer = (state, action) => {
       const { payload } = action;
       const { data } = payload;
       const { data: initialData } = state;
-      const localIds = initialData.map(history => history.id);
+      const localTransactionIds = initialData.map(transactions => transactions.id);
+
+      // Name notes do not have transaction ids, create filter instead based on itemCode/confirmDate
+      const localNameNoteFilter = initialData
+        .filter(transaction => !transaction.id)
+        .map(nameNotes => ({
+          itemCode: nameNotes.itemCode,
+          confirmDate: nameNotes.confirmDate,
+        }));
 
       // Filter out local entries before merging
       const additionalRemoteRecords = data
-        .filter(record => !localIds.includes(record.id))
+        .filter(record => !localTransactionIds.includes(record.id))
+        .filter(
+          record =>
+            !localNameNoteFilter.some(
+              filter =>
+                filter.itemCode === record.itemCode &&
+                filter.confirmDate.getTime() === record.confirmDate.getTime()
+            )
+        )
         .map(remoteHistory => ({
           ...remoteHistory,
           isRemote: '✓',
@@ -43,7 +59,7 @@ const reducer = (state, action) => {
       return { ...state, loading: true, searched: false, noMore: false };
     }
     case 'fetch_no_results': {
-      return { ...state, data: [], searched: true, loading: false };
+      return { ...state, searched: true, loading: false };
     }
 
     case 'fetch_error': {

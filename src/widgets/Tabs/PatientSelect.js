@@ -12,7 +12,7 @@ import { ActivityIndicator, Keyboard, StyleSheet, Text, ToastAndroid, View } fro
 import ReactNativeHapticFeedback from 'react-native-haptic-feedback';
 
 import { batch, connect } from 'react-redux';
-import { ModalContainer, VaccinationHistory } from '../modals';
+import { ModalContainer } from '../modals';
 import { FormControl } from '../FormControl';
 import { PageButton } from '../PageButton';
 import { FlexRow } from '../FlexRow';
@@ -58,6 +58,8 @@ import {
 } from '../../sync/lookupApiUtils';
 import { SETTINGS_KEYS } from '../../settings/index';
 import { DataTable, DataTableRow, DataTableHeaderRow } from '../DataTable';
+import { selectVaccinePatientHistory } from '../../selectors/Entities/name';
+import { PatientHistoryModal } from '../modals/PatientHistory';
 
 const getMessage = (noResults, error) => {
   if (noResults) return generalStrings.could_not_find_patient;
@@ -226,16 +228,8 @@ const PatientSelectComponent = ({
     switch (colKey) {
       case 'patientHistory':
         return patientId => {
-          const [vaccinationPatientEvent] = UIDatabase.objects('PatientEvent').filtered(
-            "code == 'vaccination'"
-          );
-          const { id: vaccinationPatientEventID } = vaccinationPatientEvent ?? {};
-
           const foundPatient = data.find(({ id }) => patientId === id);
-
-          const patientsPreviousVaccinations = foundPatient?.nameNotes
-            ?.filter(({ patientEventID }) => patientEventID === vaccinationPatientEventID)
-            .map(({ data: vaccinationNameNotes }) => vaccinationNameNotes);
+          const patientsPreviousVaccinations = selectVaccinePatientHistory(foundPatient);
 
           setPatientHistory({ patient: foundPatient, history: patientsPreviousVaccinations });
         };
@@ -332,7 +326,12 @@ const PatientSelectComponent = ({
         onClose={() => setPatientHistory({})}
         title={`${dispensingStrings.vaccination_history} ${patient?.name}`}
       >
-        <VaccinationHistory history={history} patient={patient} />
+        <PatientHistoryModal
+          patientHistory={history}
+          patientId={patient?.id || ''}
+          sortKey="itemName"
+          isVaccine={true}
+        />
       </ModalContainer>
     </FlexView>
   );

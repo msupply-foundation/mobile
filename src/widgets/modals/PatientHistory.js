@@ -99,11 +99,12 @@ const localStyles = {
 
 PatientHistoryModal.defaultProps = {
   isVaccine: false,
+  patientHistory: [],
 };
 
 PatientHistoryModal.propTypes = {
   isVaccine: PropTypes.bool,
   patientId: PropTypes.string.isRequired,
-  patientHistory: PropTypes.array.isRequired,
+  patientHistory: PropTypes.array,
   sortKey: PropTypes.string.isRequired,
 };
