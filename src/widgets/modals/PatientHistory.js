@@ -60,8 +60,9 @@ export const PatientHistoryModal = ({ isVaccine, patientId, patientHistory, sort
     PREFERENCE_KEYS.NEW_PATIENTS_VISIBLE_THIS_STORE_ONLY
   );
 
+  // Remote fetch not required if patients sync everywhere is enabled and only fetching vaccines
   const isRemoteFetchRequired =
-    canViewHistory || (canViewHistory && !patientsSyncEverywhere && isVaccine);
+    (canViewHistory && !isVaccine) || (canViewHistory && !patientsSyncEverywhere && isVaccine);
 
   const columns = React.useMemo(() => getColumns(getColumnKey(isVaccine, canViewHistory)), []);
   const [{ data, loading, error }, fetchOnline] = useLocalAndRemotePatientHistory({
