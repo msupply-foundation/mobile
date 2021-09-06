@@ -39,7 +39,7 @@ export class BunyanLoggingEngine {
   };
 
   info: Action = (text, details) => {
-    this.bunyan.info(text), details;
+    this.bunyan.info(text, details);
   };
 
   warn: Action = (text, details) => {
