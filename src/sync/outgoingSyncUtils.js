@@ -86,7 +86,7 @@ const generateSyncData = (settings, recordType, record) => {
         middle: record.middleName,
         last: record.lastName,
         name: record.name,
-        date_of_birth: moment(record.dateOfBirth).format(),
+        date_of_birth: getDateString(record.dateOfBirth),
         code: record.code,
         email: record.emailAddress,
         supplying_store_id: record.supplyingStoreId || settings.get(THIS_STORE_ID),
@@ -104,7 +104,7 @@ const generateSyncData = (settings, recordType, record) => {
         ethnicity_ID: record.ethnicity?.id ?? '',
       };
       if (record.createdDate) {
-        nameRecord.created_date = moment(record.createdDate).format();
+        nameRecord.created_date = getDateString(record.createdDate);
       }
 
       return nameRecord;
