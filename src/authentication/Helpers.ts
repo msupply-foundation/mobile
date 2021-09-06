@@ -1,5 +1,6 @@
 import { getAuthHeader } from 'sussol-utilities';
 import validUrl from 'valid-url';
+import LoggerService from '../utilities/logging';
 
 export const AUTH_ERROR_CODES = {
   CONNECTION_FAILURE: 'Unable to connect',
@@ -9,6 +10,8 @@ export const AUTH_ERROR_CODES = {
   PARSING_ERROR: 'Unable to parse server response',
   LICENSE_ERROR: 'The server reported a license error',
 };
+
+const logger = LoggerService.createLogger('Authentication');
 
 /**
  * Check whether the username and password are valid given an authentication URL.
@@ -58,9 +61,8 @@ export const authenticateAsync = async (
     if (bodyText.includes("license number doesn't allow you to connect")) {
       responseJson.error = AUTH_ERROR_CODES.LICENSE_ERROR;
     }
-  } catch {
-    // (error) {
-    // perhaps do something with (error as Error).message
+  } catch (error) {
+    logger.error(error as Error);
     throw new Error(AUTH_ERROR_CODES.CONNECTION_FAILURE);
   }
 

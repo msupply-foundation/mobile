@@ -26,7 +26,6 @@ const {
 } = SETTINGS_KEYS;
 
 const AUTH_ENDPOINT = '/sync/v3/site';
-
 export class SyncAuthenticator {
   constructor(settings) {
     this.settings = settings;
