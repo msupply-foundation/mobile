@@ -100,7 +100,7 @@ const Menu = ({
   };
   const containerStyle = {
     ...container,
-    ...(usingModules || hasVaccines ? moduleContainer : originalContainer),
+    ...(usingModules ? moduleContainer : originalContainer),
   };
 
   const isFocused = useIsFocused();
@@ -265,7 +265,7 @@ const Menu = ({
 
   return (
     <View style={{ ...appBackground }}>
-      {usingModules || hasVaccines ? <ModuleLayout /> : <OriginalLayout />}
+      {usingModules ? <ModuleLayout /> : <OriginalLayout />}
       <AdminRow />
     </View>
   );
