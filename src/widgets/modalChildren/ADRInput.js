@@ -24,12 +24,10 @@ const getSchemaItems = jsonSchema => {
 };
 const mapHistory = history =>
   history.map((h, index) => {
-    const { prescriberOrVaccinator, itemName, confirmDate } = h;
+    const { vaccinator, itemName, confirmDate } = h;
     const date = moment(confirmDate).format('DD/MM/YY');
-    const vaccinator = prescriberOrVaccinator
-      ? `  ${vaccineStrings.vaccinator}: ${prescriberOrVaccinator}`
-      : '';
-    const name = `${index + 1}. ${itemName}  ${generalStrings.date}: ${date}${vaccinator}`;
+    const vaccinatorText = vaccinator ? `  ${vaccineStrings.vaccinator}: ${vaccinator}` : '';
+    const name = `${index + 1}. ${itemName}  ${generalStrings.date}: ${date}${vaccinatorText}`;
 
     return { name, value: h.id };
   });

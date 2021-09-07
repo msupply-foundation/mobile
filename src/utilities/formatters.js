@@ -67,6 +67,20 @@ export const temperatureTickFormatter = tick => `${tick} \u2103`;
 
 export const formatDate = date => (date ? moment(date).fromNow() : generalStrings.not_available);
 
+/**
+ * Converts date from mobile input format string to ISO format string
+ *
+ * @param   {string}  dateString  The date in mobile's standard format (DD/MM/YYYY or dd-mm-yyyy)
+ * @return  {string}              A string representing the date in 'yyyy-mm-dd' format
+ */
+export const convertMobileDateToISO = dateString => {
+  const dayOfMonth = dateString.substring(0, 2);
+  const month = dateString.substring(3, 5);
+  const year = dateString.substring(6, 10);
+
+  return `${year}-${month}-${dayOfMonth}`;
+};
+
 export const formatTime = sum => {
   const asMoment = moment.duration(sum);
 
