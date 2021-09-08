@@ -112,8 +112,9 @@ export const selectVaccinePatientHistory = patient => {
       ({ patientEventID, data }) =>
         patientEventID === vaccinationPatientEventID && validateJsonSchemaData(jsonSchema, data)
     )
-    .map(({ data: vaccinationNameNotes }) => ({
+    .map(({ id, data: vaccinationNameNotes }) => ({
       ...vaccinationNameNotes,
+      id,
       doses: 1, // Currently not possible to dispense more than 1 dose
       totalQuantity: 1,
       confirmDate: new Date(convertMobileDateToISO(vaccinationNameNotes.vaccineDate)),
