@@ -719,6 +719,8 @@ export const createOrUpdateRecord = (database, settings, recordType, record) => 
         period = database.getOrCreate('Period', record.periodID);
       }
 
+      const linkedRequisition = record.linked_requisition_id || null;
+
       internalRecord = {
         id: record.ID,
         status: REQUISITION_STATUSES.translate(record.status, EXTERNAL_TO_INTERNAL),
@@ -733,6 +735,7 @@ export const createOrUpdateRecord = (database, settings, recordType, record) => 
         thresholdMOS: parseNumber(record.thresholdMOS),
         program: database.getOrCreate('MasterList', record.programID),
         period,
+        linkedRequisition,
         orderType: record.orderType,
         customData: parseJsonString(record.custom_data),
         isRemoteOrder: parseBoolean(record.isRemoteOrder),

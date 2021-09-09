@@ -451,6 +451,15 @@ export class Requisition extends Realm.Object {
     return finaliseStatus;
   }
 
+  /**
+   * Get if this requisition is linked to a requisition.
+   *
+   * @return  {boolean}
+   */
+  get isLinkedToRequisition() {
+    return !!this.linkedRequisition;
+  }
+
   get canFinalise() {
     return this.isRequest ? this.canFinaliseRequest : this.canFinaliseResponse;
   }
@@ -497,6 +506,7 @@ Requisition.schema = {
     linkedTransaction: { type: 'Transaction', optional: true },
     program: { type: 'MasterList', optional: true },
     period: { type: 'Period', optional: true },
+    linkedRequisition: { type: 'string', optional: true },
     otherStoreName: { type: 'Name', optional: true },
     customData: { type: 'string', optional: true },
     createdDate: { type: 'date', default: new Date() },
