@@ -15,6 +15,7 @@ import { PatientActions } from '../../actions/PatientActions';
 import { selectCurrentPatient } from '../../selectors/patient';
 import { useLocalAndRemotePatientHistory } from '../../hooks/useLocalAndRemoteHistory';
 import { dispensingStrings, generalStrings, vaccineStrings } from '../../localization';
+import { selectVaccinePatientHistory } from '../../selectors/Entities/name';
 
 const getSchemaItems = jsonSchema => {
   const { properties = {} } = jsonSchema;
@@ -47,13 +48,12 @@ LoadingIndicator.propTypes = {
   loading: PropTypes.bool.isRequired,
 };
 
-export const ADRInputComponent = ({ onCancel, onSave, patient, patientHistory }) => {
+export const ADRInputComponent = ({ onCancel, onSave, patient, vaccineHistory }) => {
   const [{ formData, isValid }, setForm] = useState({ formData: null, isValid: false });
   const patientId = patient?.id;
   const [ADRSchema, setADRSchema] = useState(UIDatabase.objects('ADRForm')[0]);
   const { jsonSchema, uiSchema, type, version } = UIDatabase.objects('ADRForm')[0];
   const items = getSchemaItems(jsonSchema);
-  const vaccineHistory = patientHistory.filter(h => h.itemBatch?.item?.isVaccine);
   const [{ data, loading, searched }, fetchOnline] = useLocalAndRemotePatientHistory({
     isVaccineDispensingModal: true,
     patientId,
@@ -115,7 +115,7 @@ ADRInputComponent.propTypes = {
   onCancel: PropTypes.func.isRequired,
   onSave: PropTypes.func.isRequired,
   patient: PropTypes.object.isRequired,
-  patientHistory: PropTypes.array.isRequired,
+  vaccineHistory: PropTypes.array.isRequired,
 };
 
 const localStyles = StyleSheet.create({
@@ -149,7 +149,8 @@ const localStyles = StyleSheet.create({
 
 const stateToProps = state => {
   const patient = selectCurrentPatient(state);
-  return { patient };
+  const vaccineHistory = selectVaccinePatientHistory(patient);
+  return { patient, vaccineHistory };
 };
 
 const dispatchToProps = dispatch => ({
