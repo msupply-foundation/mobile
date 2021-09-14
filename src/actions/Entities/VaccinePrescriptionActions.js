@@ -149,8 +149,10 @@ const createPrescription = (
   vaccinator,
   supplementalData
 ) => {
+  let prescription = {};
+
   UIDatabase.write(() => {
-    const prescription = createRecord(
+    prescription = createRecord(
       UIDatabase,
       'CustomerInvoice',
       patient,
@@ -168,6 +170,8 @@ const createPrescription = (
     });
     prescription.finalise(UIDatabase);
   });
+
+  return prescription;
 };
 
 const createVaccinationNameNote = (
