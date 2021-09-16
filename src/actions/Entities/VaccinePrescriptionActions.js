@@ -188,6 +188,10 @@ const createVaccinationNameNote = (
   if (!patientEvent) return;
 
   const id = generateUUID();
+
+  // Extract name notes from the patient before saving as this can get huuuge(!)
+  const { nameNotes, ...patientObject } = patient.toJSON();
+
   const data = {
     refused,
     bonusDose,
@@ -201,7 +205,7 @@ const createVaccinationNameNote = (
     extra: {
       prescription: prescription?.toJSON(),
       vaccinator: vaccinator.toJSON(),
-      patient: patient.toJSON(),
+      patient: patientObject,
     },
   };
 
