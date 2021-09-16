@@ -26,7 +26,6 @@ const {
 } = SETTINGS_KEYS;
 
 const AUTH_ENDPOINT = '/sync/v3/site';
-
 export class SyncAuthenticator {
   constructor(settings) {
     this.settings = settings;
@@ -57,6 +56,10 @@ export class SyncAuthenticator {
     const responseJson = await authenticateAsync(authURL, username, passwordHash, {
       ...this.extraHeaders,
     });
+
+    if (responseJson.error) {
+      throw new Error(responseJson.error);
+    }
 
     const { version: appVersion } = packageJson;
     const [majorAppVersion] = appVersion.split('.');
