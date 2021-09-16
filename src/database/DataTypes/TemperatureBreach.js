@@ -7,10 +7,6 @@ import Realm from 'realm';
 import moment from 'moment';
 
 export class TemperatureBreach extends Realm.Object {
-  get colour() {
-    return this.temperatureBreachConfiguration?.colour ?? null;
-  }
-
   get maximumTemperature() {
     return this.temperatureLogs.max('temperature');
   }
@@ -74,13 +70,6 @@ export class TemperatureBreach extends Realm.Object {
     );
 
     return incomingStock.sum('numberOfPacks') ?? 0 - outgoingStock.sum('numberOfPacks') ?? 0;
-  }
-
-  willContinueBreach(temperatureLog) {
-    const { minimumTemperature, maximumTemperature } = this.temperatureBreachConfiguration;
-    const { temperature } = temperatureLog;
-
-    return temperature >= minimumTemperature && temperature <= maximumTemperature;
   }
 
   toJSON() {
