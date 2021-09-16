@@ -315,6 +315,15 @@ export class TransactionItem extends Realm.Object {
       database.save('TransactionBatch', batch);
     });
   }
+
+  toJSON() {
+    return {
+      id: this.id,
+      item: this.item.toJSON(),
+      name: this.name,
+      note: this.note,
+    };
+  }
 }
 
 TransactionItem.schema = {

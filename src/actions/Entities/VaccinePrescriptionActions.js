@@ -149,8 +149,10 @@ const createPrescription = (
   vaccinator,
   supplementalData
 ) => {
+  let prescription = {};
+
   UIDatabase.write(() => {
-    const prescription = createRecord(
+    prescription = createRecord(
       UIDatabase,
       'CustomerInvoice',
       patient,
@@ -168,6 +170,8 @@ const createPrescription = (
     });
     prescription.finalise(UIDatabase);
   });
+
+  return prescription;
 };
 
 const createVaccinationNameNote = (
@@ -184,6 +188,10 @@ const createVaccinationNameNote = (
   if (!patientEvent) return;
 
   const id = generateUUID();
+
+  // Extract name notes from the patient before saving as this can get huuuge(!)
+  const { nameNotes, ...patientObject } = patient.toJSON();
+
   const data = {
     refused,
     bonusDose,
@@ -197,7 +205,7 @@ const createVaccinationNameNote = (
     extra: {
       prescription: prescription?.toJSON(),
       vaccinator: vaccinator.toJSON(),
-      patient: patient.toJSON(),
+      patient: patientObject,
     },
   };
 
