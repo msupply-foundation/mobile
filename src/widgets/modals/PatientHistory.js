@@ -4,7 +4,7 @@
  * Sustainable Solutions (NZ) Ltd. 2019
  */
 
-import React, { useEffect } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import { ActivityIndicator, View, Text, ToastAndroid } from 'react-native';
 import PropTypes from 'prop-types';
 
@@ -21,6 +21,7 @@ import { FlexView } from '../FlexView';
 import { WHITE, APP_FONT_FAMILY, SUSSOL_ORANGE, APP_GENERAL_FONT_SIZE } from '../../globalStyles';
 import { dispensingStrings, generalStrings } from '../../localization';
 import { SimpleTable } from '../SimpleTable';
+import { ToggleBar } from '../index';
 
 const EmptyComponent = () => (
   <FlexView flex={1} justifyContent="center" alignItems="center" style={{ marginTop: 20 }}>
@@ -59,21 +60,29 @@ export const PatientHistoryModal = ({ isVaccine, patientId, patientHistory, sort
   const patientsSyncEverywhere = !UIDatabase.getPreference(
     PREFERENCE_KEYS.NEW_PATIENTS_VISIBLE_THIS_STORE_ONLY
   );
+  const filteredHistory = isVaccine
+    ? patientHistory.filter(record => record.isVaccine)
+    : patientHistory.filter(record => !record.isVaccine);
 
   // Remote fetch not required if patients sync everywhere is enabled and only fetching vaccines
   const isRemoteFetchRequired =
     (canViewHistory && !isVaccine) || (canViewHistory && !patientsSyncEverywhere && isVaccine);
 
   const columns = React.useMemo(() => getColumns(getColumnKey(isVaccine, canViewHistory)), []);
-  const [{ data, loading, error }, fetchOnline] = useLocalAndRemotePatientHistory({
+
+  const [
+    { data, loading, error, historyType },
+    toggleHistoryType,
+    fetchOnline,
+  ] = useLocalAndRemotePatientHistory({
     isVaccineDispensingModal: isVaccine,
     patientId,
-    initialValue: patientHistory,
+    initialValue: filteredHistory,
     sortKey,
   });
 
   if (isRemoteFetchRequired) {
-    useEffect(fetchOnline, [patientId]);
+    useEffect(fetchOnline, [patientId, historyType]);
     useEffect(
       () =>
         error &&
@@ -82,8 +91,37 @@ export const PatientHistoryModal = ({ isVaccine, patientId, patientHistory, sort
     );
   }
 
+  const toggles = useMemo(
+    () => [
+      {
+        text: dispensingStrings.dispensing,
+        isOn: historyType === 'dispensing',
+        onPress: () =>
+          toggleHistoryType(
+            'dispensing',
+            patientHistory.filter(item => !item.isVaccine)
+          ),
+      },
+      {
+        text: dispensingStrings.vaccinations,
+        isOn: historyType === 'vaccinations',
+        onPress: () =>
+          toggleHistoryType(
+            'vaccinations',
+            patientHistory.filter(item => item.isVaccine)
+          ),
+      },
+    ],
+    [historyType]
+  );
+
   return (
     <View style={localStyles.mainContainer}>
+      {!isVaccine ? (
+        <View style={localStyles.topSectionContainer}>
+          <ToggleBar toggles={toggles} />
+        </View>
+      ) : null}
       <View style={localStyles.tableContainer}>
         <SimpleTable data={data} columns={columns} ListEmptyComponent={<EmptyComponent />} />
       </View>
@@ -96,6 +134,11 @@ const localStyles = {
   mainContainer: { backgroundColor: WHITE, flex: 1 },
   text: { fontFamily: APP_FONT_FAMILY, fontSize: APP_GENERAL_FONT_SIZE },
   tableContainer: { backgroundColor: 'white', flexGrow: 0, flexShrink: 1 },
+  topSectionContainer: {
+    alignItems: 'center',
+    paddingHorizontal: 10,
+    paddingVertical: 10,
+  },
 };
 
 PatientHistoryModal.defaultProps = {

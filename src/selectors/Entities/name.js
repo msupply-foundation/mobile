@@ -4,9 +4,6 @@ import { UIDatabase } from '../../database';
 import { selectSpecificEntityState } from './index';
 import { DATE_FORMAT } from '../../utilities/constants';
 import { PREFERENCE_KEYS } from '../../database/utilities/preferenceConstants';
-import { MILLISECONDS_PER_DAY } from '../../database/utilities/constants';
-import { validateJsonSchemaData } from '../../utilities';
-import { convertMobileDateToISO } from '../../utilities/formatters';
 
 export const selectEditingNameId = state => {
   const NameState = selectSpecificEntityState(state, 'name');
@@ -77,56 +74,4 @@ export const selectCanEditPatient = state => {
   const { isEditable = false } = editing ?? {};
 
   return UIDatabase.getPreference(PREFERENCE_KEYS.CAN_EDIT_PATIENTS_FROM_ANY_STORE) || isEditable;
-};
-
-const jsonSchema = {
-  type: 'object',
-  properties: {
-    refused: {
-      type: 'boolean',
-      enum: [false],
-    },
-    vaccinator: {
-      type: 'string',
-    },
-    itemName: {
-      type: 'string',
-    },
-    itemCode: {
-      type: 'string',
-    },
-    vaccineDate: {
-      type: 'string',
-    },
-  },
-};
-
-export const selectVaccinePatientHistory = patient => {
-  const [vaccinationPatientEvent] = UIDatabase.objects('PatientEvent').filtered(
-    "code == 'vaccination'"
-  );
-  const { id: vaccinationPatientEventID } = vaccinationPatientEvent ?? {};
-
-  const nameNotes = patient?.nameNotes
-    ?.filter(
-      ({ patientEventID, data }) =>
-        patientEventID === vaccinationPatientEventID && validateJsonSchemaData(jsonSchema, data)
-    )
-    .map(({ id, data: vaccinationNameNotes }) => ({
-      ...vaccinationNameNotes,
-      id,
-      doses: 1, // Currently not possible to dispense more than 1 dose
-      totalQuantity: 1,
-      confirmDate: new Date(convertMobileDateToISO(vaccinationNameNotes.vaccineDate)),
-      prescriberOrVaccinator: vaccinationNameNotes.vaccinator,
-    }));
-
-  return nameNotes ?? [];
-};
-
-export const selectWasPatientVaccinatedWithinOneDay = state => {
-  const history = selectVaccinePatientHistory(state);
-  const oneDayAgo = new Date().getTime() - MILLISECONDS_PER_DAY;
-
-  return !!history.filter(historyRecord => historyRecord.confirmDate.getTime() > oneDayAgo).length;
 };

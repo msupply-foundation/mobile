@@ -41,11 +41,11 @@ import { AfterInteractions } from '../AfterInteractions';
 import { Paper } from '../Paper';
 import { VaccinePrescriptionInfo } from '../VaccinePrescriptionInfo';
 import { useNavigationFocus } from '../../hooks/useNavigationFocus';
-import { selectWasPatientVaccinatedWithinOneDay } from '../../selectors/Entities/name';
 import { PaperModalContainer } from '../PaperModal/PaperModalContainer';
 import { PaperConfirmModal } from '../PaperModal/PaperConfirmModal';
 import { useToggle } from '../../hooks/useToggle';
 import { PageButton } from '../PageButton';
+import { selectWasPatientVaccinatedWithinOneDay } from '../../selectors/patient';
 
 const ListEmptyComponent = () => (
   <FlexView flex={1} justifyContent="center" alignItems="center">

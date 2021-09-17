@@ -58,8 +58,8 @@ import {
 } from '../../sync/lookupApiUtils';
 import { SETTINGS_KEYS } from '../../settings/index';
 import { DataTable, DataTableRow, DataTableHeaderRow } from '../DataTable';
-import { selectVaccinePatientHistory } from '../../selectors/Entities/name';
 import { PatientHistoryModal } from '../modals/PatientHistory';
+import { selectVaccinePatientHistory } from '../../selectors/patient';
 
 const getMessage = (noResults, error) => {
   if (noResults) return generalStrings.could_not_find_patient;

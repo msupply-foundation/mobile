@@ -19,6 +19,7 @@
     "decimal_point": ".",
     "details": "Details",
     "directions": "Directions",
+    "dispensing": "Dispensing",
     "enter_a_description": "Enter a description",
     "enter_the_amount": "Enter the amount",
     "facility": "Facility",
@@ -70,6 +71,7 @@
     "edit_the_patient": "Edit patient details",
     "edit_supplemental_data": "Edit additional details",
     "refused_vaccine": "Refused vaccine",
+    "vaccinations": "Vaccinations",
     "validation_failed": "Some required fields are not completed."
   },
   "fr": {

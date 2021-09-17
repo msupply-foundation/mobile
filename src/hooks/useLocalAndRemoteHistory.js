@@ -5,6 +5,7 @@ import {
   getServerURL,
   getPatientHistoryResponseProcessor,
 } from '../sync/lookupApiUtils';
+import { useDebounce } from './useDebounce';
 import { useFetch } from './useFetch';
 import { useThrottled } from './useThrottled';
 
@@ -13,6 +14,7 @@ const initialState = (initialValue = []) => ({
   loading: false,
   error: false,
   searched: false,
+  historyType: 'dispensing',
 });
 
 const reducer = (state, action) => {
@@ -21,8 +23,8 @@ const reducer = (state, action) => {
   switch (type) {
     case 'fetch_success': {
       const { payload } = action;
-      const { data } = payload;
-      const { data: initialData } = state;
+      const { data, isVaccineDispensingModal } = payload;
+      const { data: initialData, historyType } = state;
       const localTransactionIds = initialData.map(transactions => transactions.id);
 
       // Name notes do not have transaction ids, create filter instead based on itemCode/confirmDate
@@ -43,6 +45,11 @@ const reducer = (state, action) => {
                 filter.itemCode === record.itemCode &&
                 filter.confirmDate.getTime() === record.confirmDate.getTime()
             )
+        )
+        .filter(
+          historyType === 'vaccinations' || isVaccineDispensingModal
+            ? item => item.isVaccine
+            : item => !item.isVaccine
         )
         .map(remoteHistory => ({
           ...remoteHistory,
@@ -69,6 +76,13 @@ const reducer = (state, action) => {
       return { ...state, error, loading: false, searched: true };
     }
 
+    case 'toggle': {
+      const { payload } = action;
+      const { historyType, localHistory } = payload;
+
+      return { ...state, historyType, data: localHistory };
+    }
+
     case 'clear': {
       return initialState();
     }
@@ -91,7 +105,7 @@ export const useLocalAndRemotePatientHistory = ({
   sortKey,
   initialValue = [],
 }) => {
-  const [{ data, loading, searched, error }, dispatch] = useReducer(
+  const [{ data, loading, searched, error, historyType }, dispatch] = useReducer(
     reducer,
     initialValue,
     initialState
@@ -117,7 +131,9 @@ export const useLocalAndRemotePatientHistory = ({
   // When response changes and we have a new response, assign this as our set of data, merging
   // with our combined state.
   useEffect(() => {
-    if (response) dispatch({ type: 'fetch_success', payload: { data: response } });
+    if (response) {
+      dispatch({ type: 'fetch_success', payload: { data: response, isVaccineDispensingModal } });
+    }
   }, [response]);
 
   // Synchronizing this error with our merged state.
@@ -141,7 +157,16 @@ export const useLocalAndRemotePatientHistory = ({
     );
   };
 
+  const toggleHistoryType = (toggleType, localHistory) => {
+    dispatch({ type: 'toggle', payload: { historyType: toggleType, localHistory } });
+  };
+
+  const debouncedToggleHistory = useDebounce(toggleHistoryType, 250, true);
   const throttledSearchOnline = useThrottled(searchOnline, 500, []);
 
-  return [{ data, loading, searched, error }, throttledSearchOnline];
+  return [
+    { data, loading, searched, error, historyType },
+    debouncedToggleHistory,
+    throttledSearchOnline,
+  ];
 };

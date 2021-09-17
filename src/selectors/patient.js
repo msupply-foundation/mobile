@@ -7,13 +7,23 @@ import currency from '../localization/currency';
 import { UIDatabase } from '../database';
 import { sortDataBy } from '../utilities';
 import { PREFERENCE_KEYS } from '../database/utilities/preferenceConstants';
-import { selectVaccinePatientHistory } from './Entities/name';
+import { validateJsonSchemaData } from '../utilities/ajvValidator';
+import { convertMobileDateToISO } from '../utilities/formatters';
+import { MILLISECONDS_PER_DAY } from '../database/utilities/constants';
 
 // Returns all of a patient's history
 // Regular prescriptions fetched via transaction lookup
 // Vaccine history fetched via name note lookup
 export const selectPatientHistory = ({ patient }) => {
   const { currentPatient } = patient;
+
+  const dispensingTransactions = selectPatientDispensingHistory(currentPatient);
+  const vaccineTransactions = selectVaccinePatientHistory(currentPatient);
+
+  return [...dispensingTransactions, ...vaccineTransactions];
+};
+
+export const selectPatientDispensingHistory = currentPatient => {
   const { transactions } = currentPatient;
 
   // Create a query string `transaction.id == "{id} OR transaction.id == "{id}" ...`
@@ -25,9 +35,61 @@ export const selectPatientHistory = ({ patient }) => {
   const dispensingTransactions = inQuery
     ? UIDatabase.objects('TransactionBatch').filtered(fullQuery)
     : [];
-  const vaccineTransactions = selectVaccinePatientHistory(currentPatient);
 
-  return [...dispensingTransactions, ...vaccineTransactions];
+  return dispensingTransactions;
+};
+
+export const selectVaccinePatientHistory = patient => {
+  const [vaccinationPatientEvent] = UIDatabase.objects('PatientEvent').filtered(
+    "code == 'vaccination'"
+  );
+  const { id: vaccinationPatientEventID } = vaccinationPatientEvent ?? {};
+
+  const jsonSchema = {
+    type: 'object',
+    properties: {
+      refused: {
+        type: 'boolean',
+        enum: [false],
+      },
+      vaccinator: {
+        type: 'string',
+      },
+      itemName: {
+        type: 'string',
+      },
+      itemCode: {
+        type: 'string',
+      },
+      vaccineDate: {
+        type: 'string',
+      },
+    },
+  };
+
+  const nameNotes = patient?.nameNotes
+    ?.filter(
+      ({ patientEventID, data }) =>
+        patientEventID === vaccinationPatientEventID && validateJsonSchemaData(jsonSchema, data)
+    )
+    .map(({ id, data: vaccinationNameNotes }) => ({
+      ...vaccinationNameNotes,
+      id,
+      doses: 1, // Currently not possible to dispense more than 1 dose
+      totalQuantity: 1,
+      confirmDate: new Date(convertMobileDateToISO(vaccinationNameNotes.vaccineDate)),
+      prescriberOrVaccinator: vaccinationNameNotes.vaccinator,
+      isVaccine: true,
+    }));
+
+  return nameNotes ?? [];
+};
+
+export const selectWasPatientVaccinatedWithinOneDay = state => {
+  const history = selectVaccinePatientHistory(state);
+  const oneDayAgo = new Date().getTime() - MILLISECONDS_PER_DAY;
+
+  return !!history.filter(historyRecord => historyRecord.confirmDate.getTime() > oneDayAgo).length;
 };
 
 export const selectSortedPatientHistory = ({ patient }) => {

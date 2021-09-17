@@ -12,10 +12,9 @@ import { PageButton } from '../PageButton';
 import { SUSSOL_ORANGE, WHITE } from '../../globalStyles/colors';
 import globalStyles from '../../globalStyles/index';
 import { PatientActions } from '../../actions/PatientActions';
-import { selectCurrentPatient } from '../../selectors/patient';
+import { selectCurrentPatient, selectVaccinePatientHistory } from '../../selectors/patient';
 import { useLocalAndRemotePatientHistory } from '../../hooks/useLocalAndRemoteHistory';
 import { dispensingStrings, generalStrings, vaccineStrings } from '../../localization';
-import { selectVaccinePatientHistory } from '../../selectors/Entities/name';
 
 const getSchemaItems = jsonSchema => {
   const { properties = {} } = jsonSchema;
