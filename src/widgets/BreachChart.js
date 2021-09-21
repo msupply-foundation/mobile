@@ -19,17 +19,14 @@ import { timestampTickFormatter, temperatureTickFormatter } from '../utilities/f
 export const BreachChart = ({ lineData, x, y, xTickFormat, yTickFormat, breach }) => {
   const [width, height, setDimensions] = useLayoutDimensions();
 
-  const { minimumTemperature, maximumTemperature, colour } = breach;
+  const { minimumTemperature, maximumTemperature } = breach;
 
-  const lineStyle = React.useMemo(
-    () => ({ data: { stroke: /^#[0-9A-F]{6}$/i.test(colour) ? colour : SUSSOL_ORANGE } }),
-    []
-  );
+  const lineStyle = React.useMemo(() => ({ data: { stroke: SUSSOL_ORANGE } }), []);
   const scatterStyle = React.useMemo(
     () => ({
       data: {
         fill: WHITE,
-        stroke: /^#[0-9A-F]{6}$/i.test(colour) ? colour : SUSSOL_ORANGE,
+        stroke: SUSSOL_ORANGE,
         strokeWidth: CHART_CONSTANTS.STROKE_WIDTH,
         size: CHART_CONSTANTS.STROKE_SIZE,
       },
