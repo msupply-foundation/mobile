@@ -330,7 +330,7 @@ const PatientSelectComponent = ({
           patientHistory={history}
           patientId={patient?.id || ''}
           sortKey="itemName"
-          isVaccine={true}
+          isVaccineDispensingModal={true}
         />
       </ModalContainer>
     </FlexView>

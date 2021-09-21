@@ -41,9 +41,9 @@ LoadingIndicator.propTypes = {
   loading: PropTypes.bool.isRequired,
 };
 
-const getColumnKey = (isVaccine, canViewHistory) => {
+const getColumnKey = (isVaccineDispensingModal, canViewHistory) => {
   // Vaccine Dispensing History
-  if (isVaccine) {
+  if (isVaccineDispensingModal) {
     return canViewHistory ? MODALS.VACCINE_HISTORY_LOOKUP : MODALS.VACCINE_HISTORY;
   }
 
@@ -55,27 +55,36 @@ const getColumnKey = (isVaccine, canViewHistory) => {
   return MODALS.PATIENT_HISTORY_LOOKUP_WITH_VACCINES;
 };
 
-export const PatientHistoryModal = ({ isVaccine, patientId, patientHistory, sortKey }) => {
+export const PatientHistoryModal = ({
+  isVaccineDispensingModal,
+  patientId,
+  patientHistory,
+  sortKey,
+}) => {
   const canViewHistory = UIDatabase.getPreference(PREFERENCE_KEYS.CAN_VIEW_ALL_PATIENTS_HISTORY);
   const patientsSyncEverywhere = !UIDatabase.getPreference(
     PREFERENCE_KEYS.NEW_PATIENTS_VISIBLE_THIS_STORE_ONLY
   );
-  const filteredHistory = isVaccine
+  const filteredHistory = isVaccineDispensingModal
     ? patientHistory.filter(record => record.isVaccine)
     : patientHistory.filter(record => !record.isVaccine);
 
   // Remote fetch not required if patients sync everywhere is enabled and only fetching vaccines
   const isRemoteFetchRequired =
-    (canViewHistory && !isVaccine) || (canViewHistory && !patientsSyncEverywhere && isVaccine);
+    (canViewHistory && !isVaccineDispensingModal) ||
+    (canViewHistory && !patientsSyncEverywhere && isVaccineDispensingModal);
 
-  const columns = React.useMemo(() => getColumns(getColumnKey(isVaccine, canViewHistory)), []);
+  const columns = React.useMemo(
+    () => getColumns(getColumnKey(isVaccineDispensingModal, canViewHistory)),
+    []
+  );
 
   const [
     { data, loading, error, historyType },
     toggleHistoryType,
     fetchOnline,
   ] = useLocalAndRemotePatientHistory({
-    isVaccineDispensingModal: isVaccine,
+    isVaccineDispensingModal,
     patientId,
     initialValue: filteredHistory,
     sortKey,
@@ -117,7 +126,7 @@ export const PatientHistoryModal = ({ isVaccine, patientId, patientHistory, sort
 
   return (
     <View style={localStyles.mainContainer}>
-      {!isVaccine ? (
+      {!isVaccineDispensingModal ? (
         <View style={localStyles.topSectionContainer}>
           <ToggleBar toggles={toggles} />
         </View>
@@ -142,12 +151,12 @@ const localStyles = {
 };
 
 PatientHistoryModal.defaultProps = {
-  isVaccine: false,
+  isVaccineDispensingModal: false,
   patientHistory: [],
 };
 
 PatientHistoryModal.propTypes = {
-  isVaccine: PropTypes.bool,
+  isVaccineDispensingModal: PropTypes.bool,
   patientId: PropTypes.string.isRequired,
   patientHistory: PropTypes.array,
   sortKey: PropTypes.string.isRequired,
