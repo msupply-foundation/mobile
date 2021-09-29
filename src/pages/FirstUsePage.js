@@ -52,9 +52,12 @@ export class FirstUsePageComponent extends React.Component {
     const { onInitialised, synchroniser } = this.props;
     const { serverURL, syncSiteName, syncSitePassword } = this.state;
 
+    // Quietly snip off trailing '/' characters before persisting as this causes invalid urls
+    const trimmedSyncUrl = serverURL.replace(/\/$/, '');
+
     try {
       this.setState({ status: STATUSES.INITIALISING });
-      await synchroniser.initialise(serverURL, syncSiteName, syncSitePassword);
+      await synchroniser.initialise(trimmedSyncUrl, syncSiteName, syncSitePassword);
       this.setState({ status: STATUSES.INITIALISED });
 
       onInitialised();

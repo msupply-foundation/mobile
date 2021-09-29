@@ -116,9 +116,9 @@ const Settings = ({
       UIDatabase.write(() => {
         UIDatabase.update('Setting', {
           key: SETTINGS_KEYS.SYNC_URL,
-          value: syncURL,
+          // Quietly snip off trailing '/' characters before persisting as this causes invalid urls
+          value: syncURL.replace(/\/$/, ''),
         });
-
         UIDatabase.update('Setting', {
           key: SETTINGS_KEYS.SYNC_SITE_PASSWORD_HASH,
           value: syncPassword ? hashPassword(syncPassword) : currentUserPasswordHash,
