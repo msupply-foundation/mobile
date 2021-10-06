@@ -227,7 +227,12 @@ export const BreachManHappy = ({ width = 100, height = 80 }) => (
   </Svg>
 );
 
+BreachManHappy.defaultProps = {
+  width: undefined,
+  height: undefined,
+};
+
 BreachManHappy.propTypes = {
-  width: PropTypes.number.isRequired,
-  height: PropTypes.number.isRequired,
+  width: PropTypes.number,
+  height: PropTypes.number,
 };
