@@ -272,6 +272,20 @@ export class Item extends Realm.Object {
 
     return totalDosesPossible;
   }
+
+  toJSON() {
+    return {
+      id: this.id,
+      code: this.code,
+      name: this.name,
+      defaultPackSize: this.defaultPackSize,
+      description: this.description,
+      defaultPrice: this.defaultPrice,
+      isVisible: this.isVisible,
+      doses: this.doses,
+      isVaccine: this.isVaccine,
+    };
+  }
 }
 
 Item.schema = {

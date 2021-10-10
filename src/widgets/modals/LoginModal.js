@@ -17,6 +17,7 @@ import { Flag, IconButton } from '..';
 import { GenericChoiceList } from '../modalChildren/GenericChoiceList';
 import { ModalContainer } from './ModalContainer';
 import { LanguageIcon } from '../icons';
+import { AuthFormView } from '../AuthFormView';
 
 import { LANGUAGE_NAMES, LANGUAGE_CHOICE, authStrings, navStrings } from '../../localization';
 import { getModalTitle, MODAL_KEYS } from '../../utilities';
@@ -148,7 +149,7 @@ export class LoginModal extends React.Component {
         backgroundColor={WHITE}
       >
         <View style={[globalStyles.verticalContainer, { flex: 1 }]}>
-          <View style={[globalStyles.authFormContainer]}>
+          <AuthFormView>
             <Image
               resizeMode="contain"
               style={globalStyles.authFormLogo}
@@ -212,7 +213,7 @@ export class LoginModal extends React.Component {
                 isDisabled={!this.canAttemptLogin}
               />
             </View>
-          </View>
+          </AuthFormView>
         </View>
         <View style={globalStyles.bottomContainer}>
           <IconButton

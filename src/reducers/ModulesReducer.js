@@ -6,6 +6,7 @@
 
 import { UIDatabase } from '../database';
 import { PREFERENCE_KEYS } from '../database/utilities/constants';
+import { selectHaveVaccineStock } from '../selectors/Entities/vaccinePrescription';
 import { INITIALISE_FINISHED, SYNC_TRANSACTION_COMPLETE } from '../sync/constants';
 
 /**
@@ -36,7 +37,9 @@ const initialState = () => {
     UIDatabase.getPreference(PREFERENCE_KEYS.CAN_EDIT_PATIENTS_FROM_ANY_STORE)
   );
 
-  const usingModules = usingDashboard || usingDispensary || usingVaccines || usingCashRegister;
+  const hasVaccines = selectHaveVaccineStock();
+
+  const usingModules = usingDashboard || usingVaccines || usingCashRegister || hasVaccines;
 
   return {
     usingAdverseDrugReactions,

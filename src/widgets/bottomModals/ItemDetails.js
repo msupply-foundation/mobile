@@ -22,6 +22,8 @@ export const ItemDetailsComponent = ({ item }) => {
     batch: generalStrings.batch_name,
     expiryDate: generalStrings.expiry_date,
     numberOfPacks: generalStrings.quantity,
+    doses: generalStrings.doses,
+    vials: generalStrings.vials,
     category: tableStrings.category,
     department: tableStrings.department,
     usage: tableStrings.monthly_usage_s,
@@ -53,6 +55,18 @@ export const ItemDetailsComponent = ({ item }) => {
     return [batchNameColumn, expiryDateColumn, quantityColumn];
   };
 
+  const getVaccineBatchInfo = () => {
+    const batchNameColumn = getBatchColumn('batch');
+    const expiryDateColumn = getBatchColumn('expiryDate');
+    const vialsColumn = getBatchColumn('numberOfPacks').map(batchColumn => ({
+      title: headers.vials,
+      info: batchColumn.info,
+    }));
+    const dosesColumn = getBatchColumn('doses');
+
+    return [batchNameColumn, expiryDateColumn, vialsColumn, dosesColumn];
+  };
+
   const getItemInfo = () => {
     const { categoryName, departmentName, monthlyUsage } = item;
 
@@ -72,7 +86,11 @@ export const ItemDetailsComponent = ({ item }) => {
   return (
     <ScrollView indicatorStyle="white" style={localStyles.container}>
       <PageInfo titleColor={SUSSOL_ORANGE} infoColor="white" columns={getItemInfo()} />
-      <PageInfo titleColor={SUSSOL_ORANGE} infoColor="white" columns={getBatchInfo()} />
+      <PageInfo
+        titleColor={SUSSOL_ORANGE}
+        infoColor="white"
+        columns={item.isVaccine ? getVaccineBatchInfo() : getBatchInfo()}
+      />
     </ScrollView>
   );
 };

@@ -5,8 +5,8 @@
 
 import DeviceInfo from 'react-native-device-info';
 
-import { authenticateAsync, getAuthHeader, hashPassword } from 'sussol-utilities';
-
+import { getAuthHeader, hashPassword } from 'sussol-utilities';
+import { authenticateAsync } from './Helpers';
 import packageJson from '../../package.json';
 
 import { SERVER_COMPATIBILITIES } from '../sync/constants';
@@ -26,7 +26,6 @@ const {
 } = SETTINGS_KEYS;
 
 const AUTH_ENDPOINT = '/sync/v3/site';
-
 export class SyncAuthenticator {
   constructor(settings) {
     this.settings = settings;
@@ -57,6 +56,10 @@ export class SyncAuthenticator {
     const responseJson = await authenticateAsync(authURL, username, passwordHash, {
       ...this.extraHeaders,
     });
+
+    if (responseJson.error) {
+      throw new Error(responseJson.error);
+    }
 
     const { version: appVersion } = packageJson;
     const [majorAppVersion] = appVersion.split('.');

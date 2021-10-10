@@ -1,4 +1,3 @@
-/* eslint-disable no-console */
 import React from 'react';
 import { TextInput } from 'react-native';
 import moment from 'moment';
@@ -8,8 +7,18 @@ import { DatePickerButton } from '../../DatePickerButton';
 import { FlexRow } from '../../FlexRow';
 import { useJSONFormOptions } from '../JSONFormContext';
 import { DARKER_GREY, LIGHT_GREY } from '../../../globalStyles/colors';
+import { DATE_FORMAT } from '../../../utilities/constants';
 
-export const DatePicker = ({ disabled, value, onChange, placeholder, readonly, onBlur, id }) => {
+export const DatePicker = ({
+  disabled,
+  value,
+  onChange,
+  placeholder,
+  readonly,
+  onBlur,
+  id,
+  options,
+}) => {
   const { focusController } = useJSONFormOptions();
   const ref = focusController.useRegisteredRef();
   const handleChange = dateString => {
@@ -37,7 +46,9 @@ export const DatePicker = ({ disabled, value, onChange, placeholder, readonly, o
       <DatePickerButton
         isDisabled={readonly || disabled}
         initialValue={new Date()}
-        onDateChanged={date => handleChange(moment(date).format('YYYY-MM-DD'))}
+        minimumDate={options.dateRange === 'future' ? new Date() : null}
+        maximumDate={options.dateRange === 'past' ? new Date() : null}
+        onDateChanged={date => handleChange(moment(date).format(DATE_FORMAT.DD_MM_YYYY))}
       />
     </FlexRow>
   );
@@ -51,6 +62,9 @@ DatePicker.propTypes = {
   disabled: PropTypes.bool.isRequired,
   value: PropTypes.string,
   onChange: PropTypes.func.isRequired,
+  options: PropTypes.shape({
+    dateRange: PropTypes.string,
+  }).isRequired,
   placeholder: PropTypes.string.isRequired,
   readonly: PropTypes.bool.isRequired,
   onBlur: PropTypes.func.isRequired,

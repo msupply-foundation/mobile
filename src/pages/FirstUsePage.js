@@ -23,6 +23,7 @@ import { importData } from '../database/utilities';
 
 import globalStyles, { SUSSOL_ORANGE, WARM_GREY } from '../globalStyles';
 import { FormPasswordInput } from '../widgets/FormInputs/FormPasswordInput';
+import { AuthFormView } from '../widgets/AuthFormView';
 
 const STATUSES = {
   UNINITIALISED: 'uninitialised',
@@ -51,9 +52,12 @@ export class FirstUsePageComponent extends React.Component {
     const { onInitialised, synchroniser } = this.props;
     const { serverURL, syncSiteName, syncSitePassword } = this.state;
 
+    // Quietly snip off trailing '/' characters before persisting as this causes invalid urls
+    const trimmedSyncUrl = serverURL.replace(/\/$/, '');
+
     try {
       this.setState({ status: STATUSES.INITIALISING });
-      await synchroniser.initialise(serverURL, syncSiteName, syncSitePassword);
+      await synchroniser.initialise(trimmedSyncUrl, syncSiteName, syncSitePassword);
       this.setState({ status: STATUSES.INITIALISED });
 
       onInitialised();
@@ -118,7 +122,7 @@ export class FirstUsePageComponent extends React.Component {
 
     return (
       <View style={[globalStyles.verticalContainer, localStyles.verticalContainer]}>
-        <View style={globalStyles.authFormContainer}>
+        <AuthFormView>
           <Image
             resizeMode="contain"
             style={globalStyles.authFormLogo}
@@ -196,7 +200,7 @@ export class FirstUsePageComponent extends React.Component {
               isDisabled={!this.canAttemptLogin}
             />
           </View>
-        </View>
+        </AuthFormView>
         <View style={localStyles.demoSiteRequestButtonContainer}>
           <View style={globalStyles.horizontalContainer}>
             <Button

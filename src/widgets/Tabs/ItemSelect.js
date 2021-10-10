@@ -4,7 +4,7 @@
  * Sustainable Solutions (NZ) Ltd. 2019
  */
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { ToastAndroid } from 'react-native';
@@ -24,7 +24,6 @@ import { getColumns } from '../../pages/dataTableUtilities';
 import {
   selectHasItemsAndQuantity,
   selectItemSearchTerm,
-  selectFilteredAndSortedItems,
   selectSelectedRows,
 } from '../../selectors/prescription';
 
@@ -68,6 +67,31 @@ const ItemSelectComponent = ({
     []
   );
 
+  // Reload items when component is mounted (component is mounted on every DB action)
+  useEffect(() => {
+    PrescriptionActions.reloadItems();
+  }, []);
+
+  // sort and filter the items
+  const displayItems = React.useMemo(() => {
+    const lowerCaseSearchTerm = itemSearchTerm.toLocaleLowerCase();
+    // Filter the items by the entered search term.
+    const filteredItems = items.filter(
+      it =>
+        it.name.toLocaleLowerCase().includes(lowerCaseSearchTerm) ||
+        it.code.toLocaleLowerCase().includes(lowerCaseSearchTerm)
+    );
+
+    // Keep the items sorted alphabetically.
+    const sortedItems = filteredItems.sort((a, b) => a.name.localeCompare(b.name));
+
+    // Split the items by quantity - showing out-of-stock items at the end of the list.
+    const itemsWithStock = sortedItems.filter(it => it.totalQuantity > 0);
+    const itemsWithoutStock = sortedItems.filter(it => it.totalQuantity === 0);
+
+    return [...itemsWithStock, ...itemsWithoutStock];
+  }, [itemSearchTerm, items]);
+
   return (
     <FlexView style={pageTopViewContainer}>
       <PrescriptionInfo />
@@ -79,7 +103,7 @@ const ItemSelectComponent = ({
             placeholder={`${generalStrings.search_by} ${generalStrings.item_name}`}
           />
           <SimpleTable
-            data={items}
+            data={displayItems}
             columns={columns}
             selectedRows={selectedRows}
             selectRow={chooseItem}
@@ -117,11 +141,11 @@ const mapStateToProps = state => {
   const { wizard } = state;
   const { isComplete } = wizard;
   const itemSearchTerm = selectItemSearchTerm(state);
-  const items = selectFilteredAndSortedItems(state);
+  const { prescription } = state;
   const selectedRows = selectSelectedRows(state);
   const canProceed = selectHasItemsAndQuantity(state);
 
-  return { selectedRows, itemSearchTerm, items, canProceed, isComplete };
+  return { selectedRows, itemSearchTerm, items: prescription.items, canProceed, isComplete };
 };
 
 ItemSelectComponent.propTypes = {

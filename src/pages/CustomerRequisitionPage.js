@@ -198,6 +198,7 @@ export const CustomerRequisition = ({
         <DataTableRow
           rowData={data[index]}
           rowKey={rowKey}
+          rowState={dataState.get(rowKey)}
           columns={currentColumns}
           isFinalised={isFinalised}
           getCallback={getCallback}

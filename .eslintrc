@@ -1,15 +1,19 @@
 {
   "env": { "jest": true },
-  "extends": "airbnb",
+  "extends": ["airbnb-typescript"],
   "globals": {
     "fetch": false
   },
-  "parser": "@babel/eslint-parser",
-  "plugins": ["prettier"],
+  "parser": "@typescript-eslint/parser",
+  "parserOptions": {
+    "project": "./tsconfig.json"
+  },
+  "plugins": ["@typescript-eslint", "prettier"],
   "rules": {
     "arrow-body-style": ["error", "as-needed"],
     "arrow-parens": ["error", "as-needed"],
-    "comma-dangle": [
+    "comma-dangle": "off",
+    "@typescript-eslint/comma-dangle": [
       "error",
       {
         "arrays": "always-multiline",
@@ -28,15 +32,28 @@
     "no-underscore-dangle": "off",
     "no-confusing-arrow": "off",
     "no-param-reassign": "off",
-    "no-use-before-define": ["error", { "variables": false }],
+    "no-use-before-define": "off",
+    "@typescript-eslint/no-use-before-define": ["error", { "variables": false }],
     "object-curly-newline": ["error", { "ObjectPattern": { "multiline": true } }],
     "operator-linebreak": "off",
     "prettier/prettier": "error",
     "quotes": ["error", "single", { "avoidEscape": true }],
     "react/jsx-boolean-value": "off",
-    "react/jsx-filename-extension": [1, { "extensions": [".js", ".jsx"] }],
+    "react/jsx-filename-extension": [1, { "extensions": [".js", ".jsx", ".ts", ".tsx"] }],
     "react/jsx-one-expression-per-line": "off",
     "react/jsx-props-no-spreading": "off",
-    "strict": "off"
-  }
+    "react/static-property-placement": ["warn", "property assignment"],
+    "strict": "off",
+    // disable the rule for js files (its enabled for ts files in overrides)
+    "@typescript-eslint/explicit-module-boundary-types": "off"
+  },
+  "overrides": [
+    {
+      // enable rule specifically for ts files
+      "files": ["*.ts", "*.tsx"],
+      "rules": {
+        "@typescript-eslint/explicit-module-boundary-types": ["error"]
+      }
+    }
+  ]
 }

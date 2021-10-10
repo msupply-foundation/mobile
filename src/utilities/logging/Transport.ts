@@ -16,16 +16,16 @@ export const logFileName = 'log.txt';
 export const logFileDate = 'DD-MM-YY';
 export const logFileSeparator = '__';
 
-// interface Transport {
-//     write: (text: string) => void
-//     level: number
-//     name: string
-// }
+export interface Transport {
+  write: (text: string) => void;
+  level: number;
+  name: string;
+}
 
 export const consoleTransport = {
   name: 'console',
   level: LogLevel.trace,
-  write: text => {
+  write: (text: string): void => {
     console.log('-------------------------------------------');
     console.log('text', text);
     console.log('-------------------------------------------');
@@ -35,7 +35,7 @@ export const consoleTransport = {
 export const fileTransport = {
   name: 'file',
   level: LogLevel.info,
-  write: text => {
+  write: (text: string): void => {
     const date = moment().format(logFileDate);
     // mSupplyMobile_data/DD-MM-YY__log.txt
     const path = `${logDir}/${date}${logFileSeparator}${logFileName}`;

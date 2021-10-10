@@ -6,7 +6,7 @@
  */
 
 import RNFS from 'react-native-fs';
-
+import { RealmDatabaseType, CoreDatabaseType } from './types';
 import { Database, Settings } from 'react-native-database';
 import { SETTINGS_KEYS } from '../settings';
 import { PREFERENCE_TYPE_KEYS } from './utilities/constants';
@@ -17,7 +17,7 @@ import { version as appVersion } from '../../package.json';
 
 const { THIS_STORE_NAME_ID, APP_VERSION } = SETTINGS_KEYS;
 
-const translateToCoreDatabaseType = type => {
+const translateToCoreDatabaseType = (type: RealmDatabaseType): CoreDatabaseType => {
   switch (type) {
     case 'CashTransaction':
     case 'CustomerCredit':
@@ -98,7 +98,13 @@ const parseUntypedData = data => {
 };
 
 class UIDatabase {
-  constructor(database) {
+  database: Database;
+
+  EXPORT_DIRECTORY: string;
+
+  DEFAULT_EXPORT_FILE: string;
+
+  constructor(database: Database) {
     this.database = database;
     this.EXPORT_DIRECTORY = '/Download/mSupplyMobile_data';
     this.DEFAULT_EXPORT_FILE = 'msupply-mobile-data';
@@ -133,7 +139,7 @@ class UIDatabase {
       await RNFS.mkdir(exportFolder);
       await RNFS.copyFile(realmPath, `${exportFolder}/${copyFileName}.realm`);
     } catch (error) {
-      const { message } = error;
+      const { message } = error as Error;
       return { success: false, message };
     }
 
@@ -182,7 +188,7 @@ class UIDatabase {
     return { success: true };
   }
 
-  objects(type) {
+  objects(type: RealmDatabaseType) {
     const results = this.database.objects(translateToCoreDatabaseType(type));
     const thisStoreNameIdSetting = this.database
       .objects('Setting')
@@ -383,7 +389,7 @@ class UIDatabase {
    * @param {String} key
    * @return {Boolean|Number|String|Null}
    */
-  getPreference(key) {
+  getPreference(key: string): boolean | number | string | null {
     const preference = this.database.get('Preference', key);
     if (!preference) return null;
     const { data, type } = preference;
@@ -400,7 +406,7 @@ class UIDatabase {
     }
   }
 
-  getSetting(key) {
+  getSetting(key: string): string {
     const setting = this.database.get('Setting', key, 'key');
     return setting?.value ?? '';
   }
@@ -408,7 +414,7 @@ class UIDatabase {
 
 let UIDatabaseInstance;
 
-export const getUIDatabaseInstance = database => {
+export const getUIDatabaseInstance = (database: Database): UIDatabase => {
   if (!UIDatabaseInstance) {
     UIDatabaseInstance = new UIDatabase(database);
   }
@@ -431,6 +437,6 @@ const createUIDatabasePropType = isRequired => (props, propName, componentName) 
 };
 
 export const UIDatabaseType = createUIDatabasePropType(false);
-UIDatabaseType.isRequired = createUIDatabasePropType(true);
+(UIDatabaseType as any).isRequired = createUIDatabasePropType(true);
 
 export default getUIDatabaseInstance;

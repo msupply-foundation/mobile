@@ -597,7 +597,7 @@ export class Transaction extends Realm.Object {
       confirmDate: this.confirmDate?.getTime(),
       enteredBy: this.enteredBy?.id,
       theirRef: this.theirRef,
-      items: this.items,
+      items: this.items?.map(item => item.toJSON()),
       mode: this.mode,
       subtotal: this.subtotal,
       outstanding: this.outstanding,
