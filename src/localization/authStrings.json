@@ -9,7 +9,7 @@
     "site": "Site",
     "store": "Store",
     "invalid_username_or_password": "Invalid username or password",
-    "warning_sync_edit": "WARNING:\nThis will effect syncing for this store.\nMake sure you know what you doing!",
+    "warning_sync_edit": "WARNING:\nThis will affect syncing for this store.\nMake sure you know what you are doing!",
     "incompatible_server": "The mSupply Server you're trying to sync with is not compatible with your current version. Please contact your administrator."
   },
   "fr": {
