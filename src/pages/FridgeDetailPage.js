@@ -32,6 +32,8 @@ import { SensorHeader } from '../widgets/SensorHeader/SensorHeader';
 import { BreachManUnhappy } from '../widgets/BreachManUnhappy';
 import { BreachActions } from '../actions/BreachActions';
 import { Spacer } from '../widgets/Spacer';
+import { BreachAcknowledge } from '../widgets/modals/BreachAcknowledge';
+import { useToggle } from '../hooks';
 
 const BREACH_MAN_UNHAPPY_SIZE = 400;
 const EmptyComponent = ({ sensorName }) => (
@@ -63,6 +65,8 @@ export const FridgeDetailPageComponent = ({
   onChangeFromDate,
 }) => {
   const [chartType, setChartType] = useState('bar');
+  const [isHotBreachModalOpen, toggleHotBreachModal] = useToggle();
+  const [isColdBreachModalOpen, toggleColdBreachModal] = useToggle();
 
   const minDate = new Date(minimumDate);
   const maxDate = new Date(maximumDate);
@@ -160,14 +164,20 @@ export const FridgeDetailPageComponent = ({
           <Animatable.View animation="fadeIn" duration={3000} useNativeDriver>
             <FlexRow style={localStyles.breachCardRow}>
               <BreachCard type="COLD_CUMULATIVE" />
-              <BreachCard type="COLD_CONSECUTIVE" />
+              <BreachCard type="COLD_CONSECUTIVE" onPressBreach={toggleColdBreachModal} />
               <BreachCard type="AVERAGE_TEMPERATURE" />
               <BreachCard type="HOT_CUMULATIVE" />
-              <BreachCard type="HOT_CONSECUTIVE" />
+              <BreachCard type="HOT_CONSECUTIVE" onPressBreach={toggleHotBreachModal} />
             </FlexRow>
           </Animatable.View>
         </View>
       </AfterInteractions>
+      <BreachAcknowledge
+        isOpen={isHotBreachModalOpen || isColdBreachModalOpen}
+        sensor={sensor}
+        isHot={isHotBreachModalOpen}
+        onClose={isHotBreachModalOpen ? toggleHotBreachModal : toggleColdBreachModal}
+      />
     </DataTablePageView>
   );
 };

@@ -74,7 +74,8 @@ export const selectBreaches = createSelector(
   (fromDate, toDate, fridgeID) => {
     const breaches = UIDatabase.objects('TemperatureBreach').filtered(
       '((startTimestamp <= $0 && (endTimestamp >= $0 || endTimestamp == null)) || ' +
-        '(startTimestamp >= $0 && startTimestamp <= $1)) && location.id == $2',
+        '(startTimestamp >= $0 && startTimestamp <= $1)) && location.id == $2 &&' +
+        'acknowledged == false',
       new Date(fromDate),
       new Date(toDate),
       fridgeID
@@ -150,14 +151,18 @@ export const selectMinAndMaxLogs = createSelector(
   }
 );
 
-export const selectNumberOfHotConsecutiveBreaches = createSelector([selectBreaches], breaches => {
-  const hotBreaches = breaches?.filtered("type == 'HOT_CONSECUTIVE'");
-  return hotBreaches.length;
+export const selectColdConsecutiveBreaches = createSelector([selectBreaches], breaches => {
+  const coldBreaches =
+    breaches?.filtered("type == 'COLD_CONSECUTIVE' && acknowledged == false") ?? [];
+
+  return coldBreaches;
 });
 
-export const selectNumberOfColdConsecutiveBreaches = createSelector([selectBreaches], breaches => {
-  const coldBreaches = breaches?.filtered("type == 'COLD_CONSECUTIVE'");
-  return coldBreaches.length;
+export const selectHotConsecutiveBreaches = createSelector([selectBreaches], breaches => {
+  const hotBreaches =
+    breaches?.filtered("type == 'HOT_CONSECUTIVE' && acknowledged == false") ?? [];
+
+  return hotBreaches;
 });
 
 const selectFridgeTemperatureLogsInPeriod = createSelector(

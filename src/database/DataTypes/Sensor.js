@@ -73,16 +73,18 @@ export class Sensor extends Realm.Object {
     const breach = this.mostRecentBreach;
     const isOngoing = !breach?.endTimestamp;
     const isHot = breach?.type === 'HOT_CONSECUTIVE';
+    const isUnacknowledged = breach?.acknowledged === false;
 
-    return isOngoing && isHot;
+    return isOngoing && isHot && isUnacknowledged;
   }
 
   get isInColdBreach() {
     const breach = this.mostRecentBreach;
     const isOngoing = !breach?.endTimestamp;
-    const isHot = breach?.type === 'COLD_CONSECUTIVE';
+    const isCold = breach?.type === 'COLD_CONSECUTIVE';
+    const isUnacknowledged = breach?.acknowledged === false;
 
-    return isOngoing && isHot;
+    return isOngoing && isCold && isUnacknowledged;
   }
 
   get locationID() {

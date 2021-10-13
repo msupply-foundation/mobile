@@ -1,6 +1,7 @@
 {
   "gb": {
     "back": "Back",
+    "acknowledge_breaches": "Acknowledge Breaches",
     "add_fridge": "Add Fridge",
     "add_sensor": "Add Sensor",
     "start_scan": "Start scan",

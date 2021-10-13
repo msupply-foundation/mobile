@@ -3,20 +3,21 @@ import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 
 import { Text, StyleSheet } from 'react-native';
+import { TouchableOpacity } from 'react-native-gesture-handler';
 import { DARKER_GREY, GREY, APP_FONT_FAMILY, COLD_BREACH_BLUE, DANGER_RED } from '../globalStyles';
 
 import {
   selectAverageTemperature,
   selectColdCumulativeBreach,
-  selectNumberOfColdConsecutiveBreaches,
-  selectNumberOfHotConsecutiveBreaches,
   selectHotCumulativeBreach,
+  selectColdConsecutiveBreaches,
+  selectHotConsecutiveBreaches,
 } from '../selectors/fridge';
 import { ColdBreachIcon, HotBreachIcon, Paper } from './index';
 import { BreachManHappy } from './BreachManHappy';
 import { vaccineStrings } from '../localization/index';
 
-const BreachCardComponent = ({ config }) => {
+const BreachCardComponent = ({ config, onPressBreach }) => {
   const { type, breachCount, headerText, message } = config;
   let icon = null;
   let textStyle = {};
@@ -47,15 +48,21 @@ const BreachCardComponent = ({ config }) => {
   }
 
   return (
-    <Paper
-      headerText={headerText}
-      style={localStyles.card}
-      contentContainerStyle={{ alignItems: 'center', paddingBottom: 10 }}
-    >
-      <Text style={textStyle}>{text}</Text>
-      {icon}
-    </Paper>
+    <TouchableOpacity onLongPress={onPressBreach}>
+      <Paper
+        headerText={headerText}
+        style={localStyles.card}
+        contentContainerStyle={{ alignItems: 'center', paddingBottom: 10 }}
+      >
+        <Text style={textStyle}>{text}</Text>
+        {icon}
+      </Paper>
+    </TouchableOpacity>
   );
+};
+
+BreachCardComponent.defaultProps = {
+  onPressBreach: undefined,
 };
 
 BreachCardComponent.propTypes = {
@@ -66,6 +73,7 @@ BreachCardComponent.propTypes = {
     message: PropTypes.string,
     icon: PropTypes.element,
   }).isRequired,
+  onPressBreach: PropTypes.func,
 };
 
 const localStyles = StyleSheet.create({
@@ -102,7 +110,7 @@ const stateToProps = (state, props) => {
     case 'COLD_CONSECUTIVE':
       return {
         config: {
-          breachCount: selectNumberOfColdConsecutiveBreaches(state),
+          breachCount: selectColdConsecutiveBreaches(state).length,
           headerText: vaccineStrings.consecutive_breach,
           type: 'cold',
         },
@@ -118,7 +126,7 @@ const stateToProps = (state, props) => {
     case 'HOT_CONSECUTIVE':
       return {
         config: {
-          breachCount: selectNumberOfHotConsecutiveBreaches(state),
+          breachCount: selectHotConsecutiveBreaches(state).length,
           headerText: vaccineStrings.consecutive_breach,
           type: 'hot',
         },
