@@ -133,7 +133,8 @@ const downloadLogsFromSensor = sensor => async dispatch => {
             await BleService().updateLogIntervalWithRetries(
               macAddress,
               logInterval,
-              VACCINE_CONSTANTS.MAX_BLUETOOTH_COMMAND_ATTEMPTS
+              VACCINE_CONSTANTS.MAX_BLUETOOTH_COMMAND_ATTEMPTS,
+              false /* don't clear logs */
             );
 
             await BleService().clearLogs(macAddress);

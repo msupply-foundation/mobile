@@ -40,16 +40,14 @@ const setLogInterval = (macAddress, interval) => async dispatch => {
   dispatch(setLogIntervalStart(macAddress));
 
   try {
-    const regex = new RegExp(`Interval: ${interval}s`); // TODO: update with sensor specific response as needed
     const error = `Sensor response was not equal to 'Interval: ${interval}s'`;
     const response = await BleService().updateLogIntervalWithRetries(
       macAddress,
       interval,
-      VACCINE_CONSTANTS.MAX_BLUETOOTH_COMMAND_ATTEMPTS
+      VACCINE_CONSTANTS.MAX_BLUETOOTH_COMMAND_ATTEMPTS,
+      false /* don't clear logs */
     );
-    const action = regex.test(response.toString())
-      ? setLogIntervalSuccess()
-      : setLogIntervalError(error);
+    const action = response ? setLogIntervalSuccess() : setLogIntervalError(error);
     await dispatch(action);
   } catch (e) {
     dispatch(setLogIntervalError(e));

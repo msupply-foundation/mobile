@@ -12,7 +12,7 @@ import { connect } from 'react-redux';
 import { BluetoothStatus } from 'react-native-bluetooth-status';
 import { AppState, View } from 'react-native';
 import { Scheduler } from 'sussol-utilities';
-import { BleManager } from 'react-native-ble-plx';
+import { BleManager, DevBleManager } from 'msupply-ble-service';
 
 import Settings from './settings/MobileAppSettings';
 import Database from './database/BaseDatabase';
@@ -49,7 +49,6 @@ import { RowDetail } from './widgets/RowDetail';
 import { PermissionActions } from './actions/PermissionActions';
 import BleService from './bluetooth/BleService';
 import TemperatureLogManager from './bluetooth/TemperatureLogManager';
-import { DevBleManager } from './bluetooth/DevBleManager';
 import SensorManager from './bluetooth/SensorManager';
 import { VaccineDataAccess } from './bluetooth/VaccineDataAccess';
 import { UtilService } from './database/utilities/utilService';
