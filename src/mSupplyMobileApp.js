@@ -12,6 +12,7 @@ import { connect } from 'react-redux';
 import { BluetoothStatus } from 'react-native-bluetooth-status';
 import { AppState, View } from 'react-native';
 import { Scheduler } from 'sussol-utilities';
+import { BleManager } from 'react-native-ble-plx';
 
 import Settings from './settings/MobileAppSettings';
 import Database from './database/BaseDatabase';
@@ -55,6 +56,7 @@ import { UtilService } from './database/utilities/utilService';
 import { SensorDownloadActions } from './actions/Bluetooth/SensorDownloadActions';
 import BreachManager from './bluetooth/BreachManager';
 import { selectIsPassivelyDownloadingTemps } from './selectors/Bluetooth/sensorDownload';
+import LoggerService from './utilities/logging';
 
 const BLUETOOTH_SYNC_INTERVAL = 60 * 1000; // 1 minute in milliseconds.
 const AUTHENTICATION_INTERVAL = 10 * 60 * 1000; // 10 minutes in milliseconds.
@@ -69,7 +71,7 @@ BreachManager(new VaccineDataAccess(UIDatabase), new UtilService());
     console.log('Emulator detected - Init Dev BleManager');
     BleService(new DevBleManager());
   } else {
-    BleService();
+    BleService(new BleManager(), LoggerService.createLogger('BleService'));
   }
 })();
 

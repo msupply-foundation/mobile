@@ -39,6 +39,7 @@ LogBox.ignoreLogs([
   'Setting a timer',
   'componentWillMount',
   'Non-serializable values were found in the navigation state',
+  'Require cycle',
 ]);
 
 AppRegistry.registerComponent(appName, () => App);

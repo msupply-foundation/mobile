@@ -22,7 +22,7 @@
     "rr": "adb shell input text \"RR\"",
     "test": "jest --watch",
     "build": "cd android && ./gradlew assembleRelease",
-    "lint": "eslint src",
+    "lint": "eslint  --ext .tsx --ext .ts --ext .js --ext .jsx  src",
     "deploy": "./dev_scripts/deploy.sh",
     "export": "./dev_scripts/export.sh",
     "uninstall": "./dev_scripts/uninstall.sh",
@@ -37,7 +37,7 @@
     "preset": "react-native"
   },
   "resolutions": {
-    "react-devtools-core": "4.6.0"
+    "react-devtools-core": "4.13.1"
   },
   "lint-staged": {
     "*.{json,css,md}": [

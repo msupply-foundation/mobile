@@ -1,13 +1,10 @@
 import { BleManager } from 'react-native-ble-plx';
 import { Buffer } from 'buffer';
 import { BLUETOOTH } from './constants';
-import LoggerService from '../utilities/logging';
 
 const bufferFromBase64 = base64 => Buffer.from(base64, 'base64');
 const stringFromBase64 = base64 => bufferFromBase64(base64).toString('utf-8');
 const base64FromString = string => Buffer.from(string, 'utf-8').toString('base64');
-
-const logger = LoggerService.createLogger('BleService');
 
 /**
  * Interface for interacting with a native Ble Manager for interacting
@@ -28,10 +25,16 @@ const logger = LoggerService.createLogger('BleService');
  *
  */
 class BleService {
-  constructor(manager = new BleManager()) {
+  constructor(
+    manager = new BleManager(),
+    logger = {
+      info: () => {},
+    }
+  ) {
     this.manager = manager;
+    this.logger = logger;
 
-    logger.info('BleService constructor', { manager });
+    this.logger.info('BleService constructor', { manager });
   }
 
   setManager = manager => {
@@ -47,7 +50,7 @@ class BleService {
    * @param {String} macAddress
    */
   connectToDevice = async macAddress => {
-    logger.info('connectToDevice', { macAddress });
+    this.logger.info('connectToDevice', { macAddress });
     return this.manager.connectToDevice(macAddress);
   };
 
@@ -60,13 +63,13 @@ class BleService {
    * @param {String} macAddress
    */
   connectAndDiscoverServices = async macAddress => {
-    logger.info('connectAndDiscoverServices', { macAddress });
+    this.logger.info('connectAndDiscoverServices', { macAddress });
     // without the cancel & reconnect further commands
     // were sometimes returning an error: "BleError: Device [mac address] was disconnected"
     // Note: adding the option `{ autoConnect: true }` prevents the sensors from
     // connecting sometimes :shrug:
     const deviceIsConnected = await this.manager.isDeviceConnected(macAddress);
-    logger.info('deviceIsConnected', { deviceIsConnected });
+    this.logger.info('deviceIsConnected', { deviceIsConnected });
     if (deviceIsConnected) {
       await this.manager.cancelDeviceConnection(macAddress);
     }
@@ -75,7 +78,7 @@ class BleService {
 
     await this.manager.discoverAllServicesAndCharacteristicsForDevice(macAddress);
 
-    logger.info('Discovered all services and characteristics for device', { macAddress });
+    this.logger.info('Discovered all services and characteristics for device', { macAddress });
     return device;
   };
 
@@ -242,9 +245,9 @@ class BleService {
    */
   downloadLogs = async macAddress => {
     await this.connectAndDiscoverServices(macAddress);
-    logger.info('Download logs connected and discovered services', { macAddress });
+    this.logger.info('Download logs connected and discovered services', { macAddress });
     return this.writeAndMonitor(macAddress, BLUETOOTH.COMMANDS.DOWNLOAD, data => {
-      logger.info('Write and monitor found some data!', { data });
+      this.logger.info('Write and monitor found some data!', { data });
       const buffer = Buffer.concat(data.slice(1).map(datum => bufferFromBase64(datum)));
 
       const ind = buffer.findIndex(
@@ -284,7 +287,7 @@ class BleService {
    *
    * Connects with and blinks a sensors LED light.
    *
-   * Returns a promise which resolves to a string 'ok'
+   * Returns a promise which resolves to a boolean
    *
    * @param {String} macAddress
    */
@@ -371,7 +374,7 @@ class BleService {
    * @param {Error} error
    */
   downloadLogsWithRetries = async (macAddress, retriesLeft, error) => {
-    logger.info('Starting to download logs', { macAddress, retriesLeft, error });
+    this.logger.info('Starting to download logs', { macAddress, retriesLeft, error });
     if (!retriesLeft) throw error;
 
     return this.downloadLogs(macAddress).catch(err =>
@@ -413,9 +416,9 @@ class BleService {
 
 let BleServiceInstance;
 
-export const getBleServiceInstance = manager => {
+export const getBleServiceInstance = (manager, logger) => {
   if (!BleServiceInstance) {
-    BleServiceInstance = new BleService(manager);
+    BleServiceInstance = new BleService(manager, logger);
   }
 
   return BleServiceInstance;
