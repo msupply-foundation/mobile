@@ -21,7 +21,7 @@ export const tidyLogFiles = async () => {
   try {
     const files = await RNFS.readdir(logDir);
 
-    return Promise.all(
+    return await Promise.all(
       // All files with the name {date}__log.txt where the date is some date in the format
       // DD-MM-YY and is at least 5 days ago.
       files
