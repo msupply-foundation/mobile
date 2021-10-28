@@ -54,7 +54,7 @@ export class BunyanLoggingEngine {
     this.bunyan.fatal(text, details);
   };
 
-  setLogLevel(transportKey, newLevel) {
+  setLogLevel(transportKey: string, newLevel: unknown): void {
     this.bunyan.levels(transportKey, newLevel);
   }
 }

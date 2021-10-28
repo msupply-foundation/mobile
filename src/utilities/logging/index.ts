@@ -17,7 +17,7 @@ const getExceedsThresholdFilter = (threshold = [5, 'days']) => fileName => {
   return asMoment.isBefore(thresholdDate);
 };
 
-export const tidyLogFiles = async () => {
+export const tidyLogFiles = async (): Promise<void[] | null> => {
   try {
     const files = await RNFS.readdir(logDir);
 

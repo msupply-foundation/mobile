@@ -43,7 +43,7 @@ export class Logger {
     this.engine?.warn(textOrError, details);
   };
 
-  setLogLevel(transportName, newLevel) {
+  setLogLevel(transportName: string, newLevel: unknown): void {
     this.engine?.setLogLevel(transportName, newLevel);
   }
 }
