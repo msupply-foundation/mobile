@@ -52,6 +52,7 @@ const TextInputCell = React.memo(
     onFocus,
     onBlur,
   }) => {
+    // eslint-disable-next-line no-console
     if (debug) console.log(`- TextInputCell: ${value}`);
     const usingPlaceholder = placeholder && !value;
 

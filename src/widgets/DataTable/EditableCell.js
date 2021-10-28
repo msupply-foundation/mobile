@@ -55,6 +55,7 @@ const EditableCell = React.memo(
     placeholderColor,
     cellTextStyle,
   }) => {
+    // eslint-disable-next-line no-console
     if (debug) console.log(`- EditableCell: ${value}`);
     const usingPlaceholder = placeholder && !value;
     const onEdit = newValue => dispatch(editAction(newValue, rowKey, columnKey));

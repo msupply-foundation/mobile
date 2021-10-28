@@ -44,7 +44,9 @@ import RefContext from './RefContext';
 const Row = React.memo(
   ({ rowData, rowState, rowKey, renderCells, style, onPress, debug, rowIndex }) => {
     if (debug) {
+      // eslint-disable-next-line no-console
       console.log('=================================');
+      // eslint-disable-next-line no-console
       console.log(`Row: ${rowKey}`);
     }
 

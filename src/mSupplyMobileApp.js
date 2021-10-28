@@ -66,6 +66,7 @@ BreachManager(new VaccineDataAccess(UIDatabase), new UtilService());
 (async () => {
   const isEmulator = await DeviceInfo.isEmulator();
   if (isEmulator) {
+    // eslint-disable-next-line no-console
     console.log('Emulator detected - Init Dev BleManager');
     BleService(new DevBleManager());
   } else {
