@@ -17,6 +17,8 @@ export type PrescriptionState = {
   commentModalOpen: boolean;
 };
 
+type PrescriptionAction = any;
+
 const initialState = (): PrescriptionState => ({
   currentTab: 0,
   transaction: null,
@@ -27,7 +29,7 @@ const initialState = (): PrescriptionState => ({
 
 export const PrescriptionReducer = (
   state: PrescriptionState = initialState(),
-  action: any
+  action: PrescriptionAction
 ): PrescriptionState => {
   const { type } = action;
 
