@@ -6,8 +6,6 @@ import { logDir, logFileName, logFileDate, logFileSeparator } from './Transport'
 import { SETTINGS_KEYS } from '../../settings';
 import { UIDatabase } from '../../database/index';
 
-export type Action = (message: string | Error, details?: Record<string, unknown>) => void;
-
 const logFileFilter = file => file?.includes(`${logFileSeparator}${logFileName}`);
 
 const getExceedsThresholdFilter = (threshold = [5, 'days']) => fileName => {
