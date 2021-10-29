@@ -1,6 +1,6 @@
 import bunyan from 'react-native-bunyan';
-import { Action } from '.';
 import { Transport } from './Transport';
+import { Action } from './types';
 // Logging engine for the Logger class which implements the logic
 // of creating a log format and hands off the log to a transport
 // object.

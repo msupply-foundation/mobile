@@ -1,5 +1,5 @@
 import { BunyanLoggingEngine } from './Engine';
-import { Action } from '.';
+import { Action } from './types';
 
 // interface Logger {
 //     trace: (text: string) => void
