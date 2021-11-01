@@ -32,7 +32,14 @@
     "created_date": "Created date"
   },
   "fr": {
-    "category": "Catégorie",
+    "open_vial_wastage": "Gaspillage flacons ouverts",
+    "closed_vial_wastage": "Gaspillage flacons fermés",
+    "last_requisition_date": "Date de la dernière réquisition",
+    "temperature_range": "Plage de température",
+    "number_of_affected_batches": "No. de lots affectés",
+    "duration": "Durée",
+    "location": "Emplacement",
+    "affected_quantity": "Quantité affectée",
     "address": "Addresse",
     "code": "Code",
     "comment": "Commentaire",
@@ -42,10 +49,18 @@
     "entered_by": "Entrée par",
     "entry_date": "Date d'entrée",
     "months_stock_required": "Mois de stock",
-    "stocktake_name": "Nom du relevé d'inventaire",
+    "stocktake_name": "Nom de l'inventaire",
     "supplier": "Fournisseur",
     "their_ref": "Leur référence",
-    "by_batch": "Par lot"
+    "by_batch": "Par lot",
+    "category": "Catégorie",
+    "suggested_equals": "Quantité suggérée",
+    "suggested_formula": "(Moyenne Mensuelle x MDS Max) - leur stock",
+    "amc_equals": "Moyenne Mensuelle",
+    "number_of_days_in_a_month": "Nombre de jours dans un mois",
+    "number_of_days_in_a_month_formula": "= Nombre de jours dans une année / Nombre de mois dans une année",
+    "none_suggested": "(Aucune suggestion)",
+    "created_date": "Date de création"
   },
   "gil": {
     "address": "Am tabo",
