@@ -95,11 +95,11 @@ export const LANGUAGE_CODES = {
 export const LANGUAGE_NAMES = {
   [LANGUAGE_CODES.ENGLISH]: 'English',
   [LANGUAGE_CODES.FRENCH]: 'Français',
-  [LANGUAGE_CODES.KIRIBATI]: 'te taetae ni Kiribati',
+  [LANGUAGE_CODES.KIRIBATI]: 'Te taetae ni Kiribati',
   [LANGUAGE_CODES.LAOS]: 'ພາສາລາວ',
   [LANGUAGE_CODES.MYANMAR]: 'မြန်မာဘာသာစကား',
-  [LANGUAGE_CODES.PORTUGUESE]: 'português',
-  [LANGUAGE_CODES.SPANISH]: 'castellano',
+  [LANGUAGE_CODES.PORTUGUESE]: 'Português',
+  [LANGUAGE_CODES.SPANISH]: 'Spanish',
   [LANGUAGE_CODES.TETUM]: 'Tetum',
 };
 
