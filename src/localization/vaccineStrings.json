@@ -114,7 +114,7 @@
     "fridges": "Frigos",
     "sensors": "Capteurs",
     "sensor_save_success": "Enregistrement du capteur réussi",
-    "oops_no_temperatures": "Oups! Aucun relevé de température sur la période sélectionnée.",
+    "oops_no_temperatures": "Oups! Il n'y aucun relevé de température sur la période sélectionnée.",
     "no_temperatures": "Aucun relevé de température.",
     "is_paused": "En pause",
     "pause": "Mettre en pause",

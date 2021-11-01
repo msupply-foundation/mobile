@@ -56,7 +56,7 @@
     "details": "Détails",
     "general": "Général(e)",
     "order": "commande",
-    "not_applicable": "Pas applicable",
+    "not_applicable": "Non applicable",
     "items": "Articles",
     "indicators": "Indicateurs",
     "hide_over_stocked": "Masquer les\nproduits surstocké",
@@ -66,7 +66,7 @@
     "program_stocktake": "Inventaire\n programme",
     "general_order": "Commande Générale",
     "emergency_order": "Commande Urgente",
-    "max_items": "Articles max.",
+    "max_items": "Nb Max d'Articles",
     "customer_is_store": "Avertissement: ce client est aussi un dépôt"
   },
   "gil": {
