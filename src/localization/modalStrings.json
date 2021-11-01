@@ -87,7 +87,7 @@
     "create_cash_transaction": "Créer une nouvelle transaction",
     "delete_these_invoices": "Êtes-vous sûr de vouloir supprimer ces factures ?",
     "delete_these_requisitions": "Êtes-vous sûr de vouloir supprimer ces réquisitions ?",
-    "delete_these_stocktakes": "Êtes-vous sûr de vouloir supprimer ces relevés d'inventaires ?",
+    "delete_these_stocktakes": "Êtes-vous sûr de vouloir supprimer ces inventaires ?",
     "delete": "Supprimer",
     "edit_the_invoice_comment": "Modifier le commentaire de la facture",
     "edit_the_requisition_comment": "Modifier le commentaire de la réquisition",

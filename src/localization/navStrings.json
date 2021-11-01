@@ -39,7 +39,7 @@
     "credit": "Crédit",
     "current_stock": "Stock actuel",
     "customer_invoices": "Factures clients",
-    "customer_requisitions": "Réquisitions clients",
+    "customer_requisitions": "Réquisitions client",
     "customers": "Clients",
     "dashboard": "Tableau de bord",
     "database_contents": "Contenus de la base de données",
@@ -58,7 +58,7 @@
     "stocktakes": "Inventaires",
     "supplier_credit": "Crédit Fournisseur",
     "supplier_invoices": "Factures fournisseurs",
-    "supplier_requisitions": "Réquisitions fournisseurs",
+    "supplier_requisitions": "Réquisitions fournisseur",
     "vaccine_admin": "Admin (Vaccins)",
     "vaccine_dispensary": "Vaccinations"
   },
