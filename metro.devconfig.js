@@ -74,15 +74,6 @@ console.log('Mapping the following sym linked packages:');
 console.log(moduleMappings);
 
 module.exports = {
-  transformer: {
-    getTransformOptions: async () => ({
-      transform: {
-        experimentalImportSupport: false,
-        inlineRequires: true,
-      },
-    }),
-  },
-
   resolver: {
     // Register an "extra modules proxy" for resolving
     // modules outside of the normal resolution logic.
