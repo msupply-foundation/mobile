@@ -39,6 +39,7 @@ const TouchableCell = React.memo(
     isDisabled,
     ...otherProps
   }) => {
+    // eslint-disable-next-line no-console
     if (debug) console.log(`- TouchableCell: ${rowKey},${columnKey}`);
 
     const onPressCell = () => onPress(rowKey, columnKey);

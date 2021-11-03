@@ -1,7 +1,7 @@
 /* eslint-disable no-undef */
 import { BunyanLoggingEngine } from './Engine';
 import { Logger } from './Logger';
-import { consoleTransport, fileTransport } from './Transport';
+import { consoleTransport, fileTransport, Transport } from './Transport';
 
 const createLoggingEngine = options => new BunyanLoggingEngine(options);
 
@@ -23,7 +23,7 @@ export class LoggerService {
     }
   }
 
-  createLogger(module) {
+  createLogger(module: string): Logger {
     const engine = createLoggingEngine({ module, transports: this.transports });
     const newLogger = new Logger(engine);
     this.loggers[module] = newLogger;
@@ -41,7 +41,7 @@ export class LoggerService {
     return newLogger;
   }
 
-  addTransport(key, transport) {
+  addTransport(key: string, transport: Transport): void {
     this.transports[key] = transport;
   }
 }
