@@ -7240,7 +7240,7 @@ metro-cache@0.64.0:
     mkdirp "^0.5.1"
     rimraf "^2.5.4"
 
-metro-config@0.64, metro-config@0.64.0, metro-config@^0.64.0:
+metro-config@0.64.0, metro-config@^0.64, metro-config@^0.64.0:
   version "0.64.0"
   resolved "https://registry.yarnpkg.com/metro-config/-/metro-config-0.64.0.tgz#b634fa05cffd06b1e50e4339c200f90a42924afb"
   integrity sha512-QhM4asnX5KhlRWaugwVGNNXhX0Z85u5nK0UQ/A90bBb4xWyXqUe20e788VtdA75rkQiiI6wXTCIHWT0afbnjwQ==
