@@ -108,7 +108,7 @@
   },
   "fr": {
     "counted_doses": "DOSES\nCOMPTÉES",
-    "snapshot_doses": "DOSES{nextLine)QTÉS RÉELLES",
+    "snapshot_doses": "DOSES{nextLine}QTÉS RÉELLES",
     "vaccine_date": "DATE DE VACCINATION",
     "vaccinator": "VACCINATEUR",
     "adr": "RIM",
