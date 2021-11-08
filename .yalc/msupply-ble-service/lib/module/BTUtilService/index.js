@@ -1,2 +1,2 @@
-export { BTUtilService } from './BTUtilService';
+export { BtUtilService } from './BTUtilService';
 //# sourceMappingURL=index.js.map

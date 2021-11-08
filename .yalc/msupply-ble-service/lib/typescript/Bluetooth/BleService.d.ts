@@ -1,4 +1,4 @@
-import { BTUtilService } from '../BTUtilService';
+import { BtUtilService } from '../BTUtilService';
 import { MacAddress } from '../types/common';
 import { Characteristic, TypedDevice, InfoLog, MonitorCharacteristicCallback, MonitorCharacteristicParser, ScanCallback, SensorLog, DataLog } from './types';
 import { BluetoothManager, MockOrRealDevice } from './BleManager';
@@ -14,7 +14,7 @@ interface Logger {
 }
 export declare class BleService {
     manager: BluetoothManager;
-    utils: BTUtilService;
+    utils: BtUtilService;
     logger: Logger;
     constructor(manager: BluetoothManager, logger?: Logger);
     connectToDevice: (deviceId: string) => Promise<MockOrRealDevice>;

@@ -443,7 +443,7 @@ class BleService {
     // but we ignore it and use our own.
     // This needs to be fixed in the main app.
 
-    this.utils = new _BTUtilService.BTUtilService();
+    this.utils = new _BTUtilService.BtUtilService();
     logger.info('BleService constructor called', {});
   }
 

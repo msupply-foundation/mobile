@@ -1,6 +1,6 @@
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
-import { BTUtilService } from '../BTUtilService';
+import { BtUtilService } from '../BTUtilService';
 import { Buffer } from 'buffer';
 import { BLUE_MAESTRO, BT510 } from '../constants';
 import { ScanMode, LogLevel } from './types';
@@ -425,7 +425,7 @@ export class BleService {
     // but we ignore it and use our own.
     // This needs to be fixed in the main app.
 
-    this.utils = new BTUtilService();
+    this.utils = new BtUtilService();
     logger.info('BleService constructor called', {});
   }
 

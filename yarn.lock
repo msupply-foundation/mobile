@@ -7685,7 +7685,7 @@ ms@2.1.2, ms@^2.1.1:
   integrity sha512-sGkPx+VjMtmA6MX27oA4FBFELFCZZ4S4XqeGOXCv68tT+jb3vk/RyaKWP0PTKyWtmLSM0b+adUTEvbs1PEaH2w==
 
 "msupply-ble-service@file:.yalc/msupply-ble-service":
-  version "0.4.1"
+  version "0.5.0"
   dependencies:
     buffer "^6.0.3"
 

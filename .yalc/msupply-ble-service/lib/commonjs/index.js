@@ -7,6 +7,7 @@ var _exportNames = {
   BleService: true,
   DevBleManager: true,
   BleManager: true,
+  BtUtilService: true,
   BT510: true,
   BLUE_MAESTRO: true
 };
@@ -28,6 +29,12 @@ Object.defineProperty(exports, "BleManager", {
     return _Bluetooth.BleManager;
   }
 });
+Object.defineProperty(exports, "BtUtilService", {
+  enumerable: true,
+  get: function () {
+    return _BTUtilService.BtUtilService;
+  }
+});
 Object.defineProperty(exports, "BT510", {
   enumerable: true,
   get: function () {
@@ -42,6 +49,8 @@ Object.defineProperty(exports, "BLUE_MAESTRO", {
 });
 
 var _Bluetooth = require("./Bluetooth");
+
+var _BTUtilService = require("./BTUtilService");
 
 var _constants = require("./constants");
 

@@ -2,7 +2,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
 import { Buffer } from 'buffer';
 import { BT510, BLUE_MAESTRO } from '../constants';
-export class BTUtilService {
+export class BtUtilService {
   constructor() {
     _defineProperty(this, "toFahrenheit", celsius => Math.round(celsius * 9.0 / 5.0) + 320.0);
 

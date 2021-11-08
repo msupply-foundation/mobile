@@ -2,7 +2,7 @@ import { Buffer } from 'buffer';
 import { TypedDevice } from '../Bluetooth/types';
 import { BT510, BLUE_MAESTRO } from '../constants';
 declare type NumberRange = [number, number];
-export declare class BTUtilService {
+export declare class BtUtilService {
     /**
      * Convert to Fahrenheit
      */

@@ -1,4 +1,4 @@
-import { BTUtilService } from '../BTUtilService';
+import { BtUtilService } from '../BTUtilService';
 
 import { Buffer } from 'buffer';
 import { BLUE_MAESTRO, BT510 } from '../constants';
@@ -57,7 +57,7 @@ const dummyLogger: Logger = {
 
 export class BleService {
   manager: BluetoothManager;
-  utils: BTUtilService;
+  utils: BtUtilService;
   logger: Logger;
   constructor(manager: BluetoothManager, logger = dummyLogger) {
     this.manager = manager;
@@ -67,7 +67,7 @@ export class BleService {
     // Caller passes in utils from the main app,
     // but we ignore it and use our own.
     // This needs to be fixed in the main app.
-    this.utils = new BTUtilService();
+    this.utils = new BtUtilService();
     logger.info('BleService constructor called', {});
   }
 

@@ -3,7 +3,7 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.BTUtilService = void 0;
+exports.BtUtilService = void 0;
 
 var _buffer = require("buffer");
 
@@ -11,7 +11,7 @@ var _constants = require("../constants");
 
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
-class BTUtilService {
+class BtUtilService {
   constructor() {
     _defineProperty(this, "toFahrenheit", celsius => Math.round(celsius * 9.0 / 5.0) + 320.0);
 
@@ -48,5 +48,5 @@ class BTUtilService {
 
 }
 
-exports.BTUtilService = BTUtilService;
+exports.BtUtilService = BtUtilService;
 //# sourceMappingURL=BTUtilService.js.map

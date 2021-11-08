@@ -1,1 +1,1 @@
-export { BTUtilService } from './BTUtilService';
+export { BtUtilService } from './BTUtilService';
