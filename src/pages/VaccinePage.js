@@ -27,6 +27,7 @@ import { selectActiveSensors } from '../selectors/Entities/sensor';
 import temperature from '../utilities/temperature';
 import { BreachManUnhappy } from '../widgets/BreachManUnhappy';
 import { formatDate } from '../utilities/formatters';
+import BtUtilService from '../bluetooth/BtUtilService';
 
 const BREACH_MAN_UNHAPPY_SIZE = 400;
 
@@ -48,7 +49,7 @@ const FridgeDisplay = ({ sensor, toFridgeDetail }) => {
       <TouchableOpacity onPress={() => toFridgeDetail(locationID)}>
         <FlexRow key={id}>
           <TextWithIcon left size="ms" containerStyle={{ flex: 1 }} Icon={<Circle size={20} />}>
-            {macAddress}
+            {BtUtilService().deviceDescriptorToDevice(macAddress).id}
           </TextWithIcon>
           <TextWithIcon
             left
