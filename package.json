@@ -75,7 +75,7 @@
     "lodash.unionby": "^4.8.0",
     "metro-config": "^0.64",
     "moment": "^2.29.1",
-    "msupply-ble-service": "link:../msupply-ble-service",
+    "msupply-ble-service": "file:.yalc/msupply-ble-service",
     "prop-types": "^15.7.2",
     "querystring": "^0.2.1",
     "react": "17.0.1",
