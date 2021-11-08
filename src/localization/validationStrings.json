@@ -10,8 +10,8 @@
     "username_required": "Enter the username"
   },
   "fr": {
-    "email_required": "Saisir une addresse courriel",
-    "email_valid": "Saisir une addresse courriel valide",
+    "email_required": "Saisir une adresse email",
+    "email_valid": "Saisir une adresse email valide",
     "password_contains_spaces": "Le mot de passe ne peut contenir des espaces",
     "password_length_invalid": "Le mot de passe doit avoir entre 8-32 caractères",
     "password_match_repeat": "Mot de passe & la confirmation du mot de passe doivent correspondre",

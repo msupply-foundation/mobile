@@ -18,7 +18,9 @@
     "password": "Mot de passe",
     "repeat_password": "Veuillez saisir de nouveau le mot de passe",
     "user_name": "Identifiant",
-    "email": "Adresse courriel",
+    "email": "Adresse E-mail",
+    "site": "Site",
+    "store": "Dépôt",
     "invalid_username_or_password": "Identifiant ou mot de passe invalide",
     "warning_sync_edit": "AVERTISSEMENT:\nCeci affectera la synchronisation de ce dépôt.\nAssurez-vous de savoir ce que vous faites!",
     "incompatible_server": "Le serveur mSupply avec lequel vous essayez de vous synchroniser n'est pas compatible avec votre version actuelle. Veuillez contacter votre administrateur."

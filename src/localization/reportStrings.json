@@ -25,5 +25,31 @@
     "field_temperature": "Temperature",
     "field_log_interval_minutes": "Log interval (minutes)",
     "email_vaccine_report_subject": "Temperature log report for"
+  },
+  "fr": {
+    "title_sensor_stats": "STATISTIQUES",
+    "title_breach_config": "CONFIGURATION DES ALERTES DE TEMPÉRATURE",
+    "title_breaches": "ALERTES",
+    "title_logs": "RELEVÉS",
+    "field_timezone": "Fuseau horaire",
+    "field_device": "Appareil",
+    "field_sensor_name": "Nom du capteur",
+    "field_exported_by": "Exporté par",
+    "field_job_description": "Description du poste",
+    "field_logging_start": "Début des relevés",
+    "field_logging_interval": "Intervalle des relevés",
+    "field_max_temperature": "Température Max",
+    "field_min_temperature": "Température Min",
+    "field_number_breaches": "Nombre d'excursions consécutives",
+    "field_breach_type": "Type d'excursion",
+    "field_duration_threshold": "Seuil de durée",
+    "field_temperature_threshold": "Seuil de température",
+    "field_starting_timestamp": "Début de l'horodatage",
+    "field_ending_timestamp": "Fin de l'horodatage",
+    "field_exposure_duration": "Durée de l'excursion (minutes)",
+    "field_timestamp": "Horodatage",
+    "field_temperature": "Température",
+    "field_log_interval_minutes": "Intervalles des relevés (minutes)",
+    "email_vaccine_report_subject": "Relevés de température pour:"
   }
 }
