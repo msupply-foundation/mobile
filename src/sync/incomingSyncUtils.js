@@ -1246,8 +1246,17 @@ const RECORD_TYPE_TO_TABLE = {
     },
   },
   Name: {
+    AdverseDrugReaction: {
+      field: 'name',
+    },
     ItemBatch: {
       field: 'supplier',
+    },
+    NameNote: {
+      field: 'name',
+    },
+    NameTagJoin: {
+      field: 'name',
     },
     Transaction: {
       field: 'otherParty',
