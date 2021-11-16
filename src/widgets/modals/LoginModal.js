@@ -201,6 +201,7 @@ export class LoginModal extends React.Component {
                   if (this.passwordInputRef) this.passwordInputRef.blur();
                   if (this.canAttemptLogin) this.onLogin();
                 }}
+                placeholder={authStrings.password}
               />
             </View>
             <View style={globalStyles.authFormButtonContainer}>
