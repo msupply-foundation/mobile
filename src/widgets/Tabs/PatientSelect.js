@@ -128,12 +128,10 @@ EmptyComponent.propTypes = {
  *
  * @prop {Func}   createPatient         Callback for creating a patient.
  * @prop {object} formConfig            Configuration of the search form
- * @prop {Bool}   isAscending           Indicator if the list of patient is sorted ascending.
  * @prop {Func}   onCancelPrescription  Cancels the prescription and returns to the vaccine page
- * @prop {Func}   onFilterData          Callback for filtering patients.
- * @prop {Func}   patients              Current set of patient data.
  * @prop {Func}   selectPatient         Callback for selecting a patient.
- * @prop {String} sortKey               Current key the list of patients is sorted by.
+ * @prop {Func}   updateForm            Callback for updating form.
+ * @prop {object} completedForm         The completed form object.
  *
  */
 const PatientSelectComponent = ({
