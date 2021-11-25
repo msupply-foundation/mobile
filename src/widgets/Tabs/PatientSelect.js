@@ -5,7 +5,7 @@
  * Sustainable Solutions (NZ) Ltd. 2021
  */
 
-import React, { useCallback, useState } from 'react';
+import React, { useMemo, useCallback, useState } from 'react';
 import PropTypes from 'prop-types';
 
 import { ActivityIndicator, Keyboard, StyleSheet, Text, ToastAndroid, View } from 'react-native';
@@ -201,10 +201,13 @@ const PatientSelectComponent = ({
   const { pageTopViewContainer } = globalStyles;
   const keyboardIsOpen = useKeyboardIsOpen();
 
-  const handleUpdate = (key, value) => {
-    updateForm(key, value);
-    filter({ ...completedForm, [key]: value });
-  };
+  const handleUpdate = useMemo(
+    (key, value) => {
+      updateForm(key, value);
+      filter({ ...completedForm, [key]: value });
+    },
+    [completedForm, updateForm]
+  );
 
   const lookupRemotePatient = async params => {
     const syncUrl = UIDatabase.getSetting(SETTINGS_KEYS.SYNC_URL);
