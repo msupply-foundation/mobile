@@ -100,7 +100,9 @@ const saveEditing = () => (dispatch, getState) => {
   const currentPatient = selectEditingName(getState());
   const createdDate = currentPatient?.createdDate ? new Date(currentPatient.createdDate) : null;
   const dateOfBirth = new Date(currentPatient.dateOfBirth);
-  const patientRecord = { ...currentPatient, dateOfBirth, createdDate };
+  const name = `${currentPatient.lastName}, ${currentPatient.firstName}`;
+
+  const patientRecord = { ...currentPatient, dateOfBirth, createdDate, name };
 
   UIDatabase.write(() => createRecord(UIDatabase, 'Patient', patientRecord));
   dispatch(reset());
