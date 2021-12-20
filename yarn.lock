@@ -1415,6 +1415,13 @@
     "@nodelib/fs.scandir" "2.1.5"
     fastq "^1.6.0"
 
+"@openmsupply/msupply-ble-service@^0.5.0":
+  version "0.5.0"
+  resolved "https://registry.yarnpkg.com/@openmsupply/msupply-ble-service/-/msupply-ble-service-0.5.0.tgz#c2fa9cadb1d7641d8bd40a2b458d17f13ac64642"
+  integrity sha512-J4TU1YWqRA/0lwyD+tMnYQPnU0k3pTZG5BCNrBOT+TnnmuhPL6DCm3nzGaZTrUPOlGktCcFAh5iMVy8fQumupg==
+  dependencies:
+    buffer "^6.0.3"
+
 "@react-native-async-storage/async-storage@^1.15.4":
   version "1.15.4"
   resolved "https://registry.yarnpkg.com/@react-native-async-storage/async-storage/-/async-storage-1.15.4.tgz#cdba464ca3bb9f10ec538342cbf2520c06f453ab"
