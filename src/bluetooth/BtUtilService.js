@@ -1,4 +1,4 @@
-import { BtUtilService as MsBtUtilService } from 'msupply-ble-service';
+import { BtUtilService as MsBtUtilService } from '@openmsupply/msupply-ble-service';
 
 let BtUtilServiceInstance;
 

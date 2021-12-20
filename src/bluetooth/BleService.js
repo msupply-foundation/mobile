@@ -1,4 +1,4 @@
-import { BleService as MsBleService } from 'msupply-ble-service';
+import { BleService as MsBleService } from '@openmsupply/msupply-ble-service';
 
 let BleServiceInstance;
 
