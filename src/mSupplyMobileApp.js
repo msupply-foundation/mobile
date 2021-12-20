@@ -12,7 +12,7 @@ import { connect } from 'react-redux';
 import { BluetoothStatus } from 'react-native-bluetooth-status';
 import { AppState, View } from 'react-native';
 import { Scheduler } from 'sussol-utilities';
-import { BleManager, DevBleManager } from 'msupply-ble-service';
+import { BleManager, DevBleManager } from '@openmsupply/msupply-ble-service';
 
 import Settings from './settings/MobileAppSettings';
 import Database from './database/BaseDatabase';
