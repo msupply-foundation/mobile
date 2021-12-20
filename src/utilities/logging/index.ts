@@ -6,8 +6,6 @@ import { logDir, logFileName, logFileDate, logFileSeparator } from './Transport'
 import { SETTINGS_KEYS } from '../../settings';
 import { UIDatabase } from '../../database/index';
 
-export type Action = (message: string | Error, details?: Record<string, unknown>) => void;
-
 const logFileFilter = file => file?.includes(`${logFileSeparator}${logFileName}`);
 
 const getExceedsThresholdFilter = (threshold = [5, 'days']) => fileName => {
@@ -17,11 +15,11 @@ const getExceedsThresholdFilter = (threshold = [5, 'days']) => fileName => {
   return asMoment.isBefore(thresholdDate);
 };
 
-export const tidyLogFiles = async () => {
+export const tidyLogFiles = async (): Promise<void[] | null> => {
   try {
     const files = await RNFS.readdir(logDir);
 
-    return Promise.all(
+    return await Promise.all(
       // All files with the name {date}__log.txt where the date is some date in the format
       // DD-MM-YY and is at least 5 days ago.
       files

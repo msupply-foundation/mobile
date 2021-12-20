@@ -1415,6 +1415,13 @@
     "@nodelib/fs.scandir" "2.1.5"
     fastq "^1.6.0"
 
+"@openmsupply/msupply-ble-service@^0.5.0":
+  version "0.5.0"
+  resolved "https://registry.yarnpkg.com/@openmsupply/msupply-ble-service/-/msupply-ble-service-0.5.0.tgz#c2fa9cadb1d7641d8bd40a2b458d17f13ac64642"
+  integrity sha512-J4TU1YWqRA/0lwyD+tMnYQPnU0k3pTZG5BCNrBOT+TnnmuhPL6DCm3nzGaZTrUPOlGktCcFAh5iMVy8fQumupg==
+  dependencies:
+    buffer "^6.0.3"
+
 "@react-native-async-storage/async-storage@^1.15.4":
   version "1.15.4"
   resolved "https://registry.yarnpkg.com/@react-native-async-storage/async-storage/-/async-storage-1.15.4.tgz#cdba464ca3bb9f10ec538342cbf2520c06f453ab"
@@ -7240,7 +7247,7 @@ metro-cache@0.64.0:
     mkdirp "^0.5.1"
     rimraf "^2.5.4"
 
-metro-config@0.64.0, metro-config@^0.64.0:
+metro-config@0.64.0, metro-config@^0.64, metro-config@^0.64.0:
   version "0.64.0"
   resolved "https://registry.yarnpkg.com/metro-config/-/metro-config-0.64.0.tgz#b634fa05cffd06b1e50e4339c200f90a42924afb"
   integrity sha512-QhM4asnX5KhlRWaugwVGNNXhX0Z85u5nK0UQ/A90bBb4xWyXqUe20e788VtdA75rkQiiI6wXTCIHWT0afbnjwQ==
@@ -8579,15 +8586,7 @@ react-deep-force-update@^1.0.0:
   resolved "https://registry.yarnpkg.com/react-deep-force-update/-/react-deep-force-update-1.1.2.tgz#3d2ae45c2c9040cbb1772be52f8ea1ade6ca2ee1"
   integrity sha512-WUSQJ4P/wWcusaH+zZmbECOk7H5N2pOIl0vzheeornkIMhu+qrNdGFm0bDZLCb0hSF0jf/kH1SgkNGfBdTc4wA==
 
-react-devtools-core@4.13.1, react-devtools-core@4.6.0, react-devtools-core@^4.6.0:
-  version "4.6.0"
-  resolved "https://registry.yarnpkg.com/react-devtools-core/-/react-devtools-core-4.6.0.tgz#2443b3c6fac78b801702af188abc6d83d56224e6"
-  integrity sha512-sjR3KC5VvGV7X6vzR3OTutPT5VeBcSKwoIXUwihpl1Nb4dkmweEbzCTPx2PYMVAqc+NZ5tPGhqBzXV+iGg5CNA==
-  dependencies:
-    shell-quote "^1.6.1"
-    ws "^7"
-
-react-devtools-core@^4.13.1:
+react-devtools-core@4.13.1, react-devtools-core@^4.13.1, react-devtools-core@^4.6.0:
   version "4.13.1"
   resolved "https://registry.yarnpkg.com/react-devtools-core/-/react-devtools-core-4.13.1.tgz#84e1b51a8cb2034e1e2276851ace7874cbb8f083"
   integrity sha512-+N7vZgjQWqkPe/q7yltXOi20U3Zy4WdXax9IcLCNB4nWsUxLrkVF0Mqbsr3h4m/j0dA4046QpJOnlwdWVQuiFw==

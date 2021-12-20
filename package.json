@@ -5,7 +5,7 @@
   },
   "name": "mSupplyMobile",
   "//": "version must be in the format ${majorNumber}.${minorNumber}.${patchNumber}-rc${releaseCandidateNumber}",
-  "version": "8.3.0",
+  "version": "8.4.0",
   "private": false,
   "license": "MIT",
   "description": "Mobile app for use with the mSupply medical inventory control software",
@@ -22,7 +22,7 @@
     "rr": "adb shell input text \"RR\"",
     "test": "jest --watch",
     "build": "cd android && ./gradlew assembleRelease",
-    "lint": "eslint src",
+    "lint": "eslint  --ext .tsx --ext .ts --ext .js --ext .jsx  src",
     "deploy": "./dev_scripts/deploy.sh",
     "export": "./dev_scripts/export.sh",
     "uninstall": "./dev_scripts/uninstall.sh",
@@ -37,7 +37,7 @@
     "preset": "react-native"
   },
   "resolutions": {
-    "react-devtools-core": "4.6.0"
+    "react-devtools-core": "4.13.1"
   },
   "lint-staged": {
     "*.{json,css,md}": [
@@ -50,6 +50,7 @@
   },
   "dependencies": {
     "@bugsnag/react-native": "^7.11.0",
+    "@openmsupply/msupply-ble-service": "^0.5.0",
     "@react-native-async-storage/async-storage": "^1.15.4",
     "@react-native-community/checkbox": "^0.5.8",
     "@react-native-community/datetimepicker": "^3.4.7",
@@ -73,6 +74,7 @@
     "lodash.merge": "^4.6.2",
     "lodash.throttle": "^4.1.1",
     "lodash.unionby": "^4.8.0",
+    "metro-config": "^0.64",
     "moment": "^2.29.1",
     "prop-types": "^15.7.2",
     "querystring": "^0.2.1",

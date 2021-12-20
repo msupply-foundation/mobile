@@ -60,6 +60,7 @@ export const ExpiryDateInput = React.memo(
     onFocus,
     onBlur,
   }) => {
+    // eslint-disable-next-line no-console
     if (debug) console.log(`- ExpiryTextInputCell: ${value}`);
 
     const { focusNextCell, getRefIndex, getCellRef, adjustToTop } = React.useContext(RefContext);

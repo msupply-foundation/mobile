@@ -33,8 +33,8 @@ const scanForSensors = (dispatch, getState) => {
   dispatch(scanStart());
 
   const deviceCallback = throttle(
-    device => {
-      const { id: macAddress } = device;
+    (_, device) => {
+      const macAddress = device;
       if (macAddress) {
         const alreadyScanned = selectScannedSensors(getState());
 

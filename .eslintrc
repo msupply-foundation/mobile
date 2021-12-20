@@ -29,6 +29,15 @@
     "import/prefer-default-export": "off",
     "indent": ["warn", 2, { "SwitchCase": 1 }],
     "max-len": ["warn", { "code": 100, "ignoreTemplateLiterals": true }],
+    "@typescript-eslint/naming-convention": [
+      "error",
+      {
+        "selector": "memberLike",
+        "modifiers": ["private"],
+        "leadingUnderscore": "require",
+        "format": ["camelCase"]
+      }
+    ],
     "no-underscore-dangle": "off",
     "no-confusing-arrow": "off",
     "no-param-reassign": "off",

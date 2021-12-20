@@ -6,8 +6,8 @@
  */
 
 import RNFS from 'react-native-fs';
-import { RealmDatabaseType, CoreDatabaseType } from './types';
 import { Database, Settings } from 'react-native-database';
+import { RealmDatabaseType, CoreDatabaseType } from './types';
 import { SETTINGS_KEYS } from '../settings';
 import { PREFERENCE_TYPE_KEYS } from './utilities/constants';
 import { formatDate, backupValidation, selectDocument, compareVersions } from '../utilities';

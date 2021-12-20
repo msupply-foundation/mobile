@@ -40,6 +40,7 @@ const CheckableCell = React.memo(
     isLastCell,
     debug,
   }) => {
+    // eslint-disable-next-line no-console
     if (debug) console.log(`- CheckableCell: ${rowKey},${columnKey}`);
 
     const onPressAction = isChecked ? onUncheck : onCheck;
