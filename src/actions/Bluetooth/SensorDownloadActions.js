@@ -137,9 +137,8 @@ const downloadLogsFromSensor = sensor => async dispatch => {
               false /* don't clear logs */
             );
 
-            await BleService().clearLogs(macAddress);
-
             await dispatch(BreachActions.createConsecutiveBreaches(sensor));
+            await BleService().clearLogs(macAddress);
           } catch (e) {
             dispatch(sensorDownloadError(sensor, DOWNLOADING_ERROR_CODES.E_CANT_CONNECT));
           }
