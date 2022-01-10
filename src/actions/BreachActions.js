@@ -32,7 +32,8 @@ const createConsecutiveBreaches = sensor => async dispatch => {
       temperature,
       timestamp: moment(timestamp).unix(),
     }));
-    const configs = sensor.breachConfigs;
+
+    const configs = sensor.breachConfigs.filter(config => config.type.includes('CONSECUTIVE'));
     const mostRecentBreach = await BreachManager().getMostRecentBreach(sensorID);
     const [breaches, temperatureLogs] = await BreachManager().createBreaches(
       sensor,
