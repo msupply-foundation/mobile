@@ -27,16 +27,10 @@ const bugsnagMiddleware = () => next => action => {
   next(action);
 };
 
-const logMiddleware = () => next => action => {
-  console.log(action.type);
-
-  next(action);
-};
-
 const store = createStore(
   persistedReducer,
   {},
-  applyMiddleware(thunk, navigationMiddleware, bugsnagMiddleware, logMiddleware)
+  applyMiddleware(thunk, navigationMiddleware, bugsnagMiddleware)
 );
 
 const persistedStore = persistStore(store);
