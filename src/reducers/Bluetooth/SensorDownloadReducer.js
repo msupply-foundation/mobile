@@ -87,6 +87,10 @@ export const SensorDownloadReducer = (state = initialState(), action) => {
       return { ...state, isPassivelyDownloadingTemps: true };
     }
 
+    case DOWNLOAD_ACTIONS.PASSIVE_DOWNLOAD_STOP: {
+      return { ...state, isPassivelyDownloadingTemps: false };
+    }
+
     case DOWNLOAD_ACTIONS.DOWNLOAD_LOGS_START: {
       return { ...state, isSyncingTemps: true, error: null };
     }

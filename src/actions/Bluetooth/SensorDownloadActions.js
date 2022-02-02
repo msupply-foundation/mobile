@@ -20,12 +20,14 @@ export const DOWNLOAD_ACTIONS = {
   DOWNLOAD_LOGS_ERROR: 'Bluetooth/downloadLogsError',
   DOWNLOAD_LOGS_COMPLETE: 'Bluetooth/downloadLogsComplete',
   PASSIVE_DOWNLOAD_START: 'Bluetooth/passiveDownloadStart',
+  PASSIVE_DOWNLOAD_STOP: 'Bluetooth/passiveDownloadStop',
   SENSOR_DOWNLOAD_START: 'Bluetooth/sensorDownloadStart',
   SENSOR_DOWNLOAD_SUCCESS: 'Bluetooth/sensorDownloadSuccess',
   SENSOR_DOWNLOAD_ERROR: 'Bluetooth/sensorDownloadError',
 };
 
 const startPassiveDownloadJob = () => ({ type: DOWNLOAD_ACTIONS.PASSIVE_DOWNLOAD_START });
+const stopPassiveDownloadJob = () => ({ type: DOWNLOAD_ACTIONS.PASSIVE_DOWNLOAD_STOP });
 const downloadLogsStart = () => ({ type: DOWNLOAD_ACTIONS.DOWNLOAD_LOGS_START });
 const downloadLogsComplete = () => ({ type: DOWNLOAD_ACTIONS.DOWNLOAD_LOGS_COMPLETE });
 const downloadLogsError = error => ({
@@ -187,4 +189,5 @@ const startDownloadAll = () => async (dispatch, getState) => {
 export const SensorDownloadActions = {
   startDownloadAll,
   startPassiveDownloadJob,
+  stopPassiveDownloadJob,
 };
