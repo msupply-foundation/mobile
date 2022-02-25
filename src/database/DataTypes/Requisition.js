@@ -52,6 +52,10 @@ export class Requisition extends Realm.Object {
    */
   destructor(database) {
     database.delete('RequisitionItem', this.items);
+
+    if (this.linkedTransaction) {
+      database.delete('Transaction', this.linkedTransaction);
+    }
   }
 
   /**
