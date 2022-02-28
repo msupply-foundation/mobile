@@ -249,7 +249,7 @@ export class Requisition extends Realm.Object {
    */
   createCustomerInvoice(database, user) {
     if (this.isRequest || this.isFinalised) {
-      throw new Error('Cannot create invoice from Finalised or Request Requistion ');
+      throw new Error('Cannot create invoice from Finalised or Request Requisition ');
     }
 
     if (
