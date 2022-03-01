@@ -187,7 +187,7 @@ export const CustomerRequisitions = ({
 };
 
 const mapDispatchToProps = dispatch => ({
-  ...getPageDispatchers(dispatch, 'Transaction', ROUTES.CUSTOMER_REQUISITIONS),
+  ...getPageDispatchers(dispatch, 'Requisition', ROUTES.CUSTOMER_REQUISITIONS),
   onFilterData: value =>
     dispatch(PageActions.filterDataWithFinalisedToggle(value, ROUTES.CUSTOMER_REQUISITIONS)),
   refreshData: () =>

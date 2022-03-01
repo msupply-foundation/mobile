@@ -52,6 +52,10 @@ export class Requisition extends Realm.Object {
    */
   destructor(database) {
     database.delete('RequisitionItem', this.items);
+
+    if (this.linkedTransaction) {
+      database.delete('Transaction', this.linkedTransaction);
+    }
   }
 
   /**
@@ -245,7 +249,7 @@ export class Requisition extends Realm.Object {
    */
   createCustomerInvoice(database, user) {
     if (this.isRequest || this.isFinalised) {
-      throw new Error('Cannot create invoice from Finalised or Request Requistion ');
+      throw new Error('Cannot create invoice from Finalised or Request Requisition ');
     }
 
     if (
