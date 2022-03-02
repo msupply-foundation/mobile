@@ -278,6 +278,10 @@ export class RequisitionItem extends Realm.Object {
     return this.stockOnHand >= 0;
   }
 
+  get hasSuppliedQuantity() {
+    return this.suppliedQuantity > 0;
+  }
+
   get daysOutOfStockIsValid() {
     return this.daysOutOfStock <= this.numberOfDaysInPeriod;
   }

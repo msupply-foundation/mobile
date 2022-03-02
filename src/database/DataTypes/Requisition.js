@@ -436,6 +436,16 @@ export class Requisition extends Realm.Object {
       return { success: false, message: modalStrings.requisition_invalid_closing_stock };
     }
 
+    // If all of the supplied quantity field has 0 quantity,
+    // then the requisition is not ready to be finalised
+    const suppliedQuantitiesAreValid = this.items.some(
+      ({ hasSuppliedQuantity }) => hasSuppliedQuantity
+    );
+
+    if (!suppliedQuantitiesAreValid) {
+      return { success: false, message: modalStrings.requisition_no_supplied_quantity };
+    }
+
     const daysOutOfStockAreValid = this.items.every(
       ({ daysOutOfStockIsValid }) => daysOutOfStockIsValid
     );
