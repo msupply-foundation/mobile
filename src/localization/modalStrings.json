@@ -60,6 +60,7 @@
     "location_details": "Location Details",
     "requisition_invalid_closing_stock": "Can't finalise a requisition which has items with a negative closing quantity. Please adjust these quantities before trying to finalise!",
     "requisition_days_out_of_stock": "Can't finalise a requisition with items that have a higher days out of stock value than the length of the requisition's period",
+    "requisition_no_supplied_quantity": "Can't finalise a requisition where no item has supplied quantity. Please give quantity to at least one of the lines before trying to finalise!",
     "permissions": "Permissions",
     "services": "Services",
     "storage_permission": "Storage",
