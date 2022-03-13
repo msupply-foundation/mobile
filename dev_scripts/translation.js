@@ -84,9 +84,13 @@ const importTranslation = () => {
     const [fileName, translationField, generalValue, selectedValue] = csvRow.split('\t');
     const trimmedFileName = fileName.trim();
     if (!csvObject[trimmedFileName]) csvObject[trimmedFileName] = {};
-    if (!selectedValue) return;
-    const trimmedSelectedValue = selectedValue.replace(nextLine, '\n').trim();
-    if (trimmedSelectedValue) csvObject[trimmedFileName][translationField] = trimmedSelectedValue;
+    if (!selectedValue) {
+      const trimmedGeneraldValue = generalValue.replace(nextLine, '\n').trim();
+      if (trimmedGeneraldValue) csvObject[trimmedFileName][translationField] = trimmedGeneraldValue;
+    } else {
+      const trimmedSelectedValue = selectedValue.replace(nextLine, '\n').trim();
+      if (trimmedSelectedValue) csvObject[trimmedFileName][translationField] = trimmedSelectedValue;
+    }
   });
 
   localizationFiles.forEach(({ fileName, fileContent }) => {
