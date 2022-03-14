@@ -50,10 +50,14 @@ fs.readdirSync(`./${filesFolder}`).forEach(file => {
 const exportTranslation = () => {
   let csvData = '';
   localizationFiles.forEach(({ fileName, fileContent }) => {
-    const {
-      [mainLanguage]: mainLanguageContent,
-      [selectedLanguage]: selectedLanguageContent,
-    } = fileContent;
+    const { [mainLanguage]: mainLanguageContent } = fileContent;
+    let { [selectedLanguage]: selectedLanguageContent } = fileContent;
+    if (selectedLanguageContent === undefined) {
+      selectedLanguageContent = Object.keys(mainLanguageContent).reduce(
+        (selectedLanguageKeys, key) => ({ ...selectedLanguageKeys, [key]: '' }),
+        {}
+      );
+    }
     Object.entries(mainLanguageContent).forEach(([key, value]) => {
       value = value.replace(/\n/gi, '{nextLine}');
       if (selectedLanguageContent[key]) {
@@ -84,9 +88,13 @@ const importTranslation = () => {
     const [fileName, translationField, generalValue, selectedValue] = csvRow.split('\t');
     const trimmedFileName = fileName.trim();
     if (!csvObject[trimmedFileName]) csvObject[trimmedFileName] = {};
-    if (!selectedValue) return;
-    const trimmedSelectedValue = selectedValue.replace(nextLine, '\n').trim();
-    if (trimmedSelectedValue) csvObject[trimmedFileName][translationField] = trimmedSelectedValue;
+    if (!selectedValue) {
+      const trimmedGeneraldValue = generalValue.replace(nextLine, '\n').trim();
+      if (trimmedGeneraldValue) csvObject[trimmedFileName][translationField] = trimmedGeneraldValue;
+    } else {
+      const trimmedSelectedValue = selectedValue.replace(nextLine, '\n').trim();
+      if (trimmedSelectedValue) csvObject[trimmedFileName][translationField] = trimmedSelectedValue;
+    }
   });
 
   localizationFiles.forEach(({ fileName, fileContent }) => {
