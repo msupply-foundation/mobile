@@ -50,10 +50,14 @@ fs.readdirSync(`./${filesFolder}`).forEach(file => {
 const exportTranslation = () => {
   let csvData = '';
   localizationFiles.forEach(({ fileName, fileContent }) => {
-    const {
-      [mainLanguage]: mainLanguageContent,
-      [selectedLanguage]: selectedLanguageContent,
-    } = fileContent;
+    const { [mainLanguage]: mainLanguageContent } = fileContent;
+    let { [selectedLanguage]: selectedLanguageContent } = fileContent;
+    if (selectedLanguageContent === undefined) {
+      selectedLanguageContent = Object.keys(mainLanguageContent).reduce(
+        (selectedLanguageKeys, key) => ({ ...selectedLanguageKeys, [key]: '' }),
+        {}
+      );
+    }
     Object.entries(mainLanguageContent).forEach(([key, value]) => {
       value = value.replace(/\n/gi, '{nextLine}');
       if (selectedLanguageContent[key]) {
