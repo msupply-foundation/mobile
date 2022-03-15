@@ -1,14 +1,15 @@
 import { getAuthHeader } from 'sussol-utilities';
 import validUrl from 'valid-url';
+import { authStrings } from '../localization';
 import LoggerService from '../utilities/logging';
 
 export const AUTH_ERROR_CODES = {
-  CONNECTION_FAILURE: 'Unable to connect',
-  INVALID_URL: 'Invalid URL',
-  INVALID_PASSWORD: 'Invalid username or password',
-  MISSING_CREDENTIALS: 'Missing username and/or password',
-  PARSING_ERROR: 'Unable to parse server response',
-  LICENSE_ERROR: 'The server reported a license error',
+  CONNECTION_FAILURE: authStrings.connection_failure,
+  INVALID_URL: authStrings.url_failure,
+  INVALID_PASSWORD: authStrings.credentials_failure,
+  MISSING_CREDENTIALS: authStrings.credentials_missing,
+  PARSING_ERROR: authStrings.parsing_error,
+  LICENSE_ERROR: authStrings.licensing_error,
 };
 
 const logger = LoggerService.createLogger('Authentication');

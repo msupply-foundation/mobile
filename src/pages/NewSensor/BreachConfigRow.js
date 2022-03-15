@@ -2,6 +2,7 @@
 import React from 'react';
 
 import PropTypes from 'prop-types';
+import { vaccineStrings } from '../../localization';
 import { ColdBreachIcon, HotBreachIcon } from '../../widgets';
 import { EditorRow } from '../../widgets/EditorRow';
 import { DurationEditor, TemperatureEditor } from '../../widgets/StepperInputs';
@@ -10,10 +11,10 @@ import { MILLISECONDS } from '../../utilities/constants';
 import { COLD_BREACH_BLUE, DANGER_RED } from '../../globalStyles';
 
 export const TYPE_TO_LABEL = {
-  HOT_CONSECUTIVE: 'Hot consecutive',
-  HOT_CUMULATIVE: 'Hot cumulative',
-  COLD_CONSECUTIVE: 'Cold consecutive',
-  COLD_CUMULATIVE: 'Cold cumulative',
+  HOT_CONSECUTIVE: vaccineStrings.hot_consecutive,
+  HOT_CUMULATIVE: vaccineStrings.hot_cumulative,
+  COLD_CONSECUTIVE: vaccineStrings.cold_consecutive,
+  COLD_CUMULATIVE: vaccineStrings.cold_cumulative,
 };
 
 export const BreachConfigRow = React.memo(
