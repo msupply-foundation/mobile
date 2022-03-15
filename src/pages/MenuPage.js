@@ -108,11 +108,12 @@ const Menu = ({
   const isFocused = useIsFocused();
 
   const MenuButton = useCallback(
-    (text, onPress) => (
+    ({ text, onPress }) => (
       <Button
         style={menuButton}
         textStyle={text.length || WIDE_BUTTON_LENGHT <= 0 ? menuWideButtonText : menuButtonText}
-        {...{ ...text, ...onPress }}
+        text={text}
+        onPress={onPress}
       />
     ),
     [usingDashboard, usingDispensary, usingCashRegister, usingModules, hasVaccines]
