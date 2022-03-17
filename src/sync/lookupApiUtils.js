@@ -256,8 +256,8 @@ export const getPatientHistoryResponseProcessor = ({
 
 export const processPatientResponse = response => {
   const result = processResponse(response);
-  return result.map(
-    ({
+  return result.map(patient => {
+    const {
       ID: id,
       name,
       code,
@@ -277,7 +277,9 @@ export const processPatientResponse = response => {
       female,
       nationality_ID,
       ethnicity_ID,
-    }) => ({
+    } = patient;
+
+    return {
       id,
       name,
       barcode,
@@ -291,14 +293,14 @@ export const processPatientResponse = response => {
       firstName,
       middleName,
       lastName,
-      nationality: UIDatabase.get('Nationality', nationality_ID),
-      ethnicity: UIDatabase.get('Ethnicity', ethnicity_ID),
-      dateOfBirth: parseDate(date_of_birth),
-      policies: processInsuranceResponse(nameInsuranceJoin),
-      nameNotes: processNameNoteResponse(nameNotes),
+      nationality: nationality_ID ? UIDatabase.get('Nationality', nationality_ID) : undefined,
+      ethnicity: ethnicity_ID ? UIDatabase.get('Ethnicity', ethnicity_ID) : undefined,
+      dateOfBirth: date_of_birth ? parseDate(date_of_birth) : undefined,
+      policies: nameInsuranceJoin ? processInsuranceResponse(nameInsuranceJoin) : undefined,
+      nameNotes: nameNotes ? processNameNoteResponse(nameNotes) : undefined,
       female,
-    })
-  );
+    };
+  });
 };
 
 export const processPrescriberResponse = response =>

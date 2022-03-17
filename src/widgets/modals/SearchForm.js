@@ -174,8 +174,8 @@ const mapDispatchToProps = dispatch => ({
     if (result) {
       await dispatch(PatientActions.patientUpdate(patient));
       batch(() => {
-        patient.policies.forEach(policy => dispatch(InsuranceActions.update(policy)));
-        dispatch(NameNoteActions.createNotes(patient?.nameNotes));
+        (patient?.policies || []).forEach(policy => dispatch(InsuranceActions.update(policy)));
+        if (patient?.nameNotes) dispatch(NameNoteActions.createNotes(patient?.nameNotes));
       });
     } else {
       ToastAndroid.show(generalStrings.problem_connecting_please_try_again, ToastAndroid.LONG);
