@@ -86,7 +86,7 @@ const getQueryString = params => {
     if (!value) return queryObject;
 
     const formatter = {
-      [TYPES.STRING]: string => `@${string}@`,
+      [TYPES.STRING]: string => `${string}@`,
       [TYPES.DATE]: date => moment(date).format('DDMMYYYY'),
       [TYPES.NUMBER]: number => Number(number),
     };
@@ -127,8 +127,10 @@ const getPatientQueryString = ({
 };
 
 export const getPatientRequestUrl = params => {
+  console.log('params', params);
   const endpoint = RESOURCES.PATIENT;
   const queryString = getPatientQueryString(params);
+  console.log('queryString', queryString);
   return endpoint + queryString;
 };
 
