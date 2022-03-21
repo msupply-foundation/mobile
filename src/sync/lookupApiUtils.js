@@ -27,6 +27,7 @@ const RESOURCES = {
   PATIENT: '/api/v4/patient',
   PATIENT_HISTORY: '/api/v4/patient_history',
   PRESCRIBER: '/api/v4/prescriber',
+  NAME_IMPORT: '/api/v4/name_import',
   NAME_STORE_JOIN: '/api/v4/name_store_join',
 };
 
@@ -127,10 +128,8 @@ const getPatientQueryString = ({
 };
 
 export const getPatientRequestUrl = params => {
-  console.log('params', params);
   const endpoint = RESOURCES.PATIENT;
   const queryString = getPatientQueryString(params);
-  console.log('queryString', queryString);
   return endpoint + queryString;
 };
 
@@ -279,6 +278,7 @@ export const processPatientResponse = response => {
       female,
       nationality_ID,
       ethnicity_ID,
+      is_in_msupply,
     } = patient;
 
     return {
@@ -301,6 +301,7 @@ export const processPatientResponse = response => {
       policies: nameInsuranceJoin ? processInsuranceResponse(nameInsuranceJoin) : undefined,
       nameNotes: nameNotes ? processNameNoteResponse(nameNotes) : undefined,
       female,
+      inmSupply: is_in_msupply,
     };
   });
 };
@@ -340,10 +341,26 @@ export const createPatientVisibility = async name => {
 
   if (nameExists) return true;
 
-  const body = { store_ID: thisStoreID, name_ID: nameID };
+  const inmSupply = name.inmSupply ?? true;
+
+  const url = `${getServerURL()}${inmSupply ? RESOURCES.NAME_STORE_JOIN : RESOURCES.NAME_IMPORT}`;
+
+  const body = { store_ID: thisStoreID };
+  if (inmSupply) body.name_ID = nameID;
+  else {
+    body.name = {
+      ID: name.id,
+      code: name.code,
+      first: name.firstName,
+      last: name.lastName,
+      name: name.name,
+      date_of_birth: name.dateOfBirth.toISOString(),
+      female: name.female,
+    };
+  }
 
   try {
-    const response = await fetch(`${getServerURL()}${RESOURCES.NAME_STORE_JOIN}`, {
+    const response = await fetch(url, {
       method: 'POST',
       body: JSON.stringify(body),
       headers: {
