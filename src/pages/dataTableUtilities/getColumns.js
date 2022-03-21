@@ -178,6 +178,7 @@ const PAGE_COLUMNS = {
     COLUMN_NAMES.IS_REMOTE,
   ],
   [MODALS.PATIENT_LOOKUP]: [
+    COLUMN_NAMES.IN_MSUPPLY,
     COLUMN_NAMES.FIRST_NAME,
     COLUMN_NAMES.LAST_NAME,
     COLUMN_NAMES.DATE_OF_BIRTH,
@@ -596,6 +597,14 @@ const COLUMNS = () => ({
     key: COLUMN_KEYS.PAYMENT_TYPE_TITLE,
     title: tableStrings.payment_type,
     sortable: false,
+    editable: false,
+  },
+  [COLUMN_NAMES.IN_MSUPPLY]: {
+    type: COLUMN_TYPES.STRING,
+    key: COLUMN_KEYS.IN_MSUPPLY,
+    title: tableStrings.in_msupply,
+    alignText: 'left',
+    sortable: true,
     editable: false,
   },
   [COLUMN_NAMES.FIRST_NAME]: {
