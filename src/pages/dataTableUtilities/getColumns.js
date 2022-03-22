@@ -18,7 +18,7 @@ const PAGE_COLUMN_WIDTHS = {
   [MODALS.PATIENT_HISTORY_LOOKUP]: [1, 4, 1, 1, 2, 1],
   [MODALS.PATIENT_HISTORY_LOOKUP_WITH_VACCINES]: [1, 4, 1, 1, 2, 1],
   [MODALS.VACCINE_HISTORY_LOOKUP]: [1, 4, 1, 1, 2, 1],
-  [MODALS.PATIENT_LOOKUP]: [2, 2, 2],
+  [MODALS.PATIENT_LOOKUP]: [2, 2, 2, 1],
   [MODALS.VACCINE_PATIENT_LOOKUP]: [2, 2, 2, 1],
   [MODALS.PRESCRIBER_LOOKUP]: [2, 2, 2],
   [MODALS.REGIMEN_DATA]: [4, 1, 5],
@@ -178,10 +178,10 @@ const PAGE_COLUMNS = {
     COLUMN_NAMES.IS_REMOTE,
   ],
   [MODALS.PATIENT_LOOKUP]: [
-    COLUMN_NAMES.IN_MSUPPLY,
     COLUMN_NAMES.FIRST_NAME,
     COLUMN_NAMES.LAST_NAME,
     COLUMN_NAMES.DATE_OF_BIRTH,
+    COLUMN_NAMES.IN_MSUPPLY,
   ],
   [MODALS.VACCINE_PATIENT_LOOKUP]: [
     COLUMN_NAMES.FIRST_NAME,
@@ -597,14 +597,6 @@ const COLUMNS = () => ({
     key: COLUMN_KEYS.PAYMENT_TYPE_TITLE,
     title: tableStrings.payment_type,
     sortable: false,
-    editable: false,
-  },
-  [COLUMN_NAMES.IN_MSUPPLY]: {
-    type: COLUMN_TYPES.STRING,
-    key: COLUMN_KEYS.IN_MSUPPLY,
-    title: tableStrings.in_msupply,
-    alignText: 'left',
-    sortable: true,
     editable: false,
   },
   [COLUMN_NAMES.FIRST_NAME]: {
@@ -1193,6 +1185,15 @@ const COLUMNS = () => ({
     title: tableStrings.selected,
     alignText: 'center',
     sortable: false,
+    editable: false,
+  },
+
+  [COLUMN_NAMES.IN_MSUPPLY]: {
+    type: COLUMN_TYPES.CHECKABLE,
+    key: COLUMN_KEYS.IN_MSUPPLY,
+    title: tableStrings.in_msupply,
+    alignText: 'center',
+    sortable: true,
     editable: false,
   },
 

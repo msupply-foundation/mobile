@@ -147,6 +147,7 @@ export const COLUMN_NAMES = {
   ENTRY_DATE: 'entryDate',
   EXPIRY_DATE: 'expiryDate',
   FIRST_NAME: 'firstName',
+  IN_MSUPPLY: 'inmSupply',
   INVOICE_TYPE: 'invoiceType',
   INVOICE_NUMBER: 'invoiceNumber',
   IS_REMOTE: 'isRemote',
