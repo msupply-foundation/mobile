@@ -10,7 +10,13 @@
     "store": "Store",
     "invalid_username_or_password": "Invalid username or password",
     "warning_sync_edit": "WARNING:\nThis will affect syncing for this store.\nMake sure you know what you are doing!",
-    "incompatible_server": "The mSupply Server you're trying to sync with is not compatible with your current version. Please contact your administrator."
+    "incompatible_server": "The mSupply Server you're trying to sync with is not compatible with your current version. Please contact your administrator.",
+    "connection_failure": "Unable to connect",
+    "url_failure": "Invalid URL",
+    "credentials_failure": "Invalid username or password",
+    "credentials_missing": "Missing username and/or password",
+    "parsing_error": "Unable to parse server response",
+    "licensing_error": "The server reported a license error"
   },
   "fr": {
     "logging_in": "Connexion en cours",
@@ -65,7 +71,12 @@
     "store": "Local",
     "invalid_username_or_password": "Nome de usuário ou senha inválidos",
     "warning_sync_edit": "ATENÇÃO:\nEssa ação irá afetar a sincronização desse local.\nVocê está certo disso?",
-    "incompatible_server": "O servidor mSupply ao qual deseja se conectar não é compatível com a sua versão atual. Favor entrar em contato com o administrador"
+    "incompatible_server": "O servidor mSupply ao qual deseja se conectar não é compatível com a sua versão atual. Favor entrar em contato com o administrador",
+    "url_failure": "URL inválida",
+    "credentials_failure": "Usuário ou senha inválidos",
+    "credentials_missing": "Usuário ou senha não fornecidos",
+    "parsing_error": "Não foi possível conectar-se ao servidor",
+    "licensing_error": "O servidor não possúi uma licensa válida"
   },
   "es": {
     "logging_in": "Iniciando sesión..",

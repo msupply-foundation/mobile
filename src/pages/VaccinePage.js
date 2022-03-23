@@ -18,7 +18,7 @@ import {
   FlexView,
 } from '../widgets/index';
 import { TextWithIcon } from '../widgets/Typography';
-import { buttonStrings } from '../localization';
+import { vaccineStrings, buttonStrings } from '../localization';
 import { APP_FONT_FAMILY, DARKER_GREY, BLACK } from '../globalStyles';
 import { gotoFridgeDetailPage, gotoNewSensorPage } from '../navigation/actions';
 import { AfterInteractions } from '../widgets/AfterInteractions';
@@ -34,7 +34,7 @@ const BREACH_MAN_UNHAPPY_SIZE = 400;
 const EmptyComponent = () => (
   <FlexView justifyContent="center" alignItems="center" flex={1}>
     <BreachManUnhappy size={BREACH_MAN_UNHAPPY_SIZE} />
-    <Text style={localStyles.emptyText}>Add sensors to start logging temperatures</Text>
+    <Text style={localStyles.emptyText}>{vaccineStrings.new_sensor_warning}</Text>
   </FlexView>
 );
 

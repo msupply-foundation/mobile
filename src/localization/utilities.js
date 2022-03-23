@@ -21,6 +21,9 @@ import {
   formInputStrings,
   dispensingStrings,
   vaccineStrings,
+  validationStrings,
+  reportStrings,
+  demoUserModalStrings,
 } from './index';
 
 const DATE_CONFIGS = {
@@ -45,16 +48,19 @@ export const setDateLocale = languageCode =>
 export function setCurrentLanguage(language) {
   authStrings.setLanguage(language);
   buttonStrings.setLanguage(language);
+  demoUserModalStrings.setLanguage(language);
+  dispensingStrings.setLanguage(language);
+  formInputStrings.setLanguage(language);
   generalStrings.setLanguage(language);
   modalStrings.setLanguage(language);
   navStrings.setLanguage(language);
   pageInfoStrings.setLanguage(language);
-  tableStrings.setLanguage(language);
-  syncStrings.setLanguage(language);
   programStrings.setLanguage(language);
-  formInputStrings.setLanguage(language);
-  dispensingStrings.setLanguage(language);
+  reportStrings.setLanguage(language);
+  syncStrings.setLanguage(language);
+  tableStrings.setLanguage(language);
   vaccineStrings.setLanguage(language);
+  validationStrings.setLanguage(language);
 }
 
 export default setCurrentLanguage;
