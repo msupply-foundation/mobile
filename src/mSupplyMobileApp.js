@@ -110,30 +110,26 @@ class MSupplyMobileAppContainer extends React.Component {
   }
 
   componentDidUpdate() {
-    const { dispatch, usingVaccines, syncTemperatures, requestBluetooth } = this.props;
+    const { dispatch, requestBluetooth } = this.props;
 
-    if (usingVaccines) {
-      const { isPassivelyDownloadingTemps } = this.props;
+    this.startTemperatureDownload();
 
-      if (!isPassivelyDownloadingTemps) {
-        this.scheduler.schedule(syncTemperatures, BLUETOOTH_SYNC_INTERVAL);
-        dispatch(SensorDownloadActions.startPassiveDownloadJob());
-      }
-
-      BluetoothStatus.addListener(requestBluetooth);
-      dispatch(PermissionActions.checkPermissions());
-    }
+    BluetoothStatus.addListener(requestBluetooth);
+    dispatch(PermissionActions.checkPermissions());
   }
 
   componentDidMount = () => {
-    if (!__DEV__) AppState.addEventListener('change', this.onAppStateChange);
+    this.startTemperatureDownload();
+    AppState.addEventListener('change', this.onAppStateChange);
   };
 
   componentWillUnmount = () => {
-    const { usingVaccines } = this.props;
+    const { usingVaccines, dispatch } = this.props;
+
+    dispatch(SensorDownloadActions.stopPassiveDownloadJob());
 
     if (usingVaccines) BluetoothStatus.removeListener();
-    if (!__DEV__) AppState.removeEventListener('change', this.onAppStateChange);
+    AppState.removeEventListener('change', this.onAppStateChange);
 
     this.scheduler.clearAll();
   };
@@ -206,6 +202,19 @@ class MSupplyMobileAppContainer extends React.Component {
       dispatch(setSyncError(error.message));
     }
   };
+
+  startTemperatureDownload() {
+    const { dispatch, usingVaccines, syncTemperatures } = this.props;
+
+    if (usingVaccines) {
+      const { isPassivelyDownloadingTemps } = this.props;
+
+      if (!isPassivelyDownloadingTemps) {
+        this.scheduler.schedule(syncTemperatures, BLUETOOTH_SYNC_INTERVAL);
+        dispatch(SensorDownloadActions.startPassiveDownloadJob());
+      }
+    }
+  }
 
   renderLoadingIndicator = () => {
     const { isLoading } = this.state;

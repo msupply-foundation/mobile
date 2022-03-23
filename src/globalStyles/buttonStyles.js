@@ -69,7 +69,7 @@ export const buttonStyles = {
     padding: 15,
     marginVertical: 12,
     marginHorizontal: 30,
-    width: 240,
+    width: 250,
     height: 60,
     borderWidth: 1,
     borderRadius: 4,
