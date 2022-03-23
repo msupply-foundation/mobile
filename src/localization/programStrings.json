@@ -194,10 +194,12 @@
   "pt": {
     "select_a_program": "Selecione um programa",
     "select_a_supplier": "Selecione um fornecedor",
+    "select_a_customer": "Selecione um cliente",
     "select_an_order_type": "Selecione um tipo de pedido",
     "select_a_period": "Selecione um período",
     "no_programs": "Não existem programas",
     "no_suppliers": "Não existem fornecedores",
+    "no_customers": "Não existem clientes",
     "no_order_types": "Não existem tipos de pedido",
     "no_periods": "Não existem períodos",
     "program": "Programa",
@@ -221,7 +223,8 @@
     "program_stocktake": "Inventário por\nprograma",
     "general_order": "Pedido comum",
     "emergency_order": "Pedido de emergência",
-    "max_items": "Máx. Itens"
+    "max_items": "Máx. Itens",
+    "customer_is_store": "Aviso: Este cliente é um local virtual"
   },
   "es": {
     "select_a_program": "Seleccionar un programa",

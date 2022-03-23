@@ -61,8 +61,11 @@
     "repeat_password": "Por favor, reinsira a senha",
     "user_name": "Nome de usuário",
     "email": "E-mail",
+    "site": "Servidor",
+    "store": "Local",
     "invalid_username_or_password": "Nome de usuário ou senha inválidos",
-    "warning_sync_edit": "ATENÇÃO:\nEssa ação irá afetar a sincronização desse local.\nVocê está certo disso?"
+    "warning_sync_edit": "ATENÇÃO:\nEssa ação irá afetar a sincronização desse local.\nVocê está certo disso?",
+    "incompatible_server": "O servidor mSupply ao qual deseja se conectar não é compatível com a sua versão atual. Favor entrar em contato com o administrador"
   },
   "es": {
     "logging_in": "Iniciando sesión..",

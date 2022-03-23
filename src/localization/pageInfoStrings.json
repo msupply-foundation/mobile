@@ -125,6 +125,14 @@
     "category": "အမျိုးအစား"
   },
   "pt": {
+    "open_vial_wastage": "Frascos abertos descartados",
+    "closed_vial_wastage": "Frascos fechados descartados",
+    "last_requisition_date": "Última data de solicitação",
+    "temperature_range": "Intervalo de temperatura",
+    "number_of_affected_batches": "No. de lotes afetados",
+    "duration": "Duração",
+    "location": "Localização",
+    "affected_quantity": "Quantidade afetada",
     "address": "Endereço",
     "code": "Código",
     "comment": "Comentário",
@@ -138,7 +146,15 @@
     "supplier": "Fornecedor",
     "their_ref": "Referência do outro local",
     "by_batch": "Por lote",
-    "category": "Categoria"
+    "category": "Categoria",
+    "suggested_equals": "Quantidade sugerida",
+    "suggested_formula": "(Meses de uso x Máx. MCO) - No outro local",
+    "amc_equals": "Meses de uso",
+    "number_of_days_in_a_month": "Número de dias no mês",
+    "number_of_days_in_a_month_formula": "Erro:509",
+    "amc_formula": "(Saída x No. dias no mês) / (Dias em intervalo – DSE)",
+    "none_suggested": "(Nenhum sugerido)",
+    "created_date": "Criar data"
   },
   "es": {
     "address": "Dirección",

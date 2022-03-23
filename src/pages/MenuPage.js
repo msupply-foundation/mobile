@@ -58,6 +58,8 @@ import {
 } from '../selectors/Entities/vaccinePrescription';
 import { SUSSOL_ORANGE } from '../globalStyles/colors';
 
+const WIDE_BUTTON_LENGHT = 20;
+
 const exportData = async () => {
   const syncSiteName = UIDatabase.getSetting(SETTINGS_KEYS.SYNC_SITE_NAME);
   const { success, message } = await UIDatabase.exportData(syncSiteName);
@@ -91,10 +93,10 @@ const Menu = ({
   hasVaccines,
   toVaccineDispensingPage,
 }) => {
-  const { menuButton, menuButtonText: buttonText, appBackground } = globalStyles;
+  const { menuButton, menuButtonText, menuWideButtonText, appBackground } = globalStyles;
   const { image, originalContainer, moduleContainer, container, moduleRow } = styles;
   const labelButtonText = {
-    ...buttonText,
+    ...menuButtonText,
     width: 175,
     textAlign: 'center',
   };
@@ -106,7 +108,14 @@ const Menu = ({
   const isFocused = useIsFocused();
 
   const MenuButton = useCallback(
-    props => <Button style={menuButton} textStyle={buttonText} {...props} />,
+    ({ text, onPress }) => (
+      <Button
+        style={menuButton}
+        textStyle={text.length || WIDE_BUTTON_LENGHT <= 0 ? menuWideButtonText : menuButtonText}
+        text={text}
+        onPress={onPress}
+      />
+    ),
     [usingDashboard, usingDispensary, usingCashRegister, usingModules, hasVaccines]
   );
 

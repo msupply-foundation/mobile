@@ -20,6 +20,7 @@ import {
   LANGUAGE_CODES,
   formInputStrings,
   dispensingStrings,
+  vaccineStrings,
 } from './index';
 
 const DATE_CONFIGS = {
@@ -53,6 +54,7 @@ export function setCurrentLanguage(language) {
   programStrings.setLanguage(language);
   formInputStrings.setLanguage(language);
   dispensingStrings.setLanguage(language);
+  vaccineStrings.setLanguage(language);
 }
 
 export default setCurrentLanguage;

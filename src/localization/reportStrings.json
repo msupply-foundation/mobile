@@ -51,5 +51,32 @@
     "field_temperature": "Température",
     "field_log_interval_minutes": "Intervalles des relevés (minutes)",
     "email_vaccine_report_subject": "Relevés de température pour:"
+  },
+  "pt": {
+    "title_logging": "Registrando",
+    "title_sensor_stats": "Estatísticas",
+    "title_breach_config": "Configurações de violação",
+    "title_breaches": "Vialoções",
+    "title_logs": "Registros",
+    "field_timezone": "Fuso horário",
+    "field_device": "Dispositivo",
+    "field_sensor_name": "Nome do sensor",
+    "field_exported_by": "Exportado por",
+    "field_job_description": "Descrição do trabalho",
+    "field_logging_start": "Início do registo",
+    "field_logging_interval": "Intervalo do registro",
+    "field_max_temperature": "Temperatura máxima",
+    "field_min_temperature": "Temperatura mínima",
+    "field_number_breaches": "Número de violações consecutivas",
+    "field_breach_type": "Tipo de violação",
+    "field_duration_threshold": "Duração violação do limite",
+    "field_temperature_threshold": "Temperatura limite",
+    "field_starting_timestamp": "Data e hora de início",
+    "field_ending_timestamp": "Data e hora de fim",
+    "field_exposure_duration": "Duração de exposição (minutos)",
+    "field_timestamp": "Registro de tempo",
+    "field_temperature": "Temperatura",
+    "field_log_interval_minutes": "Intervalo do registro (minutos)",
+    "email_vaccine_report_subject": "Relatório de temperatura para"
   }
 }

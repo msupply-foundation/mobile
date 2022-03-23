@@ -57,6 +57,11 @@ export const buttonStyles = {
     fontSize: 17,
     color: DARKER_GREY,
   },
+  menuWideButtonText: {
+    fontFamily: APP_FONT_FAMILY,
+    fontSize: 16,
+    color: DARKER_GREY,
+  },
   whiteButtonText: {
     fontSize: 18,
     color: WHITE,
@@ -66,7 +71,6 @@ export const buttonStyles = {
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: 'white',
-    padding: 15,
     marginVertical: 12,
     marginHorizontal: 30,
     width: 250,
