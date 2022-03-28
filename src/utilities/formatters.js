@@ -74,6 +74,7 @@ export const formatDate = date => (date ? moment(date).fromNow() : generalString
  * @return  {string}              A string representing the date in 'yyyy-mm-dd' format
  */
 export const convertMobileDateToISO = dateString => {
+  dateString = moment(dateString).format('MM/DD/YYYY');
   const dayOfMonth = dateString.substring(0, 2);
   const month = dateString.substring(3, 5);
   const year = dateString.substring(6, 10);
