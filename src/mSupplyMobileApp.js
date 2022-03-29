@@ -153,8 +153,6 @@ class MSupplyMobileAppContainer extends React.Component {
   onAuthentication = user => {
     const { dispatch } = this.props;
     dispatch(UserActions.login(user));
-    // Required to refresh menuApp after language is updated (which is only on login page)
-    dispatch(UserActions.setLanguage(UIDatabase.getSetting(SETTINGS_KEYS.CURRENT_LANGUAGE)));
     this.postSyncProcessor.setUser(user);
   };
 
