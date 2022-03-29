@@ -9,6 +9,7 @@ import { USER_ACTION_TYPES } from '../actions/UserActions';
 
 const initialState = () => ({
   currentUser: null,
+  currentLanguage: 'gb',
   time: null,
 });
 
@@ -27,6 +28,11 @@ export const UserReducer = (state = initialState(), action) => {
 
     case USER_ACTION_TYPES.SET_TIME: {
       return { ...state, time: moment() };
+    }
+
+    case USER_ACTION_TYPES.SET_LANGUAGE: {
+      const { payload } = action;
+      return { ...state, currentLanguage: payload.code };
     }
 
     default:

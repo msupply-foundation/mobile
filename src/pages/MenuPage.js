@@ -14,9 +14,10 @@ import {
   ModulesImage,
   CustomerImage,
   IconButton,
+  InfoBadge,
+  Flag,
   SupplierImage,
   StockImage,
-  InfoBadge,
 } from '../widgets';
 
 import {
@@ -89,6 +90,7 @@ const Menu = ({
   usingCashRegister,
   usingModules,
   usingVaccines,
+  currentLanguage,
   isAdmin,
   hasVaccines,
   toVaccineDispensingPage,
@@ -233,6 +235,7 @@ const Menu = ({
     () => (
       <View style={styles.bottomRow}>
         <IconButton Icon={<PowerIcon />} label={navStrings.log_out} onPress={logout} />
+        <Flag countryCode={currentLanguage} />
         {!!isInAdminMode && <MenuButton text="Realm Explorer" onPress={toRealmExplorer} />}
         {!!isInAdminMode && <MenuButton text="Export Data" onPress={exportData} />}
         {!!isAdmin && (
@@ -240,7 +243,7 @@ const Menu = ({
         )}
       </View>
     ),
-    [isInAdminMode, isAdmin]
+    [isInAdminMode, isAdmin, currentLanguage]
   );
 
   const ModuleLayout = useCallback(
@@ -330,7 +333,10 @@ const mapDispatchToProps = dispatch => ({
 });
 
 const mapStateToProps = state => {
-  const { modules } = state;
+  const {
+    modules,
+    user: { currentLanguage },
+  } = state;
 
   const {
     usingDashboard,
@@ -351,6 +357,7 @@ const mapStateToProps = state => {
     usingModules,
     hasVaccines,
     isAdmin,
+    currentLanguage,
   };
 };
 
@@ -379,6 +386,7 @@ Menu.propTypes = {
   toDashboard: PropTypes.func.isRequired,
   toCashRegister: PropTypes.func.isRequired,
   isAdmin: PropTypes.bool,
+  currentLanguage: PropTypes.string.isRequired,
   usingDispensary: PropTypes.bool.isRequired,
   usingDashboard: PropTypes.bool.isRequired,
   usingCashRegister: PropTypes.bool.isRequired,

@@ -11,12 +11,14 @@ export const USER_ACTION_TYPES = {
   LOG_IN: 'USER/LOG_IN',
   LOG_OUT: 'USER/LOG_OUT',
   SET_TIME: 'USER/SET_TIME',
+  SET_LANGUAGE: 'USER/SET_LANGUAGE',
   ACTIVE: 'USER/ACTIVE',
 };
 
 const login = user => ({ type: USER_ACTION_TYPES.LOG_IN, payload: { user } });
 const logout = () => ({ type: USER_ACTION_TYPES.LOG_OUT });
 const setTime = () => ({ type: USER_ACTION_TYPES.SET_TIME });
+const setLanguage = code => ({ type: USER_ACTION_TYPES.SET_LANGUAGE, payload: { code } });
 
 const active = () => (dispatch, getState) => {
   const { user } = getState();
@@ -34,5 +36,6 @@ export const UserActions = {
   login,
   logout,
   setTime,
+  setLanguage,
   active,
 };

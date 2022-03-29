@@ -7,9 +7,11 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
 import { Image, Text, TextInput, View } from 'react-native';
 import { Button } from 'react-native-ui-components';
 
+import { UserActions } from '../../actions';
 import { SETTINGS_KEYS } from '../../settings';
 
 import globalStyles, { WHITE, SUSSOL_ORANGE, WARM_GREY } from '../../globalStyles';
@@ -34,7 +36,7 @@ const AUTH_STATUSES = {
   ERROR: 'error',
 };
 
-export class LoginModal extends React.Component {
+class LoginModal extends React.Component {
   constructor(props) {
     super(props);
     const username = props.settings.get(SETTINGS_KEYS.MOST_RECENT_USERNAME);
@@ -123,7 +125,8 @@ export class LoginModal extends React.Component {
   };
 
   onSelectLanguage = ({ item }) => {
-    const { settings } = this.props;
+    const { settings, changeCurrentLanguage } = this.props;
+    changeCurrentLanguage(UIDatabase.getSetting(SETTINGS_KEYS.CURRENT_LANGUAGE));
     settings.set(SETTINGS_KEYS.CURRENT_LANGUAGE, item.code);
     setCurrencyLocalisation(item.code);
     setDateLocale(item.code);
@@ -244,11 +247,16 @@ export class LoginModal extends React.Component {
   }
 }
 
-export default LoginModal;
-
 LoginModal.propTypes = {
   authenticator: PropTypes.object.isRequired,
+  changeCurrentLanguage: PropTypes.func.isRequired,
   isAuthenticated: PropTypes.bool.isRequired,
   onAuthentication: PropTypes.func.isRequired,
   settings: PropTypes.object.isRequired,
 };
+
+const mapDispatchToProps = dispatch => ({
+  changeCurrentLanguage: code => dispatch(UserActions.setLanguage(code)),
+});
+
+export default connect(null, mapDispatchToProps)(LoginModal);
