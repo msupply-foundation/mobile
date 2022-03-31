@@ -74,10 +74,13 @@ export const formatDate = date => (date ? moment(date).fromNow() : generalString
  * @return  {string}              A string representing the date in 'yyyy-mm-dd' format
  */
 export const convertMobileDateToISO = dateString => {
-  const dayOfMonth = dateString.substring(0, 2);
-  const month = dateString.substring(3, 5);
-  const year = dateString.substring(6, 10);
-
+  if (!dateString) return undefined; // show undefined if no date
+  const separators = ['/', '-'];
+  const splitDate = dateString.split(new RegExp(separators.join('|'), 'g'));
+  if (splitDate.length !== 3) return undefined; // date needs to have month, date and year
+  const dayOfMonth = splitDate[0].padStart(2, '0');
+  const month = splitDate[1].padStart(2, '0');
+  const year = splitDate[2].padStart(4, '0');
   return `${year}-${month}-${dayOfMonth}`;
 };
 
