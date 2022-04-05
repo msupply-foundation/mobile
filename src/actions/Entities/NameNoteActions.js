@@ -15,7 +15,6 @@ export const NAME_NOTE_ACTIONS = {
 
 const createDefaultNameNote = (nameID = '') => {
   const [pcd] = UIDatabase.objects('PCDEvents');
-
   return {
     id: generateUUID(),
     entryDate: new Date(),
@@ -26,7 +25,6 @@ const createDefaultNameNote = (nameID = '') => {
 
 const getMostRecentPCD = patient => {
   const [pcdEvent] = UIDatabase.objects('PCDEvents');
-
   if (!pcdEvent) return null;
 
   const { id: pcdEventID } = pcdEvent;
@@ -66,7 +64,6 @@ const createSurveyNameNote = patient => (dispatch, getState) => {
   const [surveySchema = {}] = selectSurveySchemas(getState);
   const { jsonSchema } = surveySchema;
   const isValid = validateJsonSchemaData(jsonSchema, newNameNote.data);
-
   dispatch(select(newNameNote, isValid));
 };
 
@@ -80,15 +77,16 @@ const updateForm = (data, validator) => ({
   payload: { data, isValid: validator(data) },
 });
 
-const saveEditing = () => (dispatch, getState) => {
+const saveEditing = prescriptionID => (dispatch, getState) => {
   const nameNote = selectCreatingNameNote(getState()) ?? {};
   const patient = UIDatabase.get('Name', nameNote?.nameID);
   const isDirty = JSON.stringify(patient?.mostRecentPCD?.data) !== JSON.stringify(nameNote?.data);
-
   if (isDirty) {
+    if (prescriptionID !== '') {
+      nameNote.data.transactID = prescriptionID;
+    }
     UIDatabase.write(() => createRecord(UIDatabase, 'NameNote', nameNote));
   }
-
   dispatch(reset());
 };
 
@@ -98,7 +96,6 @@ const createNotes = (nameNotes = []) => {
       const { patientEventID, nameID } = nameNote;
       const name = UIDatabase.get('Name', nameID);
       const patientEvent = UIDatabase.get('PatientEvent', patientEventID);
-
       if (name && patientEvent) {
         const toSave = {
           id: nameNote.id,
