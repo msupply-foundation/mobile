@@ -116,12 +116,13 @@ export const selectVaccinePatientHistory = patient => {
       ...vaccinationNameNotes,
       id,
       doses:
-        (vaccinationNameNotes.extra?.prescription?.customData?.doseNumber &&
+        (vaccinationNameNotes.extra?.prescription?.customData &&
           JSON.parse(vaccinationNameNotes.extra?.prescription?.customData).doseNumber) ??
         1, // Currently not possible to dispense more than 1 dose
       totalQuantity: 1,
       confirmDate:
-        (vaccinationNameNotes.extra?.prescription?.customData?.dateOfVaccination &&
+        (vaccinationNameNotes.extra?.prescription?.customData &&
+          JSON.parse(vaccinationNameNotes.extra?.prescription?.customData).dateOfVaccination &&
           new Date(
             convertMobileDateToISO(
               JSON.parse(vaccinationNameNotes.extra?.prescription?.customData).dateOfVaccination
