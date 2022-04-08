@@ -115,9 +115,19 @@ export const selectVaccinePatientHistory = patient => {
     .map(({ id, data: vaccinationNameNotes }) => ({
       ...vaccinationNameNotes,
       id,
-      doses: 1, // Currently not possible to dispense more than 1 dose
+      doses:
+        (vaccinationNameNotes.extra?.prescription?.customData?.doseNumber &&
+          JSON.parse(vaccinationNameNotes.extra?.prescription?.customData).doseNumber) ??
+        1, // Currently not possible to dispense more than 1 dose
       totalQuantity: 1,
-      confirmDate: new Date(convertMobileDateToISO(vaccinationNameNotes.vaccineDate)),
+      confirmDate:
+        (vaccinationNameNotes.extra?.prescription?.customData?.dateOfVaccination &&
+          new Date(
+            convertMobileDateToISO(
+              JSON.parse(vaccinationNameNotes.extra?.prescription?.customData).dateOfVaccination
+            )
+          )) ??
+        new Date(convertMobileDateToISO(vaccinationNameNotes.vaccineDate)),
       prescriberOrVaccinator: vaccinationNameNotes.vaccinator,
     }));
 
