@@ -85,7 +85,14 @@ export const PatientHistoryModal = ({ isVaccine, patientId, patientHistory, sort
   return (
     <View style={localStyles.mainContainer}>
       <View style={localStyles.tableContainer}>
-        <SimpleTable data={data} columns={columns} ListEmptyComponent={<EmptyComponent />} />
+        <SimpleTable
+          data={data}
+          columns={columns}
+          selectRow={() => {
+            console.log('selected');
+          }}
+          ListEmptyComponent={<EmptyComponent />}
+        />
       </View>
       <LoadingIndicator loading={loading} />
     </View>
