@@ -77,14 +77,11 @@ const updateForm = (data, validator) => ({
   payload: { data, isValid: validator(data) },
 });
 
-const saveEditing = prescriptionID => (dispatch, getState) => {
+const saveEditing = () => (dispatch, getState) => {
   const nameNote = selectCreatingNameNote(getState()) ?? {};
   const patient = UIDatabase.get('Name', nameNote?.nameID);
   const isDirty = JSON.stringify(patient?.mostRecentPCD?.data) !== JSON.stringify(nameNote?.data);
   if (isDirty) {
-    if (prescriptionID !== '') {
-      nameNote.data.transactID = prescriptionID;
-    }
     UIDatabase.write(() => createRecord(UIDatabase, 'NameNote', nameNote));
   }
   dispatch(reset());

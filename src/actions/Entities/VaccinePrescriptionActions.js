@@ -253,14 +253,6 @@ const confirm = () => (dispatch, getState) => {
   const vaccinator = selectSelectedVaccinator(getState());
   const supplementalData = selectSelectedSupplementalData(getState());
 
-  const patient = UIDatabase.get('Name', patientID);
-  const prescription = createPrescription(
-    patient,
-    currentUser,
-    selectedBatches,
-    vaccinator,
-    supplementalData
-  );
   if (hasBonusDoses) {
     UIDatabase.write(() => {
       const stocktake = createRecord(UIDatabase, 'Stocktake', currentUser, 'bonus_dose');
@@ -285,9 +277,19 @@ const confirm = () => (dispatch, getState) => {
   }
   batch(() => {
     dispatch(NameActions.saveEditing());
-    dispatch(NameNoteActions.saveEditing(prescription?.id));
+    dispatch(NameNoteActions.saveEditing());
     dispatch(reset());
   });
+
+  const patient = UIDatabase.get('Name', patientID);
+  const prescription = createPrescription(
+    patient,
+    currentUser,
+    selectedBatches,
+    vaccinator,
+    supplementalData
+  );
+
   createVaccinationNameNote(
     patient,
     prescription,
