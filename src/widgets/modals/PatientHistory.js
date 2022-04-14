@@ -54,7 +54,13 @@ const getColumnKey = (isVaccine, canViewHistory) => {
   return MODALS.PATIENT_HISTORY_LOOKUP_WITH_VACCINES;
 };
 
-export const PatientHistoryModal = ({ isVaccine, patientId, patientHistory, sortKey }) => {
+export const PatientHistoryModal = ({
+  isVaccine,
+  patientId,
+  patientHistory,
+  sortKey,
+  selectVaccination,
+}) => {
   const canViewHistory = UIDatabase.getPreference(PREFERENCE_KEYS.CAN_VIEW_ALL_PATIENTS_HISTORY);
   const patientsSyncEverywhere = !UIDatabase.getPreference(
     PREFERENCE_KEYS.NEW_PATIENTS_VISIBLE_THIS_STORE_ONLY
@@ -88,8 +94,8 @@ export const PatientHistoryModal = ({ isVaccine, patientId, patientHistory, sort
         <SimpleTable
           data={data}
           columns={columns}
-          selectRow={() => {
-            console.log('selected');
+          selectRow={row => {
+            selectVaccination(row);
           }}
           ListEmptyComponent={<EmptyComponent />}
         />
@@ -115,4 +121,5 @@ PatientHistoryModal.propTypes = {
   patientId: PropTypes.string.isRequired,
   patientHistory: PropTypes.array,
   sortKey: PropTypes.string.isRequired,
+  selectVaccination: PropTypes.func.isRequired,
 };

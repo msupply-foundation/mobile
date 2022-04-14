@@ -80,11 +80,37 @@ export const selectCanEditPatient = state => {
 };
 
 const jsonSchema = {
+  title: 'Vaccination Event',
   type: 'object',
   properties: {
     refused: {
       type: 'boolean',
       enum: [false],
+    },
+    refusalReason: {
+      type: 'string',
+    },
+    bonusDose: {
+      type: 'boolean',
+      default: false,
+    },
+    expiry: {
+      type: ['string', 'null'],
+      format: 'date-time',
+    },
+    extra: {
+      type: 'object',
+      properties: {
+        prescription: {
+          type: 'object',
+        },
+        vaccinator: {
+          type: 'object',
+        },
+        patient: {
+          type: 'object',
+        },
+      },
     },
     vaccinator: {
       type: 'string',
@@ -130,6 +156,7 @@ export const selectVaccinePatientHistory = patient => {
           )) ??
         new Date(convertMobileDateToISO(vaccinationNameNotes.vaccineDate)),
       prescriberOrVaccinator: vaccinationNameNotes.vaccinator,
+      select: '>',
     }));
 
   return nameNotes ?? [];
