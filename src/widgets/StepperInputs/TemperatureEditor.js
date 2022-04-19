@@ -36,7 +36,7 @@ export const TemperatureEditor = ({
 
   const getAdjustedValue = (toUpdate, addend) =>
     keepInRange(temperature(toUpdate + addend).temperature(), minimum, maximum);
-  const formatter = updated => keepInRange(updated, minimum, maximum).toFixed(2);
+  const formatter = updated => keepInRange(updated, minimum, maximum).toFixed(1);
 
   const [textInputRef, newValue, newOnChange] = useOptimisticUpdating(
     value,
