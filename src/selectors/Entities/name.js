@@ -92,24 +92,26 @@ export const selectVaccinePatientHistory = patient => {
         patientEventID === vaccinationPatientEventID &&
         validateJsonSchemaData(selectVaccinationEventSchemas()[0].jsonSchema, data)
     )
-    .map(({ id, data: vaccinationNameNotes }) => ({
-      ...vaccinationNameNotes,
+    .map(({ id, entryDate, data: vaccinationData }) => ({
+      ...vaccinationData,
       id,
       doses:
-        (vaccinationNameNotes.extra?.prescription?.customData &&
-          JSON.parse(vaccinationNameNotes.extra?.prescription?.customData).doseNumber) ??
+        (vaccinationData.extra?.prescription?.customData &&
+          JSON.parse(vaccinationData.extra?.prescription?.customData).doseNumber) ??
         1, // Currently not possible to dispense more than 1 dose
       totalQuantity: 1,
+      entryDate,
       confirmDate:
-        (vaccinationNameNotes.extra?.prescription?.customData &&
-          JSON.parse(vaccinationNameNotes.extra?.prescription?.customData).dateOfVaccination &&
+        (vaccinationData.extra?.prescription?.customData &&
+          JSON.parse(vaccinationData.extra?.prescription?.customData).dateOfVaccination &&
           new Date(
             convertMobileDateToISO(
-              JSON.parse(vaccinationNameNotes.extra?.prescription?.customData).dateOfVaccination
+              JSON.parse(vaccinationData.extra?.prescription?.customData).dateOfVaccination
             )
           )) ??
         'N/A',
-      prescriberOrVaccinator: vaccinationNameNotes.vaccinator,
+      prescriberOrVaccinator: vaccinationData.vaccinator,
+      pcdNameNoteId: vaccinationData.pcdNameNoteId ?? '',
       select: '>',
     }));
 
