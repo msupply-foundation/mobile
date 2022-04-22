@@ -207,7 +207,7 @@ const createVaccinationNameNote = (
       vaccinator: vaccinator.toJSON(),
       patient: patientObject,
     },
-    pcdEventID: getPcdEventID('PCD', patient.id),
+    pcdNameNoteId: getPcdNameNoteID(patient.id),
   };
   const newNameNote = {
     id,
@@ -219,9 +219,9 @@ const createVaccinationNameNote = (
   UIDatabase.write(() => UIDatabase.create('NameNote', newNameNote));
 };
 
-const getPcdEventID = (patientEventType, patientId) => {
+const getPcdNameNoteID = (patientEventType, patientId) => {
   const getSelectedNameNote = UIDatabase.objects('NameNote')
-    .filtered('patientEvent.code == $0 and name.id == $1', patientEventType, patientId)
+    .filtered('patientEvent.code == $0 and name.id == $1', 'PCD', patientId)
     .sorted('entryDate', true);
   return getSelectedNameNote.length > 0 ? getSelectedNameNote[0].id : '';
 };

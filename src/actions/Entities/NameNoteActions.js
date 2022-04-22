@@ -120,5 +120,4 @@ export const NameNoteActions = {
   createSurveyNameNote,
   updateForm,
   saveEditing,
-  getMostRecentPCD,
 };
