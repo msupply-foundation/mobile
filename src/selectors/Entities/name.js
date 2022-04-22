@@ -7,6 +7,7 @@ import { PREFERENCE_KEYS } from '../../database/utilities/preferenceConstants';
 import { MILLISECONDS_PER_DAY } from '../../database/utilities/constants';
 import { validateJsonSchemaData } from '../../utilities';
 import { convertMobileDateToISO } from '../../utilities/formatters';
+import { selectVaccinationEventSchemas } from '../formSchema';
 
 export const selectEditingNameId = state => {
   const NameState = selectSpecificEntityState(state, 'name');
@@ -79,54 +80,6 @@ export const selectCanEditPatient = state => {
   return UIDatabase.getPreference(PREFERENCE_KEYS.CAN_EDIT_PATIENTS_FROM_ANY_STORE) || isEditable;
 };
 
-const jsonSchema = {
-  title: 'Vaccination Event',
-  type: 'object',
-  properties: {
-    refused: {
-      type: 'boolean',
-      enum: [false],
-    },
-    refusalReason: {
-      type: 'string',
-    },
-    bonusDose: {
-      type: 'boolean',
-      default: false,
-    },
-    expiry: {
-      type: ['string', 'null'],
-      format: 'date-time',
-    },
-    extra: {
-      type: 'object',
-      properties: {
-        prescription: {
-          type: 'object',
-        },
-        vaccinator: {
-          type: 'object',
-        },
-        patient: {
-          type: 'object',
-        },
-      },
-    },
-    vaccinator: {
-      type: 'string',
-    },
-    itemName: {
-      type: 'string',
-    },
-    itemCode: {
-      type: 'string',
-    },
-    vaccineDate: {
-      type: 'string',
-    },
-  },
-};
-
 export const selectVaccinePatientHistory = patient => {
   const [vaccinationPatientEvent] = UIDatabase.objects('PatientEvent').filtered(
     "code == 'vaccination'"
@@ -136,7 +89,8 @@ export const selectVaccinePatientHistory = patient => {
   const nameNotes = patient?.nameNotes
     ?.filter(
       ({ patientEventID, data }) =>
-        patientEventID === vaccinationPatientEventID && validateJsonSchemaData(jsonSchema, data)
+        patientEventID === vaccinationPatientEventID &&
+        validateJsonSchemaData(selectVaccinationEventSchemas()[0].jsonSchema, data)
     )
     .map(({ id, data: vaccinationNameNotes }) => ({
       ...vaccinationNameNotes,
@@ -154,7 +108,7 @@ export const selectVaccinePatientHistory = patient => {
               JSON.parse(vaccinationNameNotes.extra?.prescription?.customData).dateOfVaccination
             )
           )) ??
-        new Date(convertMobileDateToISO(vaccinationNameNotes.vaccineDate)),
+        'N/A',
       prescriberOrVaccinator: vaccinationNameNotes.vaccinator,
       select: '>',
     }));
