@@ -14,6 +14,8 @@ export const selectNameNoteIsValid = state => {
   return isValid;
 };
 
+// Selects most recent PCD entered into the system at the time of vaccination
+// (i.e. closest before or at the same time as the vaccination entry)
 export const selectClosestPCDToVaccination = (patient, vaccinationEntryDate) => {
   const [pcdEvent] = UIDatabase.objects('PCDEvents');
   if (!pcdEvent) return null;
