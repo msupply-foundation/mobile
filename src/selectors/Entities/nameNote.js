@@ -21,7 +21,7 @@ export const selectClosestPCDToVaccination = (patient, vaccinationEntryDate) => 
   if (!pcdEvent) return null;
 
   const { id: pcdEventID } = pcdEvent;
-  const { nameNotes = [] } = patient ?? {};
+  const nameNotes = patient?.nameNotes ?? [];
 
   if (!nameNotes.length) return null;
 
@@ -47,7 +47,7 @@ export const selectMostRecentPCD = patient => {
   if (!pcdEvent) return null;
 
   const { id: pcdEventID } = pcdEvent;
-  const { nameNotes = [] } = patient ?? {};
+  const nameNotes = patient?.nameNotes ?? [];
 
   if (!nameNotes.length) return null;
 
