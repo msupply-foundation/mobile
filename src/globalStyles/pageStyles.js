@@ -31,7 +31,7 @@ export const pageStyles = {
     flexDirection: 'column',
     alignItems: 'flex-start',
     justifyContent: 'space-between',
-    flex: 2,
+    flex: 3,
     paddingHorizontal: 10,
   },
   pageTopRightSectionContainer: {
