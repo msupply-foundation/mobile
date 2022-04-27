@@ -57,7 +57,7 @@ export const TemperatureEditor = ({
             editable={false}
             SuffixComponent={
               <FlexColumn style={{ marginTop: 12 }}>
-                <Text style={suffixTextStyle}>{`${'\u00B0'}Celsius`}</Text>
+                <Text allowFontScaling={false} style={suffixTextStyle}>{`${'\u00B0'}Celsius`}</Text>
                 <Text style={{ fontSize: 10 }}>
                   {above ? vaccineStrings.and_above : vaccineStrings.and_below}
                 </Text>

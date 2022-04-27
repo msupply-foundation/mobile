@@ -48,7 +48,11 @@ export const DurationEditor = ({
           <TextInputWithAffix
             ref={textInputRef}
             editable={false}
-            SuffixComponent={<Text style={suffixTextStyle}>{generalStrings.minutes}</Text>}
+            SuffixComponent={
+              <Text allowFontScaling={false} style={suffixTextStyle}>
+                {generalStrings.minutes}
+              </Text>
+            }
             style={textInputStyle}
             value={newValue}
           />
