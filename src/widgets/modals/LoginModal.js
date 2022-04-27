@@ -126,7 +126,7 @@ class LoginModal extends React.Component {
 
   onSelectLanguage = ({ item }) => {
     const { settings, changeCurrentLanguage } = this.props;
-    changeCurrentLanguage(UIDatabase.getSetting(SETTINGS_KEYS.CURRENT_LANGUAGE));
+    changeCurrentLanguage(item.code);
     settings.set(SETTINGS_KEYS.CURRENT_LANGUAGE, item.code);
     setCurrencyLocalisation(item.code);
     setDateLocale(item.code);
