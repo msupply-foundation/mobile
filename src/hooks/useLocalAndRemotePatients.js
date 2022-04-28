@@ -24,6 +24,7 @@ const initialState = (initialValue = []) => ({
   noMore: true,
   limit: BATCH_SIZE,
   offset: 0,
+  useHL7: 1,
 });
 
 const reducer = (state, action) => {
@@ -98,7 +99,7 @@ const reducer = (state, action) => {
  */
 export const useLocalAndRemotePatients = (initialValue = []) => {
   const [
-    { data, loading, searchedWithNoResults, error, limit, offset, gettingMore, noMore },
+    { data, loading, searchedWithNoResults, error, limit, offset, gettingMore, noMore, useHL7 },
     dispatch,
   ] = useReducer(reducer, initialValue, initialState);
 
@@ -133,7 +134,7 @@ export const useLocalAndRemotePatients = (initialValue = []) => {
   }, [fetchError]);
 
   const onPressSearchOnline = searchParams => {
-    const paramsWithLimits = { ...searchParams, limit: BATCH_SIZE, offset: 0 };
+    const paramsWithLimits = { ...searchParams, limit: BATCH_SIZE, offset: 0, useHL7: 1 };
 
     dispatch({ type: 'clear' });
     refresh();
@@ -151,7 +152,7 @@ export const useLocalAndRemotePatients = (initialValue = []) => {
     if (!response || noMore) return;
 
     dispatch({ type: 'getting_more_patients' });
-    const paramsWithLimits = { ...searchParams, limit, offset };
+    const paramsWithLimits = { ...searchParams, limit, offset, useHL7 };
 
     // Use RNFetch as the fetch returned from `useFetch` is coupled with it's state in a specific
     // implementation, which we want to change by appending to the result, rather than replacing.

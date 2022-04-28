@@ -46,6 +46,7 @@ const PARAMETERS = {
   registrationCode: { key: 'code', type: TYPES.STRING },
   limit: { key: 'limit', type: TYPES.NUMBER },
   offset: { key: 'offset', type: TYPES.NUMBER },
+  useHL7: { key: 'useHL7', type: TYPES.NUMBER },
 };
 
 class BugsnagError extends Error {
@@ -114,6 +115,7 @@ const getPatientQueryString = ({
   policyNumber = '',
   limit = null,
   offset = null,
+  useHL7 = null,
 } = {}) => {
   const queryParams = [
     { [PARAMETERS.firstName.key]: firstName, type: PARAMETERS.firstName.type },
@@ -123,8 +125,9 @@ const getPatientQueryString = ({
     { [PARAMETERS.policyNumber.key]: policyNumber, type: PARAMETERS.policyNumber.type },
     { [PARAMETERS.offset.key]: offset, type: PARAMETERS.offset.type },
     { [PARAMETERS.limit.key]: limit, type: PARAMETERS.limit.type },
+    { [PARAMETERS.useHL7.key]: useHL7, type: PARAMETERS.useHL7.type },
   ];
-  return getQueryString(queryParams);
+  return `${getQueryString(queryParams)}&useHL7=1`;
 };
 
 export const getPatientRequestUrl = params => {
