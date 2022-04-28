@@ -53,7 +53,7 @@ export const Checkboxes = ({
           />
         </FlexColumn>
         <FlexColumn>
-          <Text style={styles.label} onPress={() => _onChange(option)(!checked)}>
+          <Text style={styles.label} onPress={() => !disabled ?? _onChange(option)(!checked)}>
             {option.label}
           </Text>
         </FlexColumn>
