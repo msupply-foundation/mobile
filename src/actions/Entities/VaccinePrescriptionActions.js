@@ -220,10 +220,10 @@ const createVaccinationNameNote = (
 };
 
 const getPcdNameNoteID = patientId => {
-  const getSelectedNameNote = UIDatabase.objects('NameNote')
+  const patientNameNotes = UIDatabase.objects('NameNote')
     .filtered('patientEvent.code == $0 and name.id == $1', 'PCD', patientId)
     .sorted('entryDate', true);
-  return getSelectedNameNote.length > 0 ? getSelectedNameNote[0].id : '';
+  return patientNameNotes.length > 0 ? patientNameNotes[0].id : '';
 };
 const createSupplementaryData = () => (dispatch, getState) => {
   // Create a supplementaryData object which is seeded with the data that was last
