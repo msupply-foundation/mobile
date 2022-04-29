@@ -73,7 +73,7 @@ export const SearchFormComponent = ({
     if (isPatient) {
       return async params => {
         fetch(
-          getPatientRequestUrl(params),
+          getPatientRequestUrl({ ...params, useHL7: 1 }),
           { headers: { authorization: getAuthorizationHeader() } },
           { responseHandler: processPatientResponse }
         );

@@ -127,7 +127,7 @@ const getPatientQueryString = ({
     { [PARAMETERS.limit.key]: limit, type: PARAMETERS.limit.type },
     { [PARAMETERS.useHL7.key]: useHL7, type: PARAMETERS.useHL7.type },
   ];
-  return `${getQueryString(queryParams)}&useHL7=1`;
+  return getQueryString(queryParams);
 };
 
 export const getPatientRequestUrl = params => {
