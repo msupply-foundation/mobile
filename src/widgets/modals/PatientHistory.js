@@ -88,12 +88,18 @@ export const PatientHistoryModal = ({
     );
   }
 
+  const disabledRows = React.useMemo(
+    () => (!isVaccine ? data.reduce((acc, record) => ({ ...acc, [record.id]: true }), {}) : []),
+    [data]
+  );
+
   return (
     <View style={localStyles.mainContainer}>
       <View style={localStyles.tableContainer}>
         <SimpleTable
           data={data}
           columns={columns}
+          disabledRows={disabledRows}
           selectRow={row => {
             selectVaccination(row);
           }}
