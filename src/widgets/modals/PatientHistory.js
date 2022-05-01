@@ -89,7 +89,7 @@ export const PatientHistoryModal = ({
   }
 
   const disabledRows = React.useMemo(
-    () => (!isVaccine ? data.reduce((acc, record) => ({ ...acc, [record.id]: true }), {}) : []),
+    () => (!isVaccine ? data.reduce((acc, record) => ({ ...acc, [record.id]: true }), {}) : {}),
     [data]
   );
 

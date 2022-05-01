@@ -8,7 +8,7 @@ import { JSONForm } from '../JSONForm/JSONForm';
 import { selectSurveySchemas, selectVaccinationEventSchemas } from '../../selectors/formSchema';
 import { FlexView } from '../FlexView';
 import { UIDatabase } from '../../database';
-import { selectClosestPCDToVaccination } from '../../selectors/Entities/nameNote';
+import { selectMostRecentNameNote } from '../../selectors/Entities/nameNote';
 import { FlexColumn } from '../FlexColumn';
 import { BreachManUnhappy } from '../BreachManUnhappy';
 import { APP_FONT_FAMILY, DARKER_GREY, GREY } from '../../globalStyles';
@@ -44,7 +44,7 @@ export const VaccinationEventComponent = ({
 
   const surveyForm = pcdNameNoteId
     ? UIDatabase.get('NameNote', pcdNameNoteId)
-    : selectClosestPCDToVaccination(patient, vaccinationEvent.entryDate);
+    : selectMostRecentNameNote(patient, 'PCD', vaccinationEvent.entryDate);
 
   const customDataObject = vaccinationEvent?.extra?.prescription?.customData
     ? JSON.parse(vaccinationEvent.extra.prescription.customData)

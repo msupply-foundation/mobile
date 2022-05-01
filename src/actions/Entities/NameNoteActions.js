@@ -1,7 +1,10 @@
 import { generateUUID } from 'react-native-database';
 import merge from 'lodash.merge';
 import { createRecord, UIDatabase } from '../../database/index';
-import { selectCreatingNameNote, selectMostRecentPCD } from '../../selectors/Entities/nameNote';
+import {
+  selectCreatingNameNote,
+  selectMostRecentNameNote,
+} from '../../selectors/Entities/nameNote';
 import { selectSurveySchemas } from '../../selectors/formSchema';
 import { validateJsonSchemaData } from '../../utilities/ajvValidator';
 
@@ -29,7 +32,7 @@ const createSurveyNameNote = patient => (dispatch, getState) => {
   // instance or is a newly created patient. If it is a realm object, convert it to
   // a plain object. If the passed patient has a past name note, merge that with a
   // default name note which has the current time, new ID etc.
-  const mostRecentPCD = selectMostRecentPCD(patient);
+  const mostRecentPCD = selectMostRecentNameNote(patient, 'PCD');
 
   const seedPCD = mostRecentPCD?.toObject ? mostRecentPCD.toObject() : mostRecentPCD;
   const defaultNameNote = createDefaultNameNote(patient.id);

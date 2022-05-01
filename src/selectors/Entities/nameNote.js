@@ -14,44 +14,26 @@ export const selectNameNoteIsValid = state => {
   return isValid;
 };
 
-// Selects most recent PCD entered into the system at the time of vaccination
-// (i.e. closest before or at the same time as the vaccination entry)
-export const selectClosestPCDToVaccination = (patient, vaccinationEntryDate) => {
-  const [pcdEvent] = UIDatabase.objects('PCDEvents');
-  if (!pcdEvent) return null;
+// Selects most recent nameNote entered into the system at the time specified
+// Defaults to searching from the current date
+export const selectMostRecentNameNote = (
+  patient,
+  patientEventCode,
+  datetoSearchFrom = new Date()
+) => {
+  const [event] = UIDatabase.objects('PatientEvent').filtered('code == $0', patientEventCode);
+  if (!event) return null;
 
-  const { id: pcdEventID } = pcdEvent;
+  const { id: eventID } = event;
   const nameNotes = patient?.nameNotes ?? [];
 
   if (!nameNotes.length) return null;
 
-  // Check first for a nameNote entered before the vaccination date
+  // Check first for a nameNote entered before the specified date
   const filtered = nameNotes.filter(
     ({ patientEventID, entryDate }) =>
-      patientEventID === pcdEventID && moment(vaccinationEntryDate) >= moment(entryDate)
+      patientEventID === eventID && moment(datetoSearchFrom) >= moment(entryDate)
   );
-
-  if (!filtered.length) return null;
-
-  const sorted = filtered.sort(
-    ({ entryDate: entryDateA }, { entryDate: entryDateB }) =>
-      moment(entryDateB).valueOf() - moment(entryDateA).valueOf()
-  );
-
-  const [mostRecentPCD] = sorted;
-  return mostRecentPCD;
-};
-
-export const selectMostRecentPCD = patient => {
-  const [pcdEvent] = UIDatabase.objects('PCDEvents');
-  if (!pcdEvent) return null;
-
-  const { id: pcdEventID } = pcdEvent;
-  const nameNotes = patient?.nameNotes ?? [];
-
-  if (!nameNotes.length) return null;
-
-  const filtered = nameNotes.filter(({ patientEventID }) => patientEventID === pcdEventID);
 
   if (!filtered.length) return null;
 
