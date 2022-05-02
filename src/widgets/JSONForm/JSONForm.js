@@ -177,6 +177,7 @@ export const JSONFormComponent = React.forwardRef(
       onSubmit,
       surveySchema,
       liveValidate,
+      disabled,
     },
     ref
   ) => {
@@ -224,6 +225,7 @@ export const JSONFormComponent = React.forwardRef(
     ) : (
       <JSONFormContext.Provider value={options}>
         <Form
+          disabled={disabled}
           liveValidate={liveValidate}
           onChange={change => {
             // Pass the validator function back with the change which has occurred each update
@@ -319,6 +321,7 @@ export const JSONFormComponent = React.forwardRef(
 export const JSONForm = React.memo(JSONFormComponent, propsAreEqual);
 
 JSONFormComponent.defaultProps = {
+  disabled: false,
   theme: defaultTheme,
   children: null,
   onSubmit: null,
@@ -330,6 +333,7 @@ JSONFormComponent.defaultProps = {
 };
 
 JSONFormComponent.propTypes = {
+  disabled: PropTypes.bool,
   formData: PropTypes.object,
   onChange: PropTypes.func,
   surveySchema: PropTypes.object,

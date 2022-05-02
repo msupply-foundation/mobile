@@ -60,6 +60,7 @@ import { SETTINGS_KEYS } from '../../settings/index';
 import { DataTable, DataTableRow, DataTableHeaderRow } from '../DataTable';
 import { selectVaccinePatientHistory } from '../../selectors/Entities/name';
 import { PatientHistoryModal } from '../modals/PatientHistory';
+import { VaccinationEvent } from '../modals/VaccinationEvent';
 
 const getMessage = (noResults, error) => {
   if (noResults) return generalStrings.could_not_find_patient;
@@ -145,6 +146,7 @@ const PatientSelectComponent = ({
   const withLoadingIndicator = useLoadingIndicator();
   const [isQrModalOpen, toggleQrModal] = useToggle();
   const [{ history, patient } = {}, setPatientHistory] = useState({});
+  const [vaccinationEvent, setVaccinationEvent] = useState(null);
 
   const hapticFeedBackOptions = {
     enableVibrateFallback: true,
@@ -323,7 +325,7 @@ const PatientSelectComponent = ({
       )}
       <QrScannerModal isOpen={isQrModalOpen} onBarCodeRead={onQrCodeRead} onClose={toggleQrModal} />
       <ModalContainer
-        isVisible={!!patient}
+        isVisible={!!patient && !vaccinationEvent}
         onClose={() => setPatientHistory({})}
         title={`${dispensingStrings.vaccination_history} ${patient?.name}`}
       >
@@ -332,7 +334,15 @@ const PatientSelectComponent = ({
           patientId={patient?.id || ''}
           sortKey="itemName"
           isVaccine={true}
+          selectVaccination={setVaccinationEvent}
         />
+      </ModalContainer>
+      <ModalContainer
+        isVisible={!!patient && !!vaccinationEvent}
+        onClose={() => setVaccinationEvent(null)}
+        title={`${dispensingStrings.vaccination_details}`}
+      >
+        <VaccinationEvent vaccinationEvent={vaccinationEvent} patient={patient} />
       </ModalContainer>
     </FlexView>
   );

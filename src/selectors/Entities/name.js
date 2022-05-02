@@ -7,6 +7,7 @@ import { PREFERENCE_KEYS } from '../../database/utilities/preferenceConstants';
 import { MILLISECONDS_PER_DAY } from '../../database/utilities/constants';
 import { validateJsonSchemaData } from '../../utilities';
 import { convertMobileDateToISO } from '../../utilities/formatters';
+import { selectVaccinationEventSchemas } from '../formSchema';
 
 export const selectEditingNameId = state => {
   const NameState = selectSpecificEntityState(state, 'name');
@@ -79,28 +80,6 @@ export const selectCanEditPatient = state => {
   return UIDatabase.getPreference(PREFERENCE_KEYS.CAN_EDIT_PATIENTS_FROM_ANY_STORE) || isEditable;
 };
 
-const jsonSchema = {
-  type: 'object',
-  properties: {
-    refused: {
-      type: 'boolean',
-      enum: [false],
-    },
-    vaccinator: {
-      type: 'string',
-    },
-    itemName: {
-      type: 'string',
-    },
-    itemCode: {
-      type: 'string',
-    },
-    vaccineDate: {
-      type: 'string',
-    },
-  },
-};
-
 export const selectVaccinePatientHistory = patient => {
   const [vaccinationPatientEvent] = UIDatabase.objects('PatientEvent').filtered(
     "code == 'vaccination'"
@@ -110,15 +89,30 @@ export const selectVaccinePatientHistory = patient => {
   const nameNotes = patient?.nameNotes
     ?.filter(
       ({ patientEventID, data }) =>
-        patientEventID === vaccinationPatientEventID && validateJsonSchemaData(jsonSchema, data)
+        patientEventID === vaccinationPatientEventID &&
+        validateJsonSchemaData(selectVaccinationEventSchemas()[0].jsonSchema, data)
     )
-    .map(({ id, data: vaccinationNameNotes }) => ({
-      ...vaccinationNameNotes,
+    .map(({ id, entryDate, data: vaccinationData }) => ({
+      ...vaccinationData,
       id,
-      doses: 1, // Currently not possible to dispense more than 1 dose
+      doses:
+        (vaccinationData.extra?.prescription?.customData &&
+          JSON.parse(vaccinationData.extra?.prescription?.customData).doseNumber) ??
+        1, // Currently not possible to dispense more than 1 dose
       totalQuantity: 1,
-      confirmDate: new Date(convertMobileDateToISO(vaccinationNameNotes.vaccineDate)),
-      prescriberOrVaccinator: vaccinationNameNotes.vaccinator,
+      entryDate,
+      confirmDate:
+        (vaccinationData.extra?.prescription?.customData &&
+          JSON.parse(vaccinationData.extra?.prescription?.customData).dateOfVaccination &&
+          new Date(
+            convertMobileDateToISO(
+              JSON.parse(vaccinationData.extra?.prescription?.customData).dateOfVaccination
+            )
+          )) ??
+        'N/A',
+      prescriberOrVaccinator: vaccinationData.vaccinator,
+      pcdNameNoteId: vaccinationData.pcdNameNoteId ?? '',
+      select: '>',
     }));
 
   return nameNotes ?? [];

@@ -1,8 +1,10 @@
 import { generateUUID } from 'react-native-database';
 import merge from 'lodash.merge';
-import moment from 'moment';
 import { createRecord, UIDatabase } from '../../database/index';
-import { selectCreatingNameNote } from '../../selectors/Entities/nameNote';
+import {
+  selectCreatingNameNote,
+  selectMostRecentNameNote,
+} from '../../selectors/Entities/nameNote';
 import { selectSurveySchemas } from '../../selectors/formSchema';
 import { validateJsonSchemaData } from '../../utilities/ajvValidator';
 
@@ -23,28 +25,6 @@ const createDefaultNameNote = (nameID = '') => {
   };
 };
 
-const getMostRecentPCD = patient => {
-  const [pcdEvent] = UIDatabase.objects('PCDEvents');
-  if (!pcdEvent) return null;
-
-  const { id: pcdEventID } = pcdEvent;
-  const { nameNotes = [] } = patient ?? {};
-
-  if (!nameNotes.length) return null;
-
-  const filtered = nameNotes.filter(({ patientEventID }) => patientEventID === pcdEventID);
-
-  if (!filtered.length) return null;
-
-  const sorted = filtered.sort(
-    ({ entryDate: entryDateA }, { entryDate: entryDateB }) =>
-      moment(entryDateB).valueOf() - moment(entryDateA).valueOf()
-  );
-
-  const [mostRecentPCD] = sorted;
-  return mostRecentPCD;
-};
-
 const createSurveyNameNote = patient => (dispatch, getState) => {
   // Create a new name note which is seeded with the most recent PCD name note
   // of the patient.
@@ -52,7 +32,7 @@ const createSurveyNameNote = patient => (dispatch, getState) => {
   // instance or is a newly created patient. If it is a realm object, convert it to
   // a plain object. If the passed patient has a past name note, merge that with a
   // default name note which has the current time, new ID etc.
-  const mostRecentPCD = getMostRecentPCD(patient);
+  const mostRecentPCD = selectMostRecentNameNote(patient, 'PCD');
 
   const seedPCD = mostRecentPCD?.toObject ? mostRecentPCD.toObject() : mostRecentPCD;
   const defaultNameNote = createDefaultNameNote(patient.id);
