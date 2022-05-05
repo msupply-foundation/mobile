@@ -11,8 +11,14 @@ import { UIDatabase } from '../../database';
 import { selectMostRecentNameNote } from '../../selectors/Entities/nameNote';
 import { FlexColumn } from '../FlexColumn';
 import { BreachManUnhappy } from '../BreachManUnhappy';
-import { APP_FONT_FAMILY, DARKER_GREY, GREY } from '../../globalStyles';
-import { generalStrings } from '../../localization';
+import globalStyles, {
+  APP_FONT_FAMILY,
+  DARKER_GREY,
+  GREY,
+  SUSSOL_ORANGE,
+} from '../../globalStyles';
+import { buttonStrings, generalStrings } from '../../localization';
+import { PageButton } from '../PageButton';
 
 // It's possible to get into this state if vaccination events were configured but PCD events weren't
 // and someone dispensed a vaccine. Some data cleanup may be required.
@@ -62,7 +68,7 @@ export const VaccinationEventComponent = ({
       <FlexRow flex={1}>
         {!!vaccinationEventSchema && !!vaccinationEvent && (
           <FlexRow flex={1}>
-            <View style={styles.formContainer}>
+            <View style={localStyles.formContainer}>
               <JSONForm
                 ref={vaccinationFormRef}
                 disabled={true}
@@ -75,13 +81,12 @@ export const VaccinationEventComponent = ({
           </FlexRow>
         )}
         <FlexRow flex={1}>
-          <View style={styles.formContainer}>
+          <View style={localStyles.formContainer}>
             {!!surveySchema && !!surveyForm ? (
               <FlexRow flex={1}>
-                <View style={styles.formContainer}>
+                <View style={localStyles.formContainer}>
                   <JSONForm
                     ref={pcdFormRef}
-                    disabled={true}
                     formData={surveyForm.data ?? null}
                     surveySchema={surveySchema}
                   >
@@ -94,6 +99,14 @@ export const VaccinationEventComponent = ({
             )}
           </View>
         </FlexRow>
+      </FlexRow>
+      <FlexRow flex={0} justifyContent="center">
+        <PageButton
+          text={buttonStrings.save_changes}
+          onPress={() => console.log('button pressed')}
+          style={localStyles.saveButton}
+          textStyle={localStyles.saveButtonTextStyle}
+        />
       </FlexRow>
     </FlexView>
   );
@@ -112,12 +125,23 @@ const mapStateToProps = () => {
   };
 };
 
-const styles = StyleSheet.create({
+const localStyles = StyleSheet.create({
   formContainer: {
     flex: 1,
     flexDirection: 'row',
     backgroundColor: 'white',
     alignItems: 'stretch',
+  },
+  saveButton: {
+    ...globalStyles.button,
+    flex: 1,
+    backgroundColor: SUSSOL_ORANGE,
+    alignSelf: 'center',
+  },
+  saveButtonTextStyle: {
+    ...globalStyles.buttonText,
+    color: 'white',
+    fontSize: 14,
   },
 });
 
