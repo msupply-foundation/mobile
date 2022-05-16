@@ -67,6 +67,20 @@ const saveEditing = () => (dispatch, getState) => {
   dispatch(reset());
 };
 
+const updateLinkedSurveyNameNote = (originalNote, updatedData) => () => {
+  const { id, patientEvent, name, entryDate } = originalNote;
+
+  const updatedNote = {
+    id,
+    patientEvent,
+    name,
+    entryDate: new Date(entryDate),
+    _data: JSON.stringify(updatedData),
+  };
+
+  UIDatabase.write(() => UIDatabase.update('NameNote', updatedNote));
+};
+
 const createNotes = (nameNotes = []) => {
   UIDatabase.write(() => {
     nameNotes.forEach(nameNote => {
@@ -99,5 +113,6 @@ export const NameNoteActions = {
   reset,
   createSurveyNameNote,
   updateForm,
+  updateLinkedSurveyNameNote,
   saveEditing,
 };

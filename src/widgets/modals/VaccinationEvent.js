@@ -1,5 +1,5 @@
 /* eslint-disable react/forbid-prop-types */
-import React, { useRef } from 'react';
+import React, { useRef, useState } from 'react';
 import { View, StyleSheet, Text } from 'react-native';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
@@ -19,6 +19,7 @@ import globalStyles, {
 } from '../../globalStyles';
 import { buttonStrings, generalStrings } from '../../localization';
 import { PageButton } from '../PageButton';
+import { NameNoteActions } from '../../actions';
 
 // It's possible to get into this state if vaccination events were configured but PCD events weren't
 // and someone dispensed a vaccine. Some data cleanup may be required.
@@ -41,13 +42,17 @@ export const VaccinationEventComponent = ({
   patient,
   vaccinationEvent,
   vaccinationEventSchema,
+  saveForm,
   surveySchema,
 }) => {
   const pcdFormRef = useRef(null);
   const vaccinationFormRef = useRef(null);
+  const [{ updatedPcdForm, isPCDValid }, setPCDForm] = useState({
+    updatedPcdForm: null,
+    isPCDValid: false,
+  });
 
   const { pcdNameNoteId } = vaccinationEvent;
-
   const surveyForm = pcdNameNoteId
     ? UIDatabase.get('NameNote', pcdNameNoteId)
     : selectMostRecentNameNote(patient, 'PCD', vaccinationEvent.entryDate);
@@ -89,6 +94,12 @@ export const VaccinationEventComponent = ({
                     ref={pcdFormRef}
                     formData={surveyForm.data ?? null}
                     surveySchema={surveySchema}
+                    onChange={(changed, validator) => {
+                      setPCDForm({
+                        updatedPcdForm: changed.formData,
+                        isPCDValid: validator(changed.formData),
+                      });
+                    }}
                   >
                     <></>
                   </JSONForm>
@@ -103,9 +114,10 @@ export const VaccinationEventComponent = ({
       <FlexRow flex={0} justifyContent="center">
         <PageButton
           text={buttonStrings.save_changes}
-          onPress={() => console.log('button pressed')}
+          onPress={() => (isPCDValid ? saveForm(surveyForm, updatedPcdForm) : null)}
           style={localStyles.saveButton}
           textStyle={localStyles.saveButtonTextStyle}
+          isDisabled={!isPCDValid}
         />
       </FlexRow>
     </FlexView>
@@ -124,6 +136,11 @@ const mapStateToProps = () => {
     vaccinationEventSchema,
   };
 };
+
+const mapDispatchToProps = dispatch => ({
+  saveForm: (oldSurveyNote, updatedSurveyData) =>
+    dispatch(NameNoteActions.updateLinkedSurveyNameNote(oldSurveyNote, updatedSurveyData)),
+});
 
 const localStyles = StyleSheet.create({
   formContainer: {
@@ -152,9 +169,13 @@ VaccinationEventComponent.defaultProps = {
 
 VaccinationEventComponent.propTypes = {
   patient: PropTypes.object,
+  saveForm: PropTypes.func.isRequired,
   surveySchema: PropTypes.object.isRequired,
   vaccinationEvent: PropTypes.object,
   vaccinationEventSchema: PropTypes.object.isRequired,
 };
 
-export const VaccinationEvent = connect(mapStateToProps, null)(VaccinationEventComponent);
+export const VaccinationEvent = connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(VaccinationEventComponent);
