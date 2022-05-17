@@ -74,7 +74,8 @@
     "is_paused": "PAUSED",
     "pause": "Pause",
     "resume": "Resume",
-    "refusal_reason": "Reason for refusal"
+    "refusal_reason": "Reason for refusal",
+    "vaccination_updated": "Vaccination details updated"
   },
   "fr": {
     "no_vaccine_stock": "Vous n'avez pas de vaccins en stock!",

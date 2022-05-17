@@ -1,5 +1,6 @@
 import { generateUUID } from 'react-native-database';
 import merge from 'lodash.merge';
+import { ToastAndroid } from 'react-native';
 import { createRecord, UIDatabase } from '../../database/index';
 import {
   selectCreatingNameNote,
@@ -7,6 +8,7 @@ import {
 } from '../../selectors/Entities/nameNote';
 import { selectSurveySchemas } from '../../selectors/formSchema';
 import { validateJsonSchemaData } from '../../utilities/ajvValidator';
+import { vaccineStrings } from '../../localization';
 
 export const NAME_NOTE_ACTIONS = {
   SELECT: 'NAME_NOTE/select',
@@ -79,6 +81,7 @@ const updateLinkedSurveyNameNote = (originalNote, updatedData) => () => {
   };
 
   UIDatabase.write(() => UIDatabase.update('NameNote', updatedNote));
+  ToastAndroid.show(vaccineStrings.vaccination_updated, ToastAndroid.LONG);
 };
 
 const createNotes = (nameNotes = []) => {
