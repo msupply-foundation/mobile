@@ -114,7 +114,7 @@ export const VaccinationEventComponent = ({
       <FlexRow flex={0} justifyContent="center">
         <PageButton
           text={buttonStrings.save_changes}
-          onPress={() => (isPCDValid ? saveForm(surveyForm, updatedPcdForm) : null)}
+          onPress={() => saveForm(surveyForm, updatedPcdForm)}
           style={localStyles.saveButton}
           textStyle={localStyles.saveButtonTextStyle}
           isDisabled={!isPCDValid}
