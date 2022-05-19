@@ -50,6 +50,7 @@ const FORM_INPUT_KEYS = {
   FIRST_NAME: 'firstName',
   GENDER: 'gender',
   IS_ACTIVE: 'isActive',
+  IS_DECEASED: 'isDeceased',
   LAST_NAME: 'lastName',
   MIDDLE_NAME: 'middleName',
   NATIONALITY: 'nationality',
@@ -336,6 +337,15 @@ const FORM_INPUT_CONFIGS = seedObject => ({
     label: formInputStrings.policy_number,
     isEditable: true,
   },
+  [FORM_INPUT_KEYS.IS_DECEASED]: {
+    type: FORM_INPUT_TYPES.TOGGLE,
+    initialValue: false,
+    key: 'deceased',
+    options: [true, false],
+    optionLabels: [formInputStrings.yes, formInputStrings.no],
+    label: formInputStrings.is_deceased,
+    isEditable: true,
+  },
 });
 
 const FORM_CONFIGS = {
@@ -352,6 +362,7 @@ const FORM_CONFIGS = {
     FORM_INPUT_KEYS.NATIONALITY,
     FORM_INPUT_KEYS.ETHNICITY,
     FORM_INPUT_KEYS.GENDER,
+    FORM_INPUT_KEYS.IS_DECEASED,
   ],
   prescriber: [
     FORM_INPUT_KEYS.LAST_NAME,
