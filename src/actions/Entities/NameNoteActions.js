@@ -80,7 +80,30 @@ const updateLinkedSurveyNameNote = (originalNote, updatedData) => () => {
     _data: JSON.stringify(updatedData),
   };
 
-  UIDatabase.write(() => UIDatabase.update('NameNote', updatedNote));
+  const [auditEvent] = UIDatabase.objects('PatientEvent').filtered('code == "NameNoteModified"');
+
+  const auditNameNote = {
+    id: generateUUID(),
+    name,
+    auditEvent,
+    entryDate: new Date(),
+    _data: JSON.stringify({
+      patientEvent,
+      old: {
+        entryDate,
+        data: originalNote.data,
+      },
+      new: {
+        entryDate: new Date(),
+        data: updatedData,
+      },
+    }),
+  };
+
+  UIDatabase.write(() => {
+    UIDatabase.update('NameNote', updatedNote);
+    UIDatabase.create('NameNote', auditNameNote);
+  });
   ToastAndroid.show(vaccineStrings.vaccination_updated, ToastAndroid.LONG);
 };
 
