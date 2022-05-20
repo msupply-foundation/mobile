@@ -340,7 +340,7 @@ const FORM_INPUT_CONFIGS = seedObject => ({
   [FORM_INPUT_KEYS.IS_DECEASED]: {
     type: FORM_INPUT_TYPES.TOGGLE,
     initialValue: false,
-    key: 'deceased',
+    key: 'isDeceased',
     options: [true, false],
     optionLabels: [formInputStrings.yes, formInputStrings.no],
     label: formInputStrings.is_deceased,

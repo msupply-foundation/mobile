@@ -588,6 +588,7 @@ export const createOrUpdateRecord = (database, settings, recordType, record) => 
         emailAddress: record.email,
         type: NAME_TYPES.translate(record.type, EXTERNAL_TO_INTERNAL),
         isCustomer: parseBoolean(record.customer),
+        isDeceased: parseBoolean(record.isDeceased),
         isSupplier: parseBoolean(record.supplier),
         isManufacturer: parseBoolean(record.manufacturer),
         supplyingStoreId: record.supplying_store_id,

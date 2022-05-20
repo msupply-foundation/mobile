@@ -53,6 +53,7 @@ const patientUpdate = patientDetails => async (dispatch, getState) => {
     country: currentCountry,
     supplyingStoreId: currentSupplyingStoreId,
     isActive: currentIsActive,
+    isDeceased: currentIsDeceased,
     female: currentFemale,
     ethnicity: currentEthnicity,
     nationality: currentNationality,
@@ -82,6 +83,7 @@ const patientUpdate = patientDetails => async (dispatch, getState) => {
     country: patientCountry,
     supplyingStoreId: patientSupplyingStoreId,
     female: patientFemale,
+    isDeceased: patientIsDeceased,
     ethnicity: patientEthnicity,
     nationality: patientNationality,
   } = patientDetails ?? {};
@@ -102,6 +104,7 @@ const patientUpdate = patientDetails => async (dispatch, getState) => {
   const billPostalZipCode = patientPostalZipCode ?? currentZipCode;
   const country = patientCountry ?? currentCountry;
   const female = patientFemale ?? currentFemale;
+  const isDeceased = patientIsDeceased ?? currentIsDeceased;
   const supplyingStoreId = patientSupplyingStoreId ?? currentSupplyingStoreId;
   const isActive = currentIsActive;
   const ethnicity = patientEthnicity ?? currentEthnicity;
@@ -124,6 +127,7 @@ const patientUpdate = patientDetails => async (dispatch, getState) => {
     billPostalZipCode,
     country,
     female,
+    isDeceased,
     supplyingStoreId,
     isActive,
     ethnicity,
