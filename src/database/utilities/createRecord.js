@@ -337,9 +337,6 @@ const createPatient = (database, patientDetails) => {
     createdDate,
   });
 
-  console.log('patient');
-  console.log(patient);
-
   nameNotes?.forEach(nameNote => createNameNote(database, nameNote));
 
   return patient;
