@@ -2,12 +2,12 @@ import moment from 'moment';
 
 /**
  * Converts the vaccinationDate (stored as a string and potentially in a variable format) to a
- * JavaScript date object.
+ * an ISO formatted date string
  * The 'expected' mobile format is DD/MM/YYYY but some users have inserted/scripted data
  * in all sorts of weird formats - this is a hack to make a best attempt to read it.
  *
  * @param   {string}  dateString  The date of vaccination (as entered by the user / script)
- * @return  {Date}              A JavaScript date object representing the date of vaccination
+ * @return  {string}              ISO formatted date string
  */
 export const convertVaccinationEntryToISOString = dateString => {
   if (!dateString) return undefined; // show undefined if no date
