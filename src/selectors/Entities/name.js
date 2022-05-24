@@ -6,8 +6,8 @@ import { DATE_FORMAT } from '../../utilities/constants';
 import { PREFERENCE_KEYS } from '../../database/utilities/preferenceConstants';
 import { MILLISECONDS_PER_DAY } from '../../database/utilities/constants';
 import { validateJsonSchemaData } from '../../utilities';
-import { convertMobileDateToISO } from '../../utilities/formatters';
 import { selectVaccinationEventSchemas } from '../formSchema';
+import { convertVaccinationEntryToISOString } from '../../utilities/parsers';
 
 export const selectEditingNameId = state => {
   const NameState = selectSpecificEntityState(state, 'name');
@@ -105,7 +105,7 @@ export const selectVaccinePatientHistory = patient => {
         (vaccinationData.extra?.prescription?.customData &&
           JSON.parse(vaccinationData.extra?.prescription?.customData).dateOfVaccination &&
           new Date(
-            convertMobileDateToISO(
+            convertVaccinationEntryToISOString(
               JSON.parse(vaccinationData.extra?.prescription?.customData).dateOfVaccination
             )
           )) ??
