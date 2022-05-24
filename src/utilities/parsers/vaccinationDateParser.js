@@ -1,7 +1,7 @@
 import moment from 'moment';
 
 /**
- * Converts the vaccinationDate (stored as a string and potentially in a variable format) to a
+ * Converts the vaccinationDate (stored as a string and potentially in a variable format) to
  * an ISO formatted date string
  * The 'expected' mobile format is DD/MM/YYYY but some users have inserted/scripted data
  * in all sorts of weird formats - this is a hack to make a best attempt to read it.
