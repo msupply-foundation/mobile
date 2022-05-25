@@ -10,11 +10,12 @@ import moment from 'moment';
  * @return  {string}              ISO formatted date string
  */
 export const convertVaccinationEntryToISOString = dateString => {
-  if (!dateString) return undefined; // show undefined if no date
+  const invalidDateString = 'Invalid date';
+  if (!dateString) return invalidDateString; // show 'Invalid date' if no date
   const separators = ['/', '-'];
   const splitDate = dateString.split(new RegExp(separators.join('|'), 'g'));
 
-  if (splitDate.length !== 3) return undefined; // date needs to have month, date and year
+  if (splitDate.length !== 3) return invalidDateString; // date needs to have month, date and year
 
   let convertedDate;
   // Some variant of xx-xx-yyyy format
