@@ -68,6 +68,13 @@ describe('vaccinationDateParser: convertVaccinationEntryToISOString', () => {
     expect(result).toEqual(invalidDateString);
   });
 
+  it('Month > 12 is invalid date', () => {
+    const testDate = '13-13-2022';
+    const result = convertVaccinationEntryToISOString(testDate);
+
+    expect(result).toEqual(invalidDateString);
+  });
+
   it('Date without 3 parts is invalid date', () => {
     const testDate = '18/01';
     const result = convertVaccinationEntryToISOString(testDate);
