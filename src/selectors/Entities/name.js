@@ -6,8 +6,8 @@ import { DATE_FORMAT } from '../../utilities/constants';
 import { PREFERENCE_KEYS } from '../../database/utilities/preferenceConstants';
 import { MILLISECONDS_PER_DAY } from '../../database/utilities/constants';
 import { validateJsonSchemaData } from '../../utilities';
-import { selectVaccinationEventSchemas } from '../formSchema';
 import { convertVaccinationEntryToISOString } from '../../utilities/parsers';
+import { selectVaccinationEventSchemas, selectSupplementalDataSchemas } from '../formSchema';
 
 export const selectEditingNameId = state => {
   const NameState = selectSpecificEntityState(state, 'name');
@@ -85,6 +85,10 @@ export const selectVaccinePatientHistory = patient => {
     "code == 'vaccination'"
   );
   const { id: vaccinationPatientEventID } = vaccinationPatientEvent ?? {};
+  const [supplementalDataSchema = {}] = selectSupplementalDataSchemas();
+
+  const hasDateOfVaccinationInSchema =
+    supplementalDataSchema?.jsonSchema?.properties?.dateOfVaccination;
 
   const nameNotes = patient?.nameNotes
     ?.filter(
@@ -101,15 +105,16 @@ export const selectVaccinePatientHistory = patient => {
         1, // Currently not possible to dispense more than 1 dose
       totalQuantity: 1,
       entryDate,
-      confirmDate:
-        (vaccinationData.extra?.prescription?.customData &&
-          JSON.parse(vaccinationData.extra?.prescription?.customData).dateOfVaccination &&
-          new Date(
-            convertVaccinationEntryToISOString(
-              JSON.parse(vaccinationData.extra?.prescription?.customData).dateOfVaccination
-            )
-          )) ??
-        'N/A',
+      confirmDate: hasDateOfVaccinationInSchema
+        ? (vaccinationData.extra?.prescription?.customData &&
+            JSON.parse(vaccinationData.extra?.prescription?.customData).dateOfVaccination &&
+            new Date(
+              convertVaccinationEntryToISOString(
+                JSON.parse(vaccinationData.extra?.prescription?.customData).dateOfVaccination
+              )
+            )) ??
+          'N/A'
+        : new Date(entryDate),
       prescriberOrVaccinator: vaccinationData.vaccinator,
       pcdNameNoteId: vaccinationData.pcdNameNoteId ?? '',
       select: '>',
