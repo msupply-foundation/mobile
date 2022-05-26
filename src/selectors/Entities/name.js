@@ -120,7 +120,7 @@ export const selectVaccinePatientHistory = patient => {
       select: '>',
     }));
 
-  return nameNotes ?? [];
+  return nameNotes ? nameNotes.sort((a, b) => a.confirmDate - b.confirmDate) : [];
 };
 
 export const selectWasPatientVaccinatedWithinOneDay = state => {
