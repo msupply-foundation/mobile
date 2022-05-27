@@ -80,15 +80,25 @@ export const selectCanEditPatient = state => {
   return UIDatabase.getPreference(PREFERENCE_KEYS.CAN_EDIT_PATIENTS_FROM_ANY_STORE) || isEditable;
 };
 
+const getDateOfVaccination = (supplementalDataSchema, vaccinationData) => {
+  const hasDateOfVaccinationInSchema = !!supplementalDataSchema?.jsonSchema?.properties
+    ?.dateOfVaccination;
+
+  if (!hasDateOfVaccinationInSchema) return null;
+  if (!vaccinationData.extra?.prescription?.customData) return 'N/A';
+
+  const { dateOfVaccination } = JSON.parse(vaccinationData.extra?.prescription?.customData);
+  if (!dateOfVaccination) return 'N/A';
+
+  return new Date(convertVaccinationEntryToISOString(dateOfVaccination));
+};
+
 export const selectVaccinePatientHistory = patient => {
   const [vaccinationPatientEvent] = UIDatabase.objects('PatientEvent').filtered(
     "code == 'vaccination'"
   );
   const { id: vaccinationPatientEventID } = vaccinationPatientEvent ?? {};
   const [supplementalDataSchema = {}] = selectSupplementalDataSchemas();
-
-  const hasDateOfVaccinationInSchema =
-    !!supplementalDataSchema?.jsonSchema?.properties?.dateOfVaccination;
 
   const nameNotes = patient?.nameNotes
     ?.filter(
@@ -105,16 +115,8 @@ export const selectVaccinePatientHistory = patient => {
         1, // Currently not possible to dispense more than 1 dose
       totalQuantity: 1,
       entryDate,
-      confirmDate: hasDateOfVaccinationInSchema
-        ? (vaccinationData.extra?.prescription?.customData &&
-            JSON.parse(vaccinationData.extra?.prescription?.customData).dateOfVaccination &&
-            new Date(
-              convertVaccinationEntryToISOString(
-                JSON.parse(vaccinationData.extra?.prescription?.customData).dateOfVaccination
-              )
-            )) ??
-          'N/A'
-        : new Date(entryDate),
+      confirmDate:
+        getDateOfVaccination(supplementalDataSchema, vaccinationData) ?? new Date(entryDate),
       prescriberOrVaccinator: vaccinationData.vaccinator,
       pcdNameNoteId: vaccinationData.pcdNameNoteId ?? '',
       select: '>',
