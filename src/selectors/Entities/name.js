@@ -88,7 +88,7 @@ export const selectVaccinePatientHistory = patient => {
   const [supplementalDataSchema = {}] = selectSupplementalDataSchemas();
 
   const hasDateOfVaccinationInSchema =
-    supplementalDataSchema?.jsonSchema?.properties?.dateOfVaccination;
+    !!supplementalDataSchema?.jsonSchema?.properties?.dateOfVaccination;
 
   const nameNotes = patient?.nameNotes
     ?.filter(
