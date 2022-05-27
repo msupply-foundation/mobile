@@ -6,8 +6,8 @@ import { DATE_FORMAT } from '../../utilities/constants';
 import { PREFERENCE_KEYS } from '../../database/utilities/preferenceConstants';
 import { MILLISECONDS_PER_DAY } from '../../database/utilities/constants';
 import { validateJsonSchemaData } from '../../utilities';
-import { convertMobileDateToISO } from '../../utilities/formatters';
-import { selectVaccinationEventSchemas } from '../formSchema';
+import { convertVaccinationEntryToISOString } from '../../utilities/parsers';
+import { selectVaccinationEventSchemas, selectSupplementalDataSchemas } from '../formSchema';
 
 export const selectEditingNameId = state => {
   const NameState = selectSpecificEntityState(state, 'name');
@@ -80,11 +80,25 @@ export const selectCanEditPatient = state => {
   return UIDatabase.getPreference(PREFERENCE_KEYS.CAN_EDIT_PATIENTS_FROM_ANY_STORE) || isEditable;
 };
 
+const getDateOfVaccination = (supplementalDataSchema, vaccinationData) => {
+  const hasDateOfVaccinationInSchema = !!supplementalDataSchema?.jsonSchema?.properties
+    ?.dateOfVaccination;
+
+  if (!hasDateOfVaccinationInSchema) return null;
+  if (!vaccinationData.extra?.prescription?.customData) return 'N/A';
+
+  const { dateOfVaccination } = JSON.parse(vaccinationData.extra?.prescription?.customData);
+  if (!dateOfVaccination) return 'N/A';
+
+  return new Date(convertVaccinationEntryToISOString(dateOfVaccination));
+};
+
 export const selectVaccinePatientHistory = patient => {
   const [vaccinationPatientEvent] = UIDatabase.objects('PatientEvent').filtered(
     "code == 'vaccination'"
   );
   const { id: vaccinationPatientEventID } = vaccinationPatientEvent ?? {};
+  const [supplementalDataSchema = {}] = selectSupplementalDataSchemas();
 
   const nameNotes = patient?.nameNotes
     ?.filter(
@@ -102,20 +116,13 @@ export const selectVaccinePatientHistory = patient => {
       totalQuantity: 1,
       entryDate,
       confirmDate:
-        (vaccinationData.extra?.prescription?.customData &&
-          JSON.parse(vaccinationData.extra?.prescription?.customData).dateOfVaccination &&
-          new Date(
-            convertMobileDateToISO(
-              JSON.parse(vaccinationData.extra?.prescription?.customData).dateOfVaccination
-            )
-          )) ??
-        'N/A',
+        getDateOfVaccination(supplementalDataSchema, vaccinationData) ?? new Date(entryDate),
       prescriberOrVaccinator: vaccinationData.vaccinator,
       pcdNameNoteId: vaccinationData.pcdNameNoteId ?? '',
       select: '>',
     }));
 
-  return nameNotes ?? [];
+  return nameNotes ? nameNotes.sort((a, b) => a.confirmDate - b.confirmDate) : [];
 };
 
 export const selectWasPatientVaccinatedWithinOneDay = state => {
