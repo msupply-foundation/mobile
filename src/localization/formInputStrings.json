@@ -16,6 +16,7 @@
     "family_policy_number": "Family policy number",
     "first_name": "First name",
     "is_active": "Is active",
+    "is_deceased": "Is deceased",
     "last_name": "Last name",
     "location_type": "Location type",
     "less_than_20_characters": "less than 20 characters",

@@ -265,6 +265,7 @@ const createPatient = (database, patientDetails) => {
     female: patientFemale,
     supplyingStoreId: patientSupplyingStoreId,
     isActive: patientIsActive,
+    isDeceased: patientIsDeceased,
     nationality,
     ethnicity,
     nameNotes,
@@ -292,6 +293,7 @@ const createPatient = (database, patientDetails) => {
 
   const country = patientCountry ?? '';
   const female = patientFemale ?? true;
+  const isDeceased = patientIsDeceased ?? false;
 
   const thisStoreId = database.getSetting(SETTINGS_KEYS.THIS_STORE_ID);
   const supplyingStoreId = patientSupplyingStoreId || thisStoreId;
@@ -325,6 +327,7 @@ const createPatient = (database, patientDetails) => {
     billingAddress,
     country,
     female,
+    isDeceased,
     supplyingStoreId,
     thisStoresPatient,
     isActive,
