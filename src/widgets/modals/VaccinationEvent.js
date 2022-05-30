@@ -1,5 +1,5 @@
 /* eslint-disable react/forbid-prop-types */
-import React, { useRef } from 'react';
+import React, { useRef, useState } from 'react';
 import { View, StyleSheet, Text } from 'react-native';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
@@ -11,8 +11,15 @@ import { UIDatabase } from '../../database';
 import { selectMostRecentNameNote } from '../../selectors/Entities/nameNote';
 import { FlexColumn } from '../FlexColumn';
 import { BreachManUnhappy } from '../BreachManUnhappy';
-import { APP_FONT_FAMILY, DARKER_GREY, GREY } from '../../globalStyles';
-import { generalStrings } from '../../localization';
+import globalStyles, {
+  APP_FONT_FAMILY,
+  DARKER_GREY,
+  GREY,
+  SUSSOL_ORANGE,
+} from '../../globalStyles';
+import { buttonStrings, generalStrings } from '../../localization';
+import { PageButton } from '../PageButton';
+import { NameNoteActions } from '../../actions';
 
 // It's possible to get into this state if vaccination events were configured but PCD events weren't
 // and someone dispensed a vaccine. Some data cleanup may be required.
@@ -35,13 +42,17 @@ export const VaccinationEventComponent = ({
   patient,
   vaccinationEvent,
   vaccinationEventSchema,
+  saveForm,
   surveySchema,
 }) => {
   const pcdFormRef = useRef(null);
   const vaccinationFormRef = useRef(null);
+  const [{ updatedPcdForm, isPCDValid }, setPCDForm] = useState({
+    updatedPcdForm: null,
+    isPCDValid: false,
+  });
 
   const { pcdNameNoteId } = vaccinationEvent;
-
   const surveyForm = pcdNameNoteId
     ? UIDatabase.get('NameNote', pcdNameNoteId)
     : selectMostRecentNameNote(patient, 'PCD', vaccinationEvent.entryDate);
@@ -62,7 +73,7 @@ export const VaccinationEventComponent = ({
       <FlexRow flex={1}>
         {!!vaccinationEventSchema && !!vaccinationEvent && (
           <FlexRow flex={1}>
-            <View style={styles.formContainer}>
+            <View style={localStyles.formContainer}>
               <JSONForm
                 ref={vaccinationFormRef}
                 disabled={true}
@@ -75,15 +86,20 @@ export const VaccinationEventComponent = ({
           </FlexRow>
         )}
         <FlexRow flex={1}>
-          <View style={styles.formContainer}>
+          <View style={localStyles.formContainer}>
             {!!surveySchema && !!surveyForm ? (
               <FlexRow flex={1}>
-                <View style={styles.formContainer}>
+                <View style={localStyles.formContainer}>
                   <JSONForm
                     ref={pcdFormRef}
-                    disabled={true}
                     formData={surveyForm.data ?? null}
                     surveySchema={surveySchema}
+                    onChange={(changed, validator) => {
+                      setPCDForm({
+                        updatedPcdForm: changed.formData,
+                        isPCDValid: validator(changed.formData),
+                      });
+                    }}
                   >
                     <></>
                   </JSONForm>
@@ -94,6 +110,15 @@ export const VaccinationEventComponent = ({
             )}
           </View>
         </FlexRow>
+      </FlexRow>
+      <FlexRow flex={0} justifyContent="center">
+        <PageButton
+          text={buttonStrings.save_changes}
+          onPress={() => saveForm(surveyForm, updatedPcdForm)}
+          style={localStyles.saveButton}
+          textStyle={localStyles.saveButtonTextStyle}
+          isDisabled={!isPCDValid}
+        />
       </FlexRow>
     </FlexView>
   );
@@ -112,12 +137,28 @@ const mapStateToProps = () => {
   };
 };
 
-const styles = StyleSheet.create({
+const mapDispatchToProps = dispatch => ({
+  saveForm: (oldSurveyNote, updatedSurveyData) =>
+    dispatch(NameNoteActions.updateLinkedSurveyNameNote(oldSurveyNote, updatedSurveyData)),
+});
+
+const localStyles = StyleSheet.create({
   formContainer: {
     flex: 1,
     flexDirection: 'row',
     backgroundColor: 'white',
     alignItems: 'stretch',
+  },
+  saveButton: {
+    ...globalStyles.button,
+    flex: 1,
+    backgroundColor: SUSSOL_ORANGE,
+    alignSelf: 'center',
+  },
+  saveButtonTextStyle: {
+    ...globalStyles.buttonText,
+    color: 'white',
+    fontSize: 14,
   },
 });
 
@@ -128,9 +169,13 @@ VaccinationEventComponent.defaultProps = {
 
 VaccinationEventComponent.propTypes = {
   patient: PropTypes.object,
+  saveForm: PropTypes.func.isRequired,
   surveySchema: PropTypes.object.isRequired,
   vaccinationEvent: PropTypes.object,
   vaccinationEventSchema: PropTypes.object.isRequired,
 };
 
-export const VaccinationEvent = connect(mapStateToProps, null)(VaccinationEventComponent);
+export const VaccinationEvent = connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(VaccinationEventComponent);

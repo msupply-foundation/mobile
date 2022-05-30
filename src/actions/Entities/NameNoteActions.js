@@ -1,5 +1,6 @@
 import { generateUUID } from 'react-native-database';
 import merge from 'lodash.merge';
+import { ToastAndroid } from 'react-native';
 import { createRecord, UIDatabase } from '../../database/index';
 import {
   selectCreatingNameNote,
@@ -7,6 +8,7 @@ import {
 } from '../../selectors/Entities/nameNote';
 import { selectSurveySchemas } from '../../selectors/formSchema';
 import { validateJsonSchemaData } from '../../utilities/ajvValidator';
+import { vaccineStrings } from '../../localization';
 
 export const NAME_NOTE_ACTIONS = {
   SELECT: 'NAME_NOTE/select',
@@ -67,6 +69,44 @@ const saveEditing = () => (dispatch, getState) => {
   dispatch(reset());
 };
 
+const updateLinkedSurveyNameNote = (originalNote, updatedData) => () => {
+  const { id, patientEvent, name, entryDate } = originalNote;
+
+  const updatedNote = {
+    id,
+    patientEvent,
+    name,
+    entryDate: new Date(entryDate),
+    _data: JSON.stringify(updatedData),
+  };
+
+  const [auditEvent] = UIDatabase.objects('PatientEvent').filtered('code == "NameNoteModified"');
+
+  const auditNameNote = {
+    id: generateUUID(),
+    name,
+    auditEvent,
+    entryDate: new Date(),
+    _data: JSON.stringify({
+      patientEvent,
+      old: {
+        entryDate,
+        data: originalNote.data,
+      },
+      new: {
+        entryDate: new Date(),
+        data: updatedData,
+      },
+    }),
+  };
+
+  UIDatabase.write(() => {
+    UIDatabase.update('NameNote', updatedNote);
+    UIDatabase.create('NameNote', auditNameNote);
+  });
+  ToastAndroid.show(vaccineStrings.vaccination_updated, ToastAndroid.LONG);
+};
+
 const createNotes = (nameNotes = []) => {
   UIDatabase.write(() => {
     nameNotes.forEach(nameNote => {
@@ -99,5 +139,6 @@ export const NameNoteActions = {
   reset,
   createSurveyNameNote,
   updateForm,
+  updateLinkedSurveyNameNote,
   saveEditing,
 };
