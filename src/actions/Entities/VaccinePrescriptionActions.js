@@ -207,8 +207,8 @@ const createVaccinationNameNote = (
       vaccinator: vaccinator.toJSON(),
       patient: patientObject,
     },
+    pcdNameNoteId: getPcdNameNoteID(patient.id),
   };
-
   const newNameNote = {
     id,
     name: patient,
@@ -216,10 +216,15 @@ const createVaccinationNameNote = (
     entryDate: new Date(),
     _data: JSON.stringify(data),
   };
-
   UIDatabase.write(() => UIDatabase.create('NameNote', newNameNote));
 };
 
+const getPcdNameNoteID = patientId => {
+  const patientNameNotes = UIDatabase.objects('NameNote')
+    .filtered('patientEvent.code == $0 and name.id == $1', 'PCD', patientId)
+    .sorted('entryDate', true);
+  return patientNameNotes.length > 0 ? patientNameNotes[0].id : '';
+};
 const createSupplementaryData = () => (dispatch, getState) => {
   // Create a supplementaryData object which is seeded with the data that was last
   // entered against a prescription
@@ -270,7 +275,6 @@ const confirm = () => (dispatch, getState) => {
       stocktake.finalise(UIDatabase, currentUser);
     });
   }
-
   batch(() => {
     dispatch(NameActions.saveEditing());
     dispatch(NameNoteActions.saveEditing());

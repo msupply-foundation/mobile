@@ -31,6 +31,7 @@ const reducer = (state, action) => {
         .map(nameNotes => ({
           itemCode: nameNotes.itemCode,
           confirmDate: nameNotes.confirmDate,
+          select: '>',
         }));
 
       // Filter out local entries before merging

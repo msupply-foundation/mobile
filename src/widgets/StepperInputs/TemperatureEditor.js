@@ -36,7 +36,7 @@ export const TemperatureEditor = ({
 
   const getAdjustedValue = (toUpdate, addend) =>
     keepInRange(temperature(toUpdate + addend).temperature(), minimum, maximum);
-  const formatter = updated => keepInRange(updated, minimum, maximum).toFixed(2);
+  const formatter = updated => keepInRange(updated, minimum, maximum).toFixed(1);
 
   const [textInputRef, newValue, newOnChange] = useOptimisticUpdating(
     value,
@@ -57,7 +57,7 @@ export const TemperatureEditor = ({
             editable={false}
             SuffixComponent={
               <FlexColumn style={{ marginTop: 12 }}>
-                <Text style={suffixTextStyle}>{`${'\u00B0'}Celsius`}</Text>
+                <Text allowFontScaling={false} style={suffixTextStyle}>{`${'\u00B0'}Celsius`}</Text>
                 <Text style={{ fontSize: 10 }}>
                   {above ? vaccineStrings.and_above : vaccineStrings.and_below}
                 </Text>

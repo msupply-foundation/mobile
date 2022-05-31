@@ -4,3 +4,4 @@
  */
 
 export { parsePositiveIntegerInterfaceInput } from './interfaceParsers';
+export { convertVaccinationEntryToISOString } from './vaccinationDateParser';

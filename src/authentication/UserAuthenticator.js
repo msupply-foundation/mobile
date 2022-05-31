@@ -71,6 +71,11 @@ export class UserAuthenticator {
       if (userJson && userJson.error) {
         throw new Error(userJson.error);
       }
+
+      if (userJson === undefined) {
+        throw new Error(`userJson is undefined.Server Url ${serverURL}`);
+      }
+
       if (!userJson || !userJson.UserID) {
         throw new Error('Unexpected response from server');
       }

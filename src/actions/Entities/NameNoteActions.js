@@ -1,8 +1,10 @@
 import { generateUUID } from 'react-native-database';
 import merge from 'lodash.merge';
-import moment from 'moment';
 import { createRecord, UIDatabase } from '../../database/index';
-import { selectCreatingNameNote } from '../../selectors/Entities/nameNote';
+import {
+  selectCreatingNameNote,
+  selectMostRecentNameNote,
+} from '../../selectors/Entities/nameNote';
 import { selectSurveySchemas } from '../../selectors/formSchema';
 import { validateJsonSchemaData } from '../../utilities/ajvValidator';
 
@@ -15,36 +17,12 @@ export const NAME_NOTE_ACTIONS = {
 
 const createDefaultNameNote = (nameID = '') => {
   const [pcd] = UIDatabase.objects('PCDEvents');
-
   return {
     id: generateUUID(),
     entryDate: new Date(),
     patientEventID: pcd?.id ?? '',
     nameID,
   };
-};
-
-const getMostRecentPCD = patient => {
-  const [pcdEvent] = UIDatabase.objects('PCDEvents');
-
-  if (!pcdEvent) return null;
-
-  const { id: pcdEventID } = pcdEvent;
-  const { nameNotes = [] } = patient ?? {};
-
-  if (!nameNotes.length) return null;
-
-  const filtered = nameNotes.filter(({ patientEventID }) => patientEventID === pcdEventID);
-
-  if (!filtered.length) return null;
-
-  const sorted = filtered.sort(
-    ({ entryDate: entryDateA }, { entryDate: entryDateB }) =>
-      moment(entryDateB).valueOf() - moment(entryDateA).valueOf()
-  );
-
-  const [mostRecentPCD] = sorted;
-  return mostRecentPCD;
 };
 
 const createSurveyNameNote = patient => (dispatch, getState) => {
@@ -54,7 +32,7 @@ const createSurveyNameNote = patient => (dispatch, getState) => {
   // instance or is a newly created patient. If it is a realm object, convert it to
   // a plain object. If the passed patient has a past name note, merge that with a
   // default name note which has the current time, new ID etc.
-  const mostRecentPCD = getMostRecentPCD(patient);
+  const mostRecentPCD = selectMostRecentNameNote(patient, 'PCD');
 
   const seedPCD = mostRecentPCD?.toObject ? mostRecentPCD.toObject() : mostRecentPCD;
   const defaultNameNote = createDefaultNameNote(patient.id);
@@ -66,7 +44,6 @@ const createSurveyNameNote = patient => (dispatch, getState) => {
   const [surveySchema = {}] = selectSurveySchemas(getState);
   const { jsonSchema } = surveySchema;
   const isValid = validateJsonSchemaData(jsonSchema, newNameNote.data);
-
   dispatch(select(newNameNote, isValid));
 };
 
@@ -84,11 +61,9 @@ const saveEditing = () => (dispatch, getState) => {
   const nameNote = selectCreatingNameNote(getState()) ?? {};
   const patient = UIDatabase.get('Name', nameNote?.nameID);
   const isDirty = JSON.stringify(patient?.mostRecentPCD?.data) !== JSON.stringify(nameNote?.data);
-
   if (isDirty) {
     UIDatabase.write(() => createRecord(UIDatabase, 'NameNote', nameNote));
   }
-
   dispatch(reset());
 };
 
@@ -98,7 +73,6 @@ const createNotes = (nameNotes = []) => {
       const { patientEventID, nameID } = nameNote;
       const name = UIDatabase.get('Name', nameID);
       const patientEvent = UIDatabase.get('PatientEvent', patientEventID);
-
       if (name && patientEvent) {
         const toSave = {
           id: nameNote.id,

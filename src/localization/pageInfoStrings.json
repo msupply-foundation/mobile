@@ -54,7 +54,7 @@
     "their_ref": "Leur référence",
     "by_batch": "Par lot",
     "category": "Catégorie",
-    "suggested_equals": "Quantité suggérée",
+    "suggested_equals": "Quantité suggérée (QS)",
     "suggested_formula": "(CMM x MDS Max) - leur stock",
     "amc_equals": "CMM",
     "number_of_days_in_a_month": "Nombre de jours dans un mois",
