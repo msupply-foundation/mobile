@@ -60,6 +60,7 @@ const ItemSelectComponent = ({
   items,
   selectedRows,
   onDelete,
+  reloadItems,
 }) => {
   const columns = React.useMemo(() => getColumns(TABS.ITEM), []);
   const showToast = React.useCallback(
@@ -69,7 +70,7 @@ const ItemSelectComponent = ({
 
   // Reload items when component is mounted (component is mounted on every DB action)
   useEffect(() => {
-    PrescriptionActions.reloadItems();
+    reloadItems();
   }, []);
 
   // sort and filter the items
@@ -134,7 +135,8 @@ const mapDispatchToProps = dispatch => {
   const updateQuantity = (id, quantity) => dispatch(PrescriptionActions.editQuantity(id, quantity));
   const filterItems = searchTerm => dispatch(PrescriptionActions.filter(searchTerm));
   const onDelete = () => dispatch(PrescriptionActions.cancelPrescription());
-  return { onDelete, filterItems, nextTab, chooseItem, updateQuantity };
+  const reloadItems = () => dispatch(PrescriptionActions.reloadItems());
+  return { onDelete, filterItems, nextTab, chooseItem, updateQuantity, reloadItems };
 };
 
 const mapStateToProps = state => {
@@ -158,6 +160,7 @@ ItemSelectComponent.propTypes = {
   items: PropTypes.array.isRequired,
   selectedRows: PropTypes.object.isRequired,
   onDelete: PropTypes.func.isRequired,
+  reloadItems: PropTypes.func.isRequired,
 };
 
 export const ItemSelect = connect(mapStateToProps, mapDispatchToProps)(ItemSelectComponent);
