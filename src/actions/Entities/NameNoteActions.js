@@ -90,7 +90,7 @@ const updateNameNote = (originalNote, updatedData) => () => {
     });
     ToastAndroid.show(vaccineStrings.vaccination_updated, ToastAndroid.LONG);
   } else {
-    ToastAndroid.show('No updates were made', ToastAndroid.LONG);
+    ToastAndroid.show(vaccineStrings.vaccination_not_updated, ToastAndroid.LONG);
   }
 };
 
