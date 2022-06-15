@@ -121,7 +121,10 @@ export class Synchroniser {
     }
 
     if (responseJson.error) {
-      if (responseJson.error.startsWith("Site registration doesn't match.")) {
+      if (
+        responseJson.error.startsWith("Site registration doesn't match.") ||
+        responseJson.error.startsWith('There are pending response requisition')
+      ) {
         throw new Error(responseJson.error);
       } else {
         bugsnagNotify(responseJson.error, response);
@@ -172,8 +175,7 @@ export class Synchroniser {
       if (isFresh) {
         // If a fresh initialisation, send request to server to prepare required sync records.
         await this.fetchWrapper(
-          `${this.serverURL}/sync/v3/initial_dump/` +
-            `?from_site=${this.thisSiteId}&to_site=${this.serverId}`,
+          `${this.serverURL}/sync/v3/initial_dump/?from_site=${this.thisSiteId}&to_site=${this.serverId}`,
           {
             headers: {
               Authorization: this.authHeader,
@@ -190,6 +192,10 @@ export class Synchroniser {
       // Did not authenticate, sync error or no internet, bubble up error.
       this.setError(error.message);
       this.setIsSyncing(false);
+      if (isFresh) {
+        this.serverURL = '';
+        this.thisSiteName = '';
+      }
 
       throw error;
     }
@@ -309,8 +315,7 @@ export class Synchroniser {
    */
   pushRecords = async records => {
     await this.fetchWrapper(
-      `${this.serverURL}/sync/v3/queued_records/` +
-        `?from_site=${this.thisSiteId}&to_site=${this.serverId}`,
+      `${this.serverURL}/sync/v3/queued_records/?from_site=${this.thisSiteId}&to_site=${this.serverId}`,
       {
         method: 'POST',
         headers: {
@@ -369,8 +374,7 @@ export class Synchroniser {
    */
   getWaitingRecordCount = async () => {
     const { responseJson } = await this.fetchWrapper(
-      `${this.serverURL}/sync/v3/queued_records/count` +
-        `?from_site=${this.thisSiteId}&to_site=${this.serverId}`,
+      `${this.serverURL}/sync/v3/queued_records/count?from_site=${this.thisSiteId}&to_site=${this.serverId}`,
       {
         headers: {
           Authorization: this.authHeader,
@@ -388,8 +392,7 @@ export class Synchroniser {
    */
   getIncomingRecords = async () => {
     const { responseJson } = await this.fetchWrapper(
-      `${this.serverURL}/sync/v3/queued_records` +
-        `?from_site=${this.thisSiteId}&to_site=${this.serverId}&limit=${this.batchSize}`,
+      `${this.serverURL}/sync/v3/queued_records?from_site=${this.thisSiteId}&to_site=${this.serverId}&limit=${this.batchSize}`,
       {
         headers: {
           Authorization: this.authHeader,
@@ -445,8 +448,7 @@ export class Synchroniser {
     };
 
     await this.fetchWrapper(
-      `${this.serverURL}/sync/v3/acknowledged_records` +
-        `?from_site=${this.thisSiteId}&to_site=${this.serverId}`,
+      `${this.serverURL}/sync/v3/acknowledged_records?from_site=${this.thisSiteId}&to_site=${this.serverId}`,
       {
         method: 'POST',
         headers: {

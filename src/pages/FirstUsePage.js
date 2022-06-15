@@ -14,7 +14,7 @@ import { Button } from 'react-native-ui-components';
 import { Synchroniser } from '../sync';
 
 import { SyncState } from '../widgets';
-import { DemoUserModal } from '../widgets/modals';
+import { DemoUserModal, PendingSgRequisitionModal } from '../widgets/modals';
 import packageJson from '../../package.json';
 
 import { PermissionActions } from '../actions/PermissionActions';
@@ -41,6 +41,8 @@ export class FirstUsePageComponent extends React.Component {
       syncSitePassword: '',
       status: STATUSES.UNINITIALISED,
       isDemoUserModalOpen: false,
+      isPendingSgRequisitionModalOpen: false,
+      pendingSgRequisitionCount: 0,
     };
     this.appVersion = packageJson.version;
     this.siteNameInputRef = null;
@@ -62,6 +64,14 @@ export class FirstUsePageComponent extends React.Component {
 
       onInitialised();
     } catch (error) {
+      if (error.message.startsWith('There are pending response requisition')) {
+        const pendingSgCustomerRequisitionCount = error.message.split(':')[1];
+        this.setState({
+          isPendingSgRequisitionModalOpen: true,
+          pendingSgRequisitionCount: parseInt(pendingSgCustomerRequisitionCount, 10),
+        });
+      }
+
       this.setState({ status: STATUSES.ERROR });
     }
   }
@@ -116,8 +126,20 @@ export class FirstUsePageComponent extends React.Component {
 
   handleDemoModalClose = () => this.setState({ isDemoUserModalOpen: false });
 
+  handlePendingSgRequisitionModalClose = () =>
+    this.setState({ status: STATUSES.UNINITIALISED, isPendingSgRequisitionModalOpen: false });
+
   render() {
-    const { isDemoUserModalOpen, serverURL, status, syncSiteName, syncSitePassword } = this.state;
+    const {
+      isDemoUserModalOpen,
+      isPendingSgRequisitionModalOpen,
+      serverURL,
+      status,
+      syncSiteName,
+      syncSitePassword,
+      pendingSgRequisitionCount,
+    } = this.state;
+
     const { requestImportStorageWritePermission } = this.props;
 
     return (
@@ -225,6 +247,11 @@ export class FirstUsePageComponent extends React.Component {
         </View>
         <Text style={globalStyles.authWindowButtonText}> v{this.appVersion}</Text>
         <DemoUserModal isOpen={isDemoUserModalOpen} onClose={this.handleDemoModalClose} />
+        <PendingSgRequisitionModal
+          isOpen={isPendingSgRequisitionModalOpen}
+          count={pendingSgRequisitionCount}
+          onClose={this.handlePendingSgRequisitionModalClose}
+        />
       </View>
     );
   }
