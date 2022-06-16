@@ -121,11 +121,11 @@ export class Synchroniser {
     }
 
     if (responseJson.error) {
-      if (
-        responseJson.error.startsWith("Site registration doesn't match.") ||
-        responseJson.error.startsWith('There are pending response requisition')
-      ) {
+      if (responseJson.error.startsWith("Site registration doesn't match.")) {
         throw new Error(responseJson.error);
+      } else if (responseJson.error.startsWith('There are pending response requisition')) {
+        const pendingSgCustomerRequisitionMsg = responseJson.error.split(':')[0];
+        throw new Error(pendingSgCustomerRequisitionMsg);
       } else {
         bugsnagNotify(responseJson.error, response);
         throw new Error('Server rejected pushed records');
