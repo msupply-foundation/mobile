@@ -17,18 +17,12 @@ const PendingSgRequisitionModal = ({ isOpen, onClose, count }) => {
     const response = await fetch(url, { method: 'DELETE' });
 
     if (response.status < 200 || response.status >= 300) {
-      ToastAndroid.show(
-        'Error! Failed to delete suggested customer requisition(s)',
-        ToastAndroid.LONG
-      );
+      ToastAndroid.show(modalStrings.failed_to_delete_sg_customer_requisition, ToastAndroid.LONG);
 
       Settings.delete(SETTINGS_KEYS.SYNC_URL);
       Settings.delete(SETTINGS_KEYS.SYNC_SITE_NAME);
     } else {
-      ToastAndroid.show(
-        'Successfully deleted suggested customer requisition(s)',
-        ToastAndroid.LONG
-      );
+      ToastAndroid.show(modalStrings.success_delete_sg_customer_requisition, ToastAndroid.LONG);
     }
 
     onClose();
