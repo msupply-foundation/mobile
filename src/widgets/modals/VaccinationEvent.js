@@ -172,7 +172,7 @@ export const VaccinationEventComponent = ({
           isDisabled={!isSupplementalDataValid}
         />
         <PageButton
-          text={buttonStrings.edit}
+          text={buttonStrings.save_changes}
           style={localStyles.saveButton}
           textStyle={localStyles.saveButtonTextStyle}
           isDisabled={true}
