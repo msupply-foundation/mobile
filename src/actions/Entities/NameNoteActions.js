@@ -69,17 +69,33 @@ const saveEditing = () => (dispatch, getState) => {
   dispatch(reset());
 };
 
-const updateLinkedSurveyNameNote = (originalNote, updatedData) => () => {
-  const { id, patientEvent, name, entryDate } = originalNote;
+const updateNameNote = (originalNote, updatedData) => () => {
+  const { id, patientEvent, name, entryDate, _data } = originalNote;
 
-  const updatedNote = {
-    id,
-    patientEvent,
-    name,
-    entryDate: new Date(entryDate),
-    _data: JSON.stringify(updatedData),
-  };
+  // Quick & dirty check if the object was updated, trims out some un-needed updates
+  const isDirty = _data !== JSON.stringify(updatedData);
 
+  if (isDirty) {
+    const updatedNote = {
+      id,
+      patientEvent,
+      name,
+      entryDate: new Date(entryDate),
+      _data: JSON.stringify(updatedData),
+    };
+
+    UIDatabase.write(() => {
+      UIDatabase.update('NameNote', updatedNote);
+      UIDatabase.create('NameNote', createNameNoteAudit(originalNote, updatedData));
+    });
+    ToastAndroid.show(vaccineStrings.vaccination_updated, ToastAndroid.LONG);
+  } else {
+    ToastAndroid.show(vaccineStrings.vaccination_not_updated, ToastAndroid.LONG);
+  }
+};
+
+const createNameNoteAudit = (originalNote, updatedData) => {
+  const { patientEvent, name, entryDate } = originalNote;
   const [auditEvent] = UIDatabase.objects('PatientEvent').filtered('code == "NameNoteModified"');
 
   const auditNameNote = {
@@ -100,11 +116,7 @@ const updateLinkedSurveyNameNote = (originalNote, updatedData) => () => {
     }),
   };
 
-  UIDatabase.write(() => {
-    UIDatabase.update('NameNote', updatedNote);
-    UIDatabase.create('NameNote', auditNameNote);
-  });
-  ToastAndroid.show(vaccineStrings.vaccination_updated, ToastAndroid.LONG);
+  return auditNameNote;
 };
 
 const createNotes = (nameNotes = []) => {
@@ -139,6 +151,6 @@ export const NameNoteActions = {
   reset,
   createSurveyNameNote,
   updateForm,
-  updateLinkedSurveyNameNote,
+  updateNameNote,
   saveEditing,
 };

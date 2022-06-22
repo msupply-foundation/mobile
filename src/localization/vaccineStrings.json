@@ -7,6 +7,8 @@
     "vaccine_dispense_step_two_title": "Step: 2 Edit the patients details",
     "vaccine_dispense_vaccine_select_title": "Select the vaccine",
     "vaccine_dispense_supplemental_data_title": "Step: 3 Enter additional vaccination details",
+    "vaccine_event_supplemental_data_title": "Page 2: Additional Details",
+    "vaccine_event_transact_data_title": "Page 3: Vaccination Event",
     "vaccinator": "Vaccinator",
     "logging_delayed_until": "Logging delayed until",
     "hot_consecutive": "Hot consecutive",
@@ -75,7 +77,8 @@
     "pause": "Pause",
     "resume": "Resume",
     "refusal_reason": "Reason for refusal",
-    "vaccination_updated": "Vaccination details updated"
+    "vaccination_updated": "Vaccination details updated",
+    "vaccination_not_updated": "No updates were made to the vaccination record"
   },
   "fr": {
     "no_vaccine_stock": "Vous n'avez pas de vaccins en stock!",

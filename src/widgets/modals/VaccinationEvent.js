@@ -1,3 +1,4 @@
+/* eslint-disable react/jsx-curly-newline */
 /* eslint-disable react/forbid-prop-types */
 import React, { useRef, useState } from 'react';
 import { View, StyleSheet, Text } from 'react-native';
@@ -5,7 +6,11 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { FlexRow } from '../FlexRow';
 import { JSONForm } from '../JSONForm/JSONForm';
-import { selectSurveySchemas, selectVaccinationEventSchemas } from '../../selectors/formSchema';
+import {
+  selectSupplementalDataSchemas,
+  selectSurveySchemas,
+  selectVaccinationEventSchemas,
+} from '../../selectors/formSchema';
 import { FlexView } from '../FlexView';
 import { UIDatabase } from '../../database';
 import { selectMostRecentNameNote } from '../../selectors/Entities/nameNote';
@@ -17,9 +22,11 @@ import globalStyles, {
   GREY,
   SUSSOL_ORANGE,
 } from '../../globalStyles';
-import { buttonStrings, generalStrings } from '../../localization';
+import { buttonStrings, generalStrings, vaccineStrings } from '../../localization';
 import { PageButton } from '../PageButton';
 import { NameNoteActions } from '../../actions';
+import { Paper } from '../Paper';
+import { Title } from '../JSONForm/fields';
 
 // It's possible to get into this state if vaccination events were configured but PCD events weren't
 // and someone dispensed a vaccine. Some data cleanup may be required.
@@ -40,17 +47,27 @@ export const NoPCDForm = () => (
 
 export const VaccinationEventComponent = ({
   patient,
-  vaccinationEvent,
+  supplementalDataSchema,
+  vaccinationEventId,
   vaccinationEventSchema,
-  saveForm,
+  savePCDForm,
+  saveSupplementalData,
   surveySchema,
 }) => {
   const pcdFormRef = useRef(null);
+  const supplementalFormRef = useRef(null);
   const vaccinationFormRef = useRef(null);
+
   const [{ updatedPcdForm, isPCDValid }, setPCDForm] = useState({
     updatedPcdForm: null,
     isPCDValid: false,
   });
+  const [{ updatedSupplementalDataForm, isSupplementalDataValid }, setSupplementalData] = useState({
+    updatedSupplementalDataForm: null,
+    isSupplementalDataValid: false,
+  });
+  const vaccinationEventNameNote = UIDatabase.get('NameNote', vaccinationEventId);
+  const vaccinationEvent = vaccinationEventNameNote.data;
 
   const { pcdNameNoteId } = vaccinationEvent;
   const surveyForm = pcdNameNoteId
@@ -64,27 +81,13 @@ export const VaccinationEventComponent = ({
   const parsedVaccinationEvent = {
     ...vaccinationEvent,
     extra: {
-      prescription: { ...vaccinationEvent.prescription, customData: customDataObject },
+      prescription: { ...vaccinationEvent.extra.prescription, customData: customDataObject },
     },
   };
 
   return (
     <FlexView>
-      <FlexRow flex={1}>
-        {!!vaccinationEventSchema && !!vaccinationEvent && (
-          <FlexRow flex={1}>
-            <View style={localStyles.formContainer}>
-              <JSONForm
-                ref={vaccinationFormRef}
-                disabled={true}
-                formData={parsedVaccinationEvent ?? null}
-                surveySchema={vaccinationEventSchema}
-              >
-                <></>
-              </JSONForm>
-            </View>
-          </FlexRow>
-        )}
+      <FlexRow flex={1} style={localStyles.formContainer}>
         <FlexRow flex={1}>
           <View style={localStyles.formContainer}>
             {!!surveySchema && !!surveyForm ? (
@@ -110,14 +113,69 @@ export const VaccinationEventComponent = ({
             )}
           </View>
         </FlexRow>
+        <FlexRow flex={1}>
+          <View style={localStyles.formContainer}>
+            <Paper
+              Header={
+                <Title title={vaccineStrings.vaccine_event_supplemental_data_title} size="large" />
+              }
+              contentContainerStyle={{ flex: 1 }}
+              style={{ flex: 1 }}
+              headerContainerStyle={localStyles.title}
+            >
+              <JSONForm
+                ref={supplementalFormRef}
+                formData={customDataObject ?? null}
+                surveySchema={supplementalDataSchema}
+                onChange={(changed, validator) => {
+                  setSupplementalData({
+                    updatedSupplementalDataForm: changed.formData,
+                    isSupplementalDataValid: validator(changed.formData),
+                  });
+                }}
+              >
+                <></>
+              </JSONForm>
+            </Paper>
+          </View>
+        </FlexRow>
+        {!!vaccinationEventSchema && !!vaccinationEvent && (
+          <FlexRow flex={1}>
+            <View style={localStyles.formContainer}>
+              <JSONForm
+                ref={vaccinationFormRef}
+                disabled={true}
+                formData={parsedVaccinationEvent ?? null}
+                surveySchema={vaccinationEventSchema}
+              >
+                <></>
+              </JSONForm>
+            </View>
+          </FlexRow>
+        )}
       </FlexRow>
       <FlexRow flex={0} justifyContent="center">
         <PageButton
           text={buttonStrings.save_changes}
-          onPress={() => saveForm(surveyForm, updatedPcdForm)}
+          onPress={() => savePCDForm(surveyForm, updatedPcdForm)}
           style={localStyles.saveButton}
           textStyle={localStyles.saveButtonTextStyle}
           isDisabled={!isPCDValid}
+        />
+        <PageButton
+          text={buttonStrings.save_changes}
+          onPress={() =>
+            saveSupplementalData(vaccinationEventNameNote, updatedSupplementalDataForm)
+          }
+          style={localStyles.saveButton}
+          textStyle={localStyles.saveButtonTextStyle}
+          isDisabled={!isSupplementalDataValid}
+        />
+        <PageButton
+          text={buttonStrings.save_changes}
+          style={localStyles.saveButton}
+          textStyle={localStyles.saveButtonTextStyle}
+          isDisabled={true}
         />
       </FlexRow>
     </FlexView>
@@ -131,16 +189,39 @@ const mapStateToProps = () => {
   const vaccinationEventSchemas = selectVaccinationEventSchemas();
   const [vaccinationEventSchema] = vaccinationEventSchemas;
 
+  const supplementalDataSchemas = selectSupplementalDataSchemas();
+  const [supplementalDataSchema] = supplementalDataSchemas;
+
   return {
     surveySchema,
     vaccinationEventSchema,
+    supplementalDataSchema,
   };
 };
 
-const mapDispatchToProps = dispatch => ({
-  saveForm: (oldSurveyNote, updatedSurveyData) =>
-    dispatch(NameNoteActions.updateLinkedSurveyNameNote(oldSurveyNote, updatedSurveyData)),
-});
+const mapDispatchToProps = dispatch => {
+  const savePCDForm = (oldSurveyNote, updatedSurveyData) => {
+    dispatch(NameNoteActions.updateNameNote(oldSurveyNote, updatedSurveyData));
+  };
+
+  const saveSupplementalData = (vaccinationEventNameNote, updatedSupplementalData) => {
+    const vaccinationEvent = vaccinationEventNameNote.data;
+
+    const updatedData = {
+      ...vaccinationEvent,
+      extra: {
+        ...vaccinationEvent.extra,
+        prescription: {
+          ...vaccinationEvent.extra.prescription,
+          customData: JSON.stringify(updatedSupplementalData),
+        },
+      },
+    };
+    dispatch(NameNoteActions.updateNameNote(vaccinationEventNameNote, updatedData));
+  };
+
+  return { savePCDForm, saveSupplementalData };
+};
 
 const localStyles = StyleSheet.create({
   formContainer: {
@@ -160,18 +241,27 @@ const localStyles = StyleSheet.create({
     color: 'white',
     fontSize: 14,
   },
+  title: {
+    textAlignVertical: 'center',
+    fontWeight: 'bold',
+    fontSize: 22,
+    fontFamily: APP_FONT_FAMILY,
+    color: DARKER_GREY,
+  },
 });
 
 VaccinationEventComponent.defaultProps = {
   patient: {},
-  vaccinationEvent: {},
+  vaccinationEventId: '',
 };
 
 VaccinationEventComponent.propTypes = {
   patient: PropTypes.object,
-  saveForm: PropTypes.func.isRequired,
+  savePCDForm: PropTypes.func.isRequired,
+  saveSupplementalData: PropTypes.func.isRequired,
+  supplementalDataSchema: PropTypes.object.isRequired,
   surveySchema: PropTypes.object.isRequired,
-  vaccinationEvent: PropTypes.object,
+  vaccinationEventId: PropTypes.string,
   vaccinationEventSchema: PropTypes.object.isRequired,
 };
 

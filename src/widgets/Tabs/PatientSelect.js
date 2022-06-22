@@ -342,7 +342,7 @@ const PatientSelectComponent = ({
         onClose={() => setVaccinationEvent(null)}
         title={`${dispensingStrings.vaccination_details}`}
       >
-        <VaccinationEvent vaccinationEvent={vaccinationEvent} patient={patient} />
+        <VaccinationEvent vaccinationEventId={vaccinationEvent?.id} patient={patient} />
       </ModalContainer>
     </FlexView>
   );
