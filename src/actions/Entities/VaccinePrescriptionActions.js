@@ -17,6 +17,7 @@ import { NameNoteActions } from './NameNoteActions';
 import { goBack, gotoVaccineDispensingPage } from '../../navigation/actions';
 import { selectSupplementalDataSchemas } from '../../selectors/formSchema';
 import { validateJsonSchemaData } from '../../utilities/ajvValidator';
+import { SETTINGS_KEYS } from '../../settings';
 
 export const VACCINE_PRESCRIPTION_ACTIONS = {
   CREATE: 'VACCINE_PRESCRIPTION/create',
@@ -191,6 +192,8 @@ const createVaccinationNameNote = (
 
   // Extract name notes from the patient before saving as this can get huuuge(!)
   const { nameNotes, ...patientObject } = patient.toJSON();
+  const storeId = UIDatabase.getSetting(SETTINGS_KEYS.THIS_STORE_ID);
+  const storeNameId = UIDatabase.getSetting(SETTINGS_KEYS.THIS_STORE_NAME_ID);
 
   const data = {
     refused,
@@ -208,6 +211,8 @@ const createVaccinationNameNote = (
       patient: patientObject,
     },
     pcdNameNoteId: getPcdNameNoteID(patient.id),
+    storeId,
+    storeName: UIDatabase.objects('Name').filtered('id == $0', storeNameId)[0]?.name,
   };
   const newNameNote = {
     id,
