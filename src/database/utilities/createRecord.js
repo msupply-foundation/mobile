@@ -532,21 +532,31 @@ const createOffsetCustomerCredit = (database, receipt) => {
 };
 
 const createCustomerRefundLine = (database, customerCredit, transactionBatch) => {
-  const { total, itemBatch, numberOfPacks } = transactionBatch;
-  const { item, batch, expiryDate, packSize, costPrice, sellPrice, donor } = itemBatch;
+  const { totalQuantity, itemBatch, numberOfPacks } = transactionBatch;
 
-  const inverseTotal = -total;
+  const { batch, expiryDate, packSize, costPrice, sellPrice, donor } = itemBatch;
+
+  const inverseTotal = -totalQuantity;
+
+  // Create a TransactionItem to link between the new TransactionBatch and Transaction.
+  const transactionItem = createTransactionItem(
+    database,
+    customerCredit,
+    itemBatch.item,
+    inverseTotal
+  );
 
   const refundLine = database.create('TransactionBatch', {
     id: generateUUID(),
-    item,
+    itemId: transactionItem.id,
+    itemName: transactionItem.name,
+    itemBatch,
     batch,
     expiryDate,
     packSize,
     costPrice,
     sellPrice,
     donor,
-    itemBatch,
     transaction: customerCredit,
     total: inverseTotal,
     type: 'stock_in',
@@ -556,13 +566,43 @@ const createCustomerRefundLine = (database, customerCredit, transactionBatch) =>
   customerCredit.outstanding += inverseTotal;
 
   itemBatch.addTransactionBatch(refundLine);
+  itemBatch.totalQuantity -= totalQuantity;
+
   refundLine.setTotalQuantity(database, numberOfPacks);
 
   database.save('Transaction', customerCredit);
   database.save('TransactionBatch', refundLine);
-  database.save('ItemBatch', customerCredit);
+  database.save('ItemBatch', itemBatch);
 
   return refundLine;
+};
+
+/**
+ * Create a customer credit
+ *
+ * @param   {Realm}        database
+ * @param   {Name}         customer  Customer associated with invoice.
+ * @return  {Transaction}
+ */
+const createCustomerCredit = (database, user, otherParty, mode = 'store') => {
+  const { CUSTOMER_INVOICE_NUMBER } = NUMBER_SEQUENCE_KEYS;
+  const currentDate = new Date();
+  const customerCredit = database.create('Transaction', {
+    id: generateUUID(),
+    serialNumber: getNextNumber(database, CUSTOMER_INVOICE_NUMBER),
+    entryDate: currentDate,
+    confirmDate: currentDate,
+    type: 'customer_credit',
+    status: 'finalised',
+    comment: '',
+    otherParty,
+    enteredBy: user,
+    mode,
+  });
+
+  database.save('Transaction', customerCredit);
+
+  return customerCredit;
 };
 
 /**
@@ -1237,6 +1277,8 @@ const createAdverseDrugReaction = (database, patient, formData, user) => {
  */
 export const createRecord = (database, type, ...args) => {
   switch (type) {
+    case 'CustomerCredit':
+      return createCustomerCredit(database, ...args);
     case 'CustomerRequisition':
       return createCustomerRequisition(database, ...args);
     case 'CustomerInvoice':
