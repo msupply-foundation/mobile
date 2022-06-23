@@ -18,8 +18,6 @@ import { dispensingStrings, vaccineStrings } from '../localization';
 import { FlexColumn } from './FlexColumn';
 import { FlexView } from './FlexView';
 import { APP_FONT_FAMILY, DARKER_GREY, SUSSOL_ORANGE } from '../globalStyles';
-import { UIDatabase } from '../database/index';
-import { DropDown } from './DropDown';
 import { VaccinePrescriptionActions } from '../actions/Entities';
 import {
   selectFoundBonusDose,
@@ -29,6 +27,7 @@ import {
 import { Spacer } from './Spacer';
 import { BACKGROUND_COLOR, LIGHT_GREY } from '../globalStyles/colors';
 import { selectCurrentTab } from '../selectors/wizard';
+import { VaccinatorDropDown } from './VaccinatorDropDown';
 
 const WithLabel = ({ label, ...props }) => (
   <FlexColumn flex={0}>
@@ -41,29 +40,6 @@ const WithLabel = ({ label, ...props }) => (
 
 WithLabel.propTypes = {
   label: PropTypes.string.isRequired,
-};
-
-const VaccinatorDropDown = ({ value, onChange }) => {
-  const medicineAdmins = UIDatabase.objects('MedicineAdministrator').sorted('lastName');
-  const values = medicineAdmins.map(({ displayString }) => displayString);
-
-  return (
-    <DropDown
-      style={styles.dropdown}
-      values={values}
-      onValueChange={(_, i) => onChange(medicineAdmins[i])}
-      selectedValue={value?.displayString}
-    />
-  );
-};
-
-VaccinatorDropDown.defaultProps = {
-  value: null,
-};
-
-VaccinatorDropDown.propTypes = {
-  value: PropTypes.object,
-  onChange: PropTypes.func.isRequired,
 };
 
 const Header = ({ title }) => (
@@ -186,7 +162,6 @@ const styles = StyleSheet.create({
     fontFamily: APP_FONT_FAMILY,
     fontSize: 12,
   },
-  dropdown: { height: 35, marginTop: 0, marginBottom: 0, marginLeft: 0 },
   headerContainer: {
     flex: 1,
     height: 40,
