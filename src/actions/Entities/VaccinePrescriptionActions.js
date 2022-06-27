@@ -325,12 +325,32 @@ const toggleHistory = toggle => ({
   payload: { toggle },
 });
 
+const revertFinalisedVaccination = (patientID, transactionBatch) => (dispatch, getState) => {
+  const { user } = getState();
+  const { currentUser } = user;
+  const patient = UIDatabase.get('Name', patientID);
+
+  UIDatabase.write(() => {
+    const customerCredit = createRecord(
+      UIDatabase,
+      'CustomerCredit',
+      currentUser,
+      patient,
+      'dispensary'
+    );
+    const refundLine = createRecord(UIDatabase, 'RefundLine', customerCredit, transactionBatch);
+    console.log(customerCredit);
+    console.log(refundLine);
+  });
+};
+
 export const VaccinePrescriptionActions = {
   cancel,
   confirm,
   create,
   createSupplementaryData,
   reset,
+  revertFinalisedVaccination,
   selectBatch,
   selectSupplementalData,
   selectVaccine,

@@ -5,13 +5,12 @@ import { StyleSheet } from 'react-native';
 import { UIDatabase } from '../database/index';
 import { DropDown } from './DropDown';
 
-export const VaccinatorDropDown = ({ value, onChange }) => {
+export const VaccinatorDropDown = ({ value, onChange, style }) => {
   const medicineAdmins = UIDatabase.objects('MedicineAdministrator').sorted('lastName');
   const values = medicineAdmins.map(({ displayString }) => displayString);
-
   return (
     <DropDown
-      style={styles.dropdown}
+      style={{ ...style, ...styles.dropdown }}
       values={values}
       onValueChange={(_, i) => onChange(medicineAdmins[i])}
       selectedValue={value?.displayString}
@@ -25,9 +24,11 @@ const styles = StyleSheet.create({
 
 VaccinatorDropDown.defaultProps = {
   value: null,
+  style: {},
 };
 
 VaccinatorDropDown.propTypes = {
   value: PropTypes.object,
   onChange: PropTypes.func.isRequired,
+  style: PropTypes.object,
 };
