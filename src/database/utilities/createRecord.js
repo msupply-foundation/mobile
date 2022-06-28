@@ -565,10 +565,10 @@ const createCustomerRefundLine = (database, customerCredit, transactionBatch) =>
 
   customerCredit.outstanding += inverseTotal;
 
-  itemBatch.addTransactionBatch(refundLine);
-  itemBatch.totalQuantity -= totalQuantity;
-
   refundLine.setTotalQuantity(database, numberOfPacks);
+
+  itemBatch.addTransactionBatch(refundLine);
+  itemBatch.totalQuantity += totalQuantity;
 
   database.save('Transaction', customerCredit);
   database.save('TransactionBatch', refundLine);
