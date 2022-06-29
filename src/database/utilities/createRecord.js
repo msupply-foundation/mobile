@@ -552,18 +552,17 @@ const createCustomerRefundLine = (database, customerCredit, transactionBatch) =>
     batch,
     expiryDate,
     packSize,
+    numberOfPacks: 0,
     costPrice,
     sellPrice,
     donor,
     transaction: customerCredit,
-    total: totalQuantity,
     type: 'stock_in',
     note: 'credit',
+    sentPackSize: packSize,
   });
 
   itemBatch.addTransactionBatch(refundLine);
-
-  database.save('TransactionBatch', refundLine);
   database.save('ItemBatch', itemBatch);
 
   return refundLine;
@@ -589,10 +588,7 @@ const createCustomerCredit = (database, user, otherParty, returnAmount, mode = '
     otherParty,
     enteredBy: user,
     mode,
-    subtotal: returnAmount,
   });
-
-  database.save('Transaction', customerCredit);
 
   return customerCredit;
 };
