@@ -30,7 +30,6 @@ export const VACCINE_PRESCRIPTION_ACTIONS = {
   SELECT_BATCH: 'VACCINE_PRESCRIPTION/selectBatch',
   SELECT_VACCINATOR: 'VACCINE_PRESCRIPTION/selectVaccinator',
   SET_BONUS_DOSE: 'VACCINE_PRESCRIPTION/setBonusDose',
-  TOGGLE_HISTORY: 'VACCINE_PRESCRIPTION/toggleHistory',
   SELECT_DEFAULT_VACCINE: 'VACCINE_PRESCRIPTION/selectDefaultVaccine',
 };
 
@@ -320,14 +319,10 @@ const confirmAndRepeat = () => dispatch =>
     dispatch(gotoVaccineDispensingPage());
   });
 
-const toggleHistory = toggle => ({
-  type: VACCINE_PRESCRIPTION_ACTIONS.TOGGLE_HISTORY,
-  payload: { toggle },
-});
-
-const revertFinalisedVaccination = (patientID, transactionBatch) => (dispatch, getState) => {
+const returnVaccineToStock = (patientID, transactionBatch) => (dispatch, getState) => {
   const { user } = getState();
   const { currentUser } = user;
+  const { totalQuantity } = transactionBatch;
   const patient = UIDatabase.get('Name', patientID);
 
   UIDatabase.write(() => {
@@ -336,11 +331,11 @@ const revertFinalisedVaccination = (patientID, transactionBatch) => (dispatch, g
       'CustomerCredit',
       currentUser,
       patient,
+      -totalQuantity,
       'dispensary'
     );
-    const refundLine = createRecord(UIDatabase, 'RefundLine', customerCredit, transactionBatch);
-    console.log(customerCredit);
-    console.log(refundLine);
+    createRecord(UIDatabase, 'RefundLine', customerCredit, transactionBatch);
+    customerCredit.finalise(UIDatabase);
   });
 };
 
@@ -350,7 +345,7 @@ export const VaccinePrescriptionActions = {
   create,
   createSupplementaryData,
   reset,
-  revertFinalisedVaccination,
+  returnVaccineToStock,
   selectBatch,
   selectSupplementalData,
   selectVaccine,
@@ -359,7 +354,6 @@ export const VaccinePrescriptionActions = {
   selectVaccinator,
   confirmAndRepeat,
   setBonusDose,
-  toggleHistory,
   selectDefaultVaccine,
   updateSupplementalData,
 };

@@ -51,7 +51,7 @@ export const NoPCDForm = () => (
 );
 
 export const VaccinationEventComponent = ({
-  createCustomerCredit,
+  editTransaction,
   patient,
   savePCDForm,
   saveSupplementalData,
@@ -98,7 +98,7 @@ export const VaccinationEventComponent = ({
   }, [transaction]);
 
   const trySave = useCallback(() => {
-    createCustomerCredit(patient, transactionBatch);
+    editTransaction(patient, transactionBatch);
   }, [patient, transactionBatch]);
 
   const { pcdNameNoteId } = vaccinationEvent;
@@ -301,11 +301,11 @@ const mapDispatchToProps = dispatch => {
     dispatch(NameNoteActions.updateNameNote(vaccinationEventNameNote, updatedData));
   };
 
-  const createCustomerCredit = (patient, transactionBatch) => {
-    dispatch(VaccinePrescriptionActions.revertFinalisedVaccination(patient.id, transactionBatch));
+  const editTransaction = (patient, transactionBatch) => {
+    dispatch(VaccinePrescriptionActions.returnVaccineToStock(patient.id, transactionBatch));
   };
 
-  return { createCustomerCredit, savePCDForm, saveSupplementalData };
+  return { editTransaction, savePCDForm, saveSupplementalData };
 };
 
 const localStyles = StyleSheet.create({
@@ -342,7 +342,7 @@ VaccinationEventComponent.defaultProps = {
 };
 
 VaccinationEventComponent.propTypes = {
-  createCustomerCredit: PropTypes.func.isRequired,
+  editTransaction: PropTypes.func.isRequired,
   patient: PropTypes.object,
   savePCDForm: PropTypes.func.isRequired,
   saveSupplementalData: PropTypes.func.isRequired,

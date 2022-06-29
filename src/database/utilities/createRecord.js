@@ -532,18 +532,16 @@ const createOffsetCustomerCredit = (database, receipt) => {
 };
 
 const createCustomerRefundLine = (database, customerCredit, transactionBatch) => {
-  const { totalQuantity, itemBatch, numberOfPacks } = transactionBatch;
+  const { totalQuantity, itemBatch } = transactionBatch;
 
   const { batch, expiryDate, packSize, costPrice, sellPrice, donor } = itemBatch;
-
-  const inverseTotal = -totalQuantity;
 
   // Create a TransactionItem to link between the new TransactionBatch and Transaction.
   const transactionItem = createTransactionItem(
     database,
     customerCredit,
     itemBatch.item,
-    inverseTotal
+    totalQuantity
   );
 
   const refundLine = database.create('TransactionBatch', {
@@ -558,19 +556,13 @@ const createCustomerRefundLine = (database, customerCredit, transactionBatch) =>
     sellPrice,
     donor,
     transaction: customerCredit,
-    total: inverseTotal,
+    total: totalQuantity,
     type: 'stock_in',
     note: 'credit',
   });
 
-  customerCredit.outstanding += inverseTotal;
-
-  refundLine.setTotalQuantity(database, numberOfPacks);
-
   itemBatch.addTransactionBatch(refundLine);
-  itemBatch.totalQuantity += totalQuantity;
 
-  database.save('Transaction', customerCredit);
   database.save('TransactionBatch', refundLine);
   database.save('ItemBatch', itemBatch);
 
@@ -584,7 +576,7 @@ const createCustomerRefundLine = (database, customerCredit, transactionBatch) =>
  * @param   {Name}         customer  Customer associated with invoice.
  * @return  {Transaction}
  */
-const createCustomerCredit = (database, user, otherParty, mode = 'store') => {
+const createCustomerCredit = (database, user, otherParty, returnAmount, mode = 'store') => {
   const { CUSTOMER_INVOICE_NUMBER } = NUMBER_SEQUENCE_KEYS;
   const currentDate = new Date();
   const customerCredit = database.create('Transaction', {
@@ -593,11 +585,11 @@ const createCustomerCredit = (database, user, otherParty, mode = 'store') => {
     entryDate: currentDate,
     confirmDate: currentDate,
     type: 'customer_credit',
-    status: 'finalised',
     comment: '',
     otherParty,
     enteredBy: user,
     mode,
+    subtotal: returnAmount,
   });
 
   database.save('Transaction', customerCredit);
