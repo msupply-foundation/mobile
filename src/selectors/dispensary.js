@@ -45,7 +45,7 @@ export const selectDataSet = ({ dispensary }) => {
 
 export const selectData = ({ dispensary }) => {
   const { data } = dispensary;
-  return data;
+  return data.filtered('isDeleted == false');
 };
 
 export const selectDataSetInUse = ({ dispensary }) => {

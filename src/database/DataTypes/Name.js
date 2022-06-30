@@ -159,6 +159,7 @@ export class Name extends Realm.Object {
       lastName: this.lastName,
       isActive: this.isActive,
       isDeceased: this.isDeceased,
+      isDeleted: this.isDeleted,
       isCustomer: this.isCustomer,
       isSupplier: this.isSupplier,
       isManufacturer: this.isManufacturer,
