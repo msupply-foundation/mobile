@@ -102,7 +102,8 @@ export const selectVaccinePatientHistory = patient => {
 
   const nameNotes = patient?.nameNotes
     ?.filter(
-      ({ patientEventID, data }) =>
+      ({ patientEventID, data, isDeleted }) =>
+        !isDeleted &&
         patientEventID === vaccinationPatientEventID &&
         validateJsonSchemaData(selectVaccinationEventSchemas()[0].jsonSchema, data)
     )

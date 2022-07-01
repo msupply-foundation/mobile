@@ -44,8 +44,10 @@ export const selectDataSet = ({ dispensary }) => {
 };
 
 export const selectData = ({ dispensary }) => {
+  const dataSet = selectDataSet({ dispensary });
   const { data } = dispensary;
-  return data;
+
+  return dataSet === 'patient' ? data.filtered('isDeleted == false') : data;
 };
 
 export const selectDataSetInUse = ({ dispensary }) => {
