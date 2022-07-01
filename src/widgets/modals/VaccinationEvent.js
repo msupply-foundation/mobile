@@ -1,9 +1,9 @@
 /* eslint-disable react/jsx-curly-newline */
 /* eslint-disable react/forbid-prop-types */
 import React, { useCallback, useRef, useState } from 'react';
-import { View, StyleSheet, Text } from 'react-native';
+import { View, StyleSheet, Text, ToastAndroid } from 'react-native';
 import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
+import { batch, connect } from 'react-redux';
 import { FlexRow } from '../FlexRow';
 import { JSONForm } from '../JSONForm/JSONForm';
 import {
@@ -24,7 +24,7 @@ import globalStyles, {
 } from '../../globalStyles';
 import { buttonStrings, generalStrings, modalStrings, vaccineStrings } from '../../localization';
 import { PageButton } from '../PageButton';
-import { NameNoteActions, VaccinePrescriptionActions } from '../../actions';
+import { NameActions, NameNoteActions, VaccinePrescriptionActions } from '../../actions';
 import { Paper } from '../Paper';
 import { Title } from '../JSONForm/fields';
 import { useToggle } from '../../hooks';
@@ -76,7 +76,9 @@ export const VaccinationEventComponent = ({
   const [isEditingTransaction, toggleEditTransaction] = useToggle(false);
   const [isModalOpen, toggleModal] = useToggle(false);
   const [vaccinator, setVaccinator] = useState(transactionBatch?.medicineAdministrator);
-  const [vaccine, setVaccine] = useState(transactionBatch?.itemBatch?.item);
+  const [vaccine, setVaccine] = useState(
+    vaccines.filter(item => item.id === transactionBatch?.itemId)
+  );
   const vaccineDropDownValues = vaccines.map(({ code, name }) => `${code}: ${name}`);
 
   const [{ updatedPcdForm, isPCDValid }, setPCDForm] = useState({
@@ -97,10 +99,6 @@ export const VaccinationEventComponent = ({
     }
   }, [transaction]);
 
-  const trySave = useCallback(() => {
-    editTransaction(patient, transactionBatch);
-  }, [patient, transactionBatch]);
-
   const { pcdNameNoteId } = vaccinationEvent;
   const surveyForm = pcdNameNoteId
     ? UIDatabase.get('NameNote', pcdNameNoteId)
@@ -116,6 +114,25 @@ export const VaccinationEventComponent = ({
       prescription: { ...vaccinationEvent.extra.prescription, customData: customDataObject },
     },
   };
+
+  const trySave = useCallback(() => {
+    const vaccineChanged = vaccine.code !== transactionBatch?.itemBatch?.item?.code;
+    const vaccinatorChanged =
+      JSON.stringify(vaccinator) !== JSON.stringify(transactionBatch.medicineAdministrator);
+
+    if (vaccineChanged || vaccinatorChanged) {
+      editTransaction(
+        patient,
+        transactionBatch,
+        vaccine,
+        vaccinator,
+        customDataObject,
+        vaccinationEventNameNote
+      );
+    } else {
+      ToastAndroid.show(vaccineStrings.vaccination_not_updated, ToastAndroid.LONG);
+    }
+  }, [patient, transactionBatch, vaccine]);
 
   return (
     <FlexView>
@@ -301,8 +318,26 @@ const mapDispatchToProps = dispatch => {
     dispatch(NameNoteActions.updateNameNote(vaccinationEventNameNote, updatedData));
   };
 
-  const editTransaction = (patient, transactionBatch) => {
-    dispatch(VaccinePrescriptionActions.returnVaccineToStock(patient.id, transactionBatch));
+  const editTransaction = (
+    patient,
+    transactionBatch,
+    vaccine,
+    vaccinator,
+    supplementalData,
+    vaccinationEventNameNote
+  ) => {
+    batch(() => {
+      dispatch(VaccinePrescriptionActions.returnVaccineToStock(patient.id, transactionBatch));
+      dispatch(NameActions.select(patient));
+      dispatch(VaccinePrescriptionActions.selectVaccinator(vaccinator));
+      dispatch(VaccinePrescriptionActions.selectVaccine(UIDatabase.get('Item', vaccine.id)));
+      dispatch(VaccinePrescriptionActions.selectSupplementalData(supplementalData));
+      dispatch(VaccinePrescriptionActions.confirm());
+    });
+
+    UIDatabase.write(() => {
+      UIDatabase.update('NameNote', { id: vaccinationEventNameNote.id, isDeleted: true });
+    });
   };
 
   return { editTransaction, savePCDForm, saveSupplementalData };
