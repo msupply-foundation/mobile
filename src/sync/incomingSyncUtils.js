@@ -589,6 +589,7 @@ export const createOrUpdateRecord = (database, settings, recordType, record) => 
         type: NAME_TYPES.translate(record.type, EXTERNAL_TO_INTERNAL),
         isCustomer: parseBoolean(record.customer),
         isDeceased: parseBoolean(record.isDeceased),
+        isDeleted: parseBoolean(record.is_deleted),
         isSupplier: parseBoolean(record.supplier),
         isManufacturer: parseBoolean(record.manufacturer),
         supplyingStoreId: record.supplying_store_id,
@@ -1155,6 +1156,7 @@ export const createOrUpdateRecord = (database, settings, recordType, record) => 
         patientEvent: database.getOrCreate('PatientEvent', record.patient_event_ID),
         entryDate: parseDate(record.entry_date),
         _data: record.data,
+        isDeleted: parseBoolean(record.is_deleted),
         name: database.getOrCreate('Name', record.name_ID),
         note: record.note,
       });

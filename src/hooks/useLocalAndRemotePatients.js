@@ -187,7 +187,7 @@ export const useLocalAndRemotePatients = (initialValue = []) => {
     }
     dispatch({ type: 'fetch_start' });
 
-    const query = 'lastName BEGINSWITH[c] $0 AND firstName BEGINSWITH[c] $1';
+    const query = 'isDeleted == false AND lastName BEGINSWITH[c] $0 AND firstName BEGINSWITH[c] $1';
     let patients = UIDatabase.objects('Patient').filtered(query, lastName, firstName);
 
     if (dateOfBirth) {

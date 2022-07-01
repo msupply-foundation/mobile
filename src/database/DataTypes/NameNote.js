@@ -38,6 +38,7 @@ NameNote.schema = {
     id: 'string',
     entryDate: { type: 'date', default: new Date() },
     _data: { type: 'string', optional: true },
+    isDeleted: { type: 'bool', default: false, optional: true },
     name: 'Name',
     note: { type: 'string', optional: true },
     patientEvent: 'PatientEvent',
