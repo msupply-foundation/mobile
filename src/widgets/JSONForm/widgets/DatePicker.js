@@ -34,7 +34,7 @@ export const DatePicker = ({
         underlineColorAndroid={DARKER_GREY}
         placeholder={placeholder}
         editable={!(readonly || disabled)}
-        value={moment(value).format(DATE_FORMAT.DD_MM_YYYY)}
+        value={value}
         ref={ref}
         onSubmitEditing={() => focusController.next(ref)}
         onChangeText={handleChange}
@@ -45,7 +45,7 @@ export const DatePicker = ({
       />
       <DatePickerButton
         isDisabled={readonly || disabled}
-        initialValue={new Date(moment(value).format(DATE_FORMAT.DD_MM_YYYY))}
+        initialValue={moment(value, DATE_FORMAT.DD_MM_YYYY).toDate()}
         minimumDate={options.dateRange === 'future' ? new Date() : null}
         maximumDate={options.dateRange === 'past' ? new Date() : null}
         onDateChanged={date => handleChange(moment(date).format(DATE_FORMAT.DD_MM_YYYY))}
