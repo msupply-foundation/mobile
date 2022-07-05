@@ -132,7 +132,7 @@ export const deleteSelectedRecords = (recordType, route) => (dispatch, getState)
   const transactionsToDelete = recordIds.reduce((acc, recordId) => {
     const record = backingData.filtered('id == $0', recordId)[0];
     const shouldDelete = record && record.isValid() && !record.isFinalised;
-    if (shouldDelete) return [...acc, record];
+    if (shouldDelete && record.serialNumber > 0) return [...acc, record];
     return acc;
   }, []);
 
