@@ -9,6 +9,7 @@
     "vaccine_dispense_supplemental_data_title": "Step: 3 Enter additional vaccination details",
     "vaccine_event_supplemental_data_title": "Page 2: Additional Details",
     "vaccine_event_transact_data_title": "Page 3: Vaccination Event",
+    "vaccine_event_transact_data_description": "You may edit the vaccinator or vaccine type.",
     "vaccinator": "Vaccinator",
     "logging_delayed_until": "Logging delayed until",
     "hot_consecutive": "Hot consecutive",

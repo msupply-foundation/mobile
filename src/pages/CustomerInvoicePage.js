@@ -117,7 +117,6 @@ export const CustomerInvoice = ({
   const renderRow = useCallback(
     listItem => {
       const { item, index } = listItem;
-
       const rowKey = keyExtractor(item);
       return (
         <DataTableRow
@@ -230,7 +229,13 @@ const mapStateToProps = state => {
   const { usingVaccines } = modules;
   const { pageObject } = customerInvoice ?? {};
   const { isCredit = false } = pageObject ?? {};
-  if (isCredit) return { ...customerInvoice, columns: getColumns(ROUTES.CUSTOMER_CREDIT) };
+
+  if (isCredit) {
+    if (usingVaccines && pageObject.hasVaccine) {
+      return { ...customerInvoice, columns: getColumns(ROUTES.CUSTOMER_CREDIT_WITH_VACCINES) };
+    }
+    return { ...customerInvoice, columns: getColumns(ROUTES.CUSTOMER_CREDIT) };
+  }
   if (usingVaccines && pageObject?.hasVaccine) {
     return { ...customerInvoice, columns: getColumns(ROUTES.CUSTOMER_INVOICE_WITH_VACCINES) };
   }

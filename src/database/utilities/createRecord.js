@@ -532,37 +532,65 @@ const createOffsetCustomerCredit = (database, receipt) => {
 };
 
 const createCustomerRefundLine = (database, customerCredit, transactionBatch) => {
-  const { total, itemBatch, numberOfPacks } = transactionBatch;
-  const { item, batch, expiryDate, packSize, costPrice, sellPrice, donor } = itemBatch;
+  const { totalQuantity, itemBatch } = transactionBatch;
 
-  const inverseTotal = -total;
+  const { batch, expiryDate, packSize, costPrice, sellPrice, donor } = itemBatch;
+
+  // Create a TransactionItem to link between the new TransactionBatch and Transaction.
+  const transactionItem = createTransactionItem(
+    database,
+    customerCredit,
+    itemBatch.item,
+    totalQuantity
+  );
 
   const refundLine = database.create('TransactionBatch', {
     id: generateUUID(),
-    item,
+    itemId: transactionItem.id,
+    itemName: transactionItem.name,
+    itemBatch,
     batch,
     expiryDate,
     packSize,
+    numberOfPacks: 0,
     costPrice,
     sellPrice,
     donor,
-    itemBatch,
     transaction: customerCredit,
-    total: inverseTotal,
     type: 'stock_in',
     note: 'credit',
+    sentPackSize: packSize,
   });
 
-  customerCredit.outstanding += inverseTotal;
-
   itemBatch.addTransactionBatch(refundLine);
-  refundLine.setTotalQuantity(database, numberOfPacks);
-
-  database.save('Transaction', customerCredit);
-  database.save('TransactionBatch', refundLine);
-  database.save('ItemBatch', customerCredit);
+  database.save('ItemBatch', itemBatch);
 
   return refundLine;
+};
+
+/**
+ * Create a customer credit
+ *
+ * @param   {Realm}        database
+ * @param   {Name}         customer  Customer associated with invoice.
+ * @return  {Transaction}
+ */
+const createCustomerCredit = (database, user, otherParty, returnAmount, mode = 'store') => {
+  const { CUSTOMER_INVOICE_NUMBER } = NUMBER_SEQUENCE_KEYS;
+  const currentDate = new Date();
+  const customerCredit = database.create('Transaction', {
+    id: generateUUID(),
+    serialNumber: getNextNumber(database, CUSTOMER_INVOICE_NUMBER),
+    entryDate: currentDate,
+    confirmDate: currentDate,
+    type: 'customer_credit',
+    comment: '',
+    otherParty,
+    enteredBy: user,
+    mode,
+  });
+
+  return customerCredit;
 };
 
 /**
@@ -1237,6 +1265,8 @@ const createAdverseDrugReaction = (database, patient, formData, user) => {
  */
 export const createRecord = (database, type, ...args) => {
   switch (type) {
+    case 'CustomerCredit':
+      return createCustomerCredit(database, ...args);
     case 'CustomerRequisition':
       return createCustomerRequisition(database, ...args);
     case 'CustomerInvoice':

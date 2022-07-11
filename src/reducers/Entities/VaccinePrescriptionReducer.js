@@ -12,7 +12,6 @@ const initialState = () => ({
   vaccines: UIDatabase.objects('Vaccine').sorted('name'),
   vaccinator: null,
   bonusDose: false,
-  historyIsOpen: false,
   isSupplementalDataValid: false,
 });
 
@@ -114,13 +113,6 @@ export const VaccinePrescriptionReducer = (state = initialState(), action) => {
       const { toggle } = payload;
 
       return { ...state, bonusDose: toggle };
-    }
-
-    case VACCINE_PRESCRIPTION_ACTIONS.TOGGLE_HISTORY: {
-      const { payload } = action;
-      const { toggle } = payload;
-
-      return { ...state, historyIsOpen: toggle };
     }
 
     default: {
