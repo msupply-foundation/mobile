@@ -14,6 +14,8 @@ import { PageButton } from '../PageButton';
 import { FlexRow } from '../FlexRow';
 import { FlexView } from '../FlexView';
 import { PageButtonWithOnePress } from '../PageButtonWithOnePress';
+import { PaperModalContainer } from '../PaperModal/PaperModalContainer';
+import { PaperConfirmModal } from '../PaperModal/PaperConfirmModal';
 
 import { selectCanEditPatient, selectEditingName } from '../../selectors/Entities/name';
 import { selectSurveySchemas } from '../../selectors/formSchema';
@@ -22,8 +24,15 @@ import { WizardActions } from '../../actions/WizardActions';
 import { VaccinePrescriptionActions } from '../../actions/Entities/VaccinePrescriptionActions';
 import { selectCanSaveForm, selectCompletedForm } from '../../selectors/form';
 import { getFormInputConfig } from '../../utilities/formInputConfigs';
+import { useToggle } from '../../hooks/useToggle';
 
-import { buttonStrings, vaccineStrings, dispensingStrings } from '../../localization';
+import {
+  buttonStrings,
+  vaccineStrings,
+  dispensingStrings,
+  modalStrings,
+  generalStrings,
+} from '../../localization';
 import globalStyles from '../../globalStyles';
 import { JSONForm } from '../JSONForm/JSONForm';
 import { NameNoteActions } from '../../actions/Entities/NameNoteActions';
@@ -55,17 +64,21 @@ const PatientEditComponent = ({
   canEditPatient,
 }) => {
   const { pageTopViewContainer } = globalStyles;
+  const [isDeceasedModalOpen, toggleIsDeceasedAlert] = useToggle(false);
   const formRef = useRef(null);
-
   const savePatient = useCallback(
     e => {
       updatePatientDetails(completedForm);
-      formRef?.current?.submit(e);
+      if (!completedForm.isDeceased) {
+        formRef?.current?.submit(e);
 
-      if (canSaveForm) {
-        onCompleted();
+        if (canSaveForm) {
+          onCompleted();
+        } else {
+          ToastAndroid.show(dispensingStrings.validation_failed, ToastAndroid.LONG);
+        }
       } else {
-        ToastAndroid.show(dispensingStrings.validation_failed, ToastAndroid.LONG);
+        toggleIsDeceasedAlert();
       }
     },
     [completedForm, canSaveForm]
@@ -118,6 +131,13 @@ const PatientEditComponent = ({
           style={{ marginLeft: 'auto' }}
         />
       </FlexRow>
+      <PaperModalContainer isVisible={isDeceasedModalOpen} onClose={toggleIsDeceasedAlert}>
+        <PaperConfirmModal
+          questionText={modalStrings.deceased_patient_vaccination}
+          confirmText={generalStrings.ok}
+          onConfirm={toggleIsDeceasedAlert}
+        />
+      </PaperModalContainer>
     </FlexView>
   );
 };
