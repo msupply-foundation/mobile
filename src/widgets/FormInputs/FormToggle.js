@@ -54,6 +54,7 @@ export const FormToggle = ({
         toggleOnStyle={localStyles.toggleOnStyle}
         toggleOffStyle={localStyles.toggleOffStyle}
         toggleOnDisabledStyle={localStyles.toggleOnDisabledStyle}
+        toggleOffDisabledStyle={localStyles.toggleOffDisabledStyle}
       />
     </FlexView>
   );
@@ -83,6 +84,14 @@ const localStyles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: WARMER_GREY,
+    borderRadius: 20,
+    margin: 5,
+  },
+  toggleOffDisabledStyle: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderColor: WARMER_GREY,
     borderRadius: 20,
     margin: 5,
   },
