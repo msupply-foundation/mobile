@@ -147,7 +147,7 @@ const PatientSelectComponent = ({
 }) => {
   const withLoadingIndicator = useLoadingIndicator();
   const [isQrModalOpen, toggleQrModal] = useToggle();
-  const [isModalOpen, toggleIsDeceasedAlert] = useToggle(false);
+  const [isDeceasedModalOpen, toggleIsDeceasedAlert] = useToggle(false);
   const [{ history, patient } = {}, setPatientHistory] = useState({});
   const [vaccinationEvent, setVaccinationEvent] = useState(null);
 
@@ -351,7 +351,7 @@ const PatientSelectComponent = ({
       >
         <VaccinationEvent vaccinationEventId={vaccinationEvent?.id} patient={patient} />
       </ModalContainer>
-      <PaperModalContainer isVisible={isModalOpen} onClose={toggleIsDeceasedAlert}>
+      <PaperModalContainer isVisible={isDeceasedModalOpen} onClose={toggleIsDeceasedAlert}>
         <PaperConfirmModal
           questionText={modalStrings.deceased_patient_vaccination}
           confirmText={generalStrings.ok}
