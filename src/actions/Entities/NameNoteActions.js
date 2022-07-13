@@ -24,6 +24,7 @@ const createDefaultNameNote = (nameID = '') => {
     entryDate: new Date(),
     patientEventID: pcd?.id ?? '',
     nameID,
+    isDeleted: false,
   };
 };
 
@@ -70,7 +71,7 @@ const saveEditing = () => (dispatch, getState) => {
 };
 
 const updateNameNote = (originalNote, updatedData) => () => {
-  const { id, patientEvent, name, entryDate, _data } = originalNote;
+  const { id, patientEvent, name, entryDate, _data, isDeleted } = originalNote;
 
   // Quick & dirty check if the object was updated, trims out some un-needed updates
   const isDirty = _data !== JSON.stringify(updatedData);
@@ -82,6 +83,7 @@ const updateNameNote = (originalNote, updatedData) => () => {
       name,
       entryDate: new Date(entryDate),
       _data: JSON.stringify(updatedData),
+      isDeleted,
     };
 
     UIDatabase.write(() => {
@@ -94,8 +96,14 @@ const updateNameNote = (originalNote, updatedData) => () => {
   }
 };
 
+const deleteNameNote = NameNote => () => {
+  UIDatabase.write(() => {
+    UIDatabase.update('NameNote', { id: NameNote.id, isDeleted: true });
+  });
+};
+
 const createNameNoteAudit = (originalNote, updatedData) => {
-  const { patientEvent, name, entryDate } = originalNote;
+  const { patientEvent, name, entryDate, isDeleted } = originalNote;
   const [auditEvent] = UIDatabase.objects('PatientEvent').filtered('code == "NameNoteModified"');
 
   const auditNameNote = {
@@ -114,6 +122,7 @@ const createNameNoteAudit = (originalNote, updatedData) => {
         data: updatedData,
       },
     }),
+    isDeleted,
   };
 
   return auditNameNote;
@@ -125,6 +134,7 @@ const createNotes = (nameNotes = []) => {
       const { patientEventID, nameID } = nameNote;
       const name = UIDatabase.get('Name', nameID);
       const patientEvent = UIDatabase.get('PatientEvent', patientEventID);
+      console.log('createNotes(pleeeease): ', nameNote);
       if (name && patientEvent) {
         const toSave = {
           id: nameNote.id,
@@ -132,6 +142,7 @@ const createNotes = (nameNotes = []) => {
           name,
           _data: JSON.stringify(nameNote?.data),
           entryDate: new Date(nameNote?.entryDate),
+          isDeleted: nameNote.isDeleted,
         };
 
         UIDatabase.update('NameNote', toSave);
@@ -152,5 +163,6 @@ export const NameNoteActions = {
   createSurveyNameNote,
   updateForm,
   updateNameNote,
+  deleteNameNote,
   saveEditing,
 };
