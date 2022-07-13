@@ -134,7 +134,6 @@ const createNotes = (nameNotes = []) => {
       const { patientEventID, nameID } = nameNote;
       const name = UIDatabase.get('Name', nameID);
       const patientEvent = UIDatabase.get('PatientEvent', patientEventID);
-      console.log('createNotes(pleeeease): ', nameNote);
       if (name && patientEvent) {
         const toSave = {
           id: nameNote.id,
