@@ -69,16 +69,16 @@ const PatientEditComponent = ({
   const savePatient = useCallback(
     e => {
       updatePatientDetails(completedForm);
-      if (!completedForm.isDeceased) {
-        formRef?.current?.submit(e);
-
-        if (canSaveForm) {
-          onCompleted();
-        } else {
-          ToastAndroid.show(dispensingStrings.validation_failed, ToastAndroid.LONG);
-        }
-      } else {
+      if (completedForm.isDeceased) {
         toggleIsDeceasedAlert();
+        return;
+      }
+
+      formRef?.current?.submit(e);
+      if (canSaveForm) {
+        onCompleted();
+      } else {
+        ToastAndroid.show(dispensingStrings.validation_failed, ToastAndroid.LONG);
       }
     },
     [completedForm, canSaveForm]
