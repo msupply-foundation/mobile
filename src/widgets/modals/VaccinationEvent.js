@@ -21,6 +21,7 @@ import globalStyles, {
   DARKER_GREY,
   GREY,
   SUSSOL_ORANGE,
+  DANGER_RED,
 } from '../../globalStyles';
 import { buttonStrings, generalStrings, modalStrings, vaccineStrings } from '../../localization';
 import { PageButton } from '../PageButton';
@@ -52,6 +53,7 @@ export const NoPCDForm = () => (
 
 export const VaccinationEventComponent = ({
   editTransaction,
+  deleteVaccinationEvent,
   patient,
   savePCDForm,
   saveSupplementalData,
@@ -75,6 +77,7 @@ export const VaccinationEventComponent = ({
 
   const [isEditingTransaction, toggleEditTransaction] = useToggle(false);
   const [isModalOpen, toggleModal] = useToggle(false);
+  const [isDeleteModalOpen, toggleDeleteModal] = useToggle(false);
   const [vaccinator, setVaccinator] = useState(transactionBatch?.medicineAdministrator);
   const [vaccine, setVaccine] = useState(
     vaccines.filter(item => item.id === transactionBatch?.itemId)
@@ -133,6 +136,11 @@ export const VaccinationEventComponent = ({
       ToastAndroid.show(vaccineStrings.vaccination_not_updated, ToastAndroid.LONG);
     }
   }, [patient, transactionBatch, vaccine]);
+
+  const tryDelete = useCallback(() => {
+    deleteVaccinationEvent(patient, transactionBatch, vaccinationEventNameNote);
+    toggleDeleteModal();
+  }, [patient]);
 
   return (
     <FlexView>
@@ -230,6 +238,14 @@ export const VaccinationEventComponent = ({
                     </FlexColumn>
                     <FlexRow flex={1} style={{ marginBottom: 10 }}>
                       <PageButton
+                        text={buttonStrings.delete_vaccination_event}
+                        onPress={toggleDeleteModal}
+                        style={localStyles.deleteButton}
+                        textStyle={localStyles.saveButtonTextStyle}
+                      />
+                    </FlexRow>
+                    <FlexRow flex={1} style={{ marginBottom: 10 }}>
+                      <PageButton
                         style={{ flex: 1, alignSelf: 'flex-end' }}
                         text="Cancel Editing"
                         onPress={toggleEditTransaction}
@@ -271,6 +287,15 @@ export const VaccinationEventComponent = ({
           questionText={modalStrings.vaccine_event_not_editable}
           confirmText={modalStrings.confirm}
           onConfirm={toggleModal}
+        />
+      </PaperModalContainer>
+      <PaperModalContainer isVisible={isDeleteModalOpen} onClose={toggleDeleteModal}>
+        <PaperConfirmModal
+          questionText={modalStrings.delete_vaccination_event}
+          confirmText={modalStrings.delete}
+          cancelText={modalStrings.cancel}
+          onConfirm={tryDelete}
+          onCancel={toggleDeleteModal}
         />
       </PaperModalContainer>
     </FlexView>
@@ -328,19 +353,24 @@ const mapDispatchToProps = dispatch => {
   ) => {
     batch(() => {
       dispatch(VaccinePrescriptionActions.returnVaccineToStock(patient.id, transactionBatch));
+      dispatch(VaccinePrescriptionActions.softDelete(vaccinationEventNameNote));
       dispatch(NameActions.select(patient));
       dispatch(VaccinePrescriptionActions.selectVaccinator(vaccinator));
       dispatch(VaccinePrescriptionActions.selectVaccine(UIDatabase.get('Item', vaccine.id)));
       dispatch(VaccinePrescriptionActions.selectSupplementalData(supplementalData));
       dispatch(VaccinePrescriptionActions.confirm());
-    });
-
-    UIDatabase.write(() => {
-      UIDatabase.update('NameNote', { id: vaccinationEventNameNote.id, isDeleted: true });
+      dispatch(NameNoteActions.deleteNameNote(vaccinationEventNameNote));
     });
   };
 
-  return { editTransaction, savePCDForm, saveSupplementalData };
+  const deleteVaccinationEvent = (patient, transactionBatch, vaccinationEventNameNote) => {
+    batch(() => {
+      dispatch(VaccinePrescriptionActions.returnVaccineToStock(patient.id, transactionBatch));
+      dispatch(NameNoteActions.deleteNameNote(vaccinationEventNameNote));
+    });
+  };
+
+  return { editTransaction, savePCDForm, saveSupplementalData, deleteVaccinationEvent };
 };
 
 const localStyles = StyleSheet.create({
@@ -369,6 +399,12 @@ const localStyles = StyleSheet.create({
     fontFamily: APP_FONT_FAMILY,
     color: DARKER_GREY,
   },
+  deleteButton: {
+    ...globalStyles.button,
+    flex: 1,
+    backgroundColor: DANGER_RED,
+    alignSelf: 'center',
+  },
 });
 
 VaccinationEventComponent.defaultProps = {
@@ -378,6 +414,7 @@ VaccinationEventComponent.defaultProps = {
 
 VaccinationEventComponent.propTypes = {
   editTransaction: PropTypes.func.isRequired,
+  deleteVaccinationEvent: PropTypes.func.isRequired,
   patient: PropTypes.object,
   savePCDForm: PropTypes.func.isRequired,
   saveSupplementalData: PropTypes.func.isRequired,
