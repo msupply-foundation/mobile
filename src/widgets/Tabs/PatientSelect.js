@@ -257,15 +257,16 @@ const PatientSelectComponent = ({
           columns={columns}
           onPress={name => {
             if (!name?.isDeceased) {
-              // Only show a spinner when the name doesn't exist in the database, as we need to
-              // send a request to the server to add a name store join.
-              if (UIDatabase.get('Name', name?.id)) {
-                selectPatient(name);
-              } else {
-                withLoadingIndicator(() => selectPatient(name));
-              }
-            } else {
               toggleIsDeceasedAlert();
+              return;
+            }
+
+            // Only show a spinner when the name doesn't exist in the database, as we need to
+            // send a request to the server to add a name store join.
+            if (UIDatabase.get('Name', name?.id)) {
+              selectPatient(name);
+            } else {
+              withLoadingIndicator(() => selectPatient(name));
             }
           }}
           rowIndex={index}
