@@ -371,11 +371,9 @@ const mapDispatchToProps = dispatch => {
       Keyboard.dismiss();
       const selectedPatient = await dispatch(NameActions.select(patient));
 
-      if (selectedPatient) {
-        if (!selectedPatient.isDeceased) {
-          dispatch(NameNoteActions.createSurveyNameNote(selectedPatient));
-          dispatch(WizardActions.nextTab());
-        }
+      if (selectedPatient && !selectedPatient.isDeceased) {
+        dispatch(NameNoteActions.createSurveyNameNote(selectedPatient));
+        dispatch(WizardActions.nextTab());
       }
     });
 
