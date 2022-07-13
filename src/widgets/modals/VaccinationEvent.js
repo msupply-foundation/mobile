@@ -148,6 +148,7 @@ export const VaccinationEventComponent = ({
   const tryDelete = useCallback(() => {
     deleteVaccinationEvent(patient, transactionBatch, vaccinationEventNameNote);
     toggleDeleteModal();
+    toggleEditTransaction();
     setIsDeletedVaccinationEvent({
       isDeletedVaccinationEvent: true,
     });
