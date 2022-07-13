@@ -353,7 +353,6 @@ const mapDispatchToProps = dispatch => {
   ) => {
     batch(() => {
       dispatch(VaccinePrescriptionActions.returnVaccineToStock(patient.id, transactionBatch));
-      dispatch(VaccinePrescriptionActions.softDelete(vaccinationEventNameNote));
       dispatch(NameActions.select(patient));
       dispatch(VaccinePrescriptionActions.selectVaccinator(vaccinator));
       dispatch(VaccinePrescriptionActions.selectVaccine(UIDatabase.get('Item', vaccine.id)));
