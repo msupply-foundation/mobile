@@ -93,6 +93,10 @@ export const VaccinationEventComponent = ({
     isSupplementalDataValid: false,
   });
 
+  const [{ isDeletedVaccinationEvent }, setIsDeletedVaccinationEvent] = useState({
+    isDeletedVaccinationEvent: vaccinationEventNameNote.isDeleted,
+  });
+
   // User cannot edit 'Vaccination Event' panel if vaccination was done on a different tablet/store
   const tryEdit = useCallback(() => {
     if (!transaction) {
@@ -132,6 +136,10 @@ export const VaccinationEventComponent = ({
         customDataObject,
         vaccinationEventNameNote
       );
+      toggleEditTransaction();
+      setIsDeletedVaccinationEvent({
+        isDeletedVaccinationEvent: true,
+      });
     } else {
       ToastAndroid.show(vaccineStrings.vaccination_not_updated, ToastAndroid.LONG);
     }
@@ -140,7 +148,12 @@ export const VaccinationEventComponent = ({
   const tryDelete = useCallback(() => {
     deleteVaccinationEvent(patient, transactionBatch, vaccinationEventNameNote);
     toggleDeleteModal();
+    setIsDeletedVaccinationEvent({
+      isDeletedVaccinationEvent: true,
+    });
   }, [patient]);
+  console.log('isDeletedVaccinationEvent: ', isDeletedVaccinationEvent);
+  console.log('isPCDValid: ', isSupplementalDataValid);
 
   return (
     <FlexView>
@@ -160,6 +173,7 @@ export const VaccinationEventComponent = ({
                         isPCDValid: validator(changed.formData),
                       });
                     }}
+                    disabled={isDeletedVaccinationEvent}
                   >
                     <></>
                   </JSONForm>
@@ -190,6 +204,7 @@ export const VaccinationEventComponent = ({
                     isSupplementalDataValid: validator(changed.formData),
                   });
                 }}
+                disabled={isDeletedVaccinationEvent}
               >
                 <></>
               </JSONForm>
@@ -264,7 +279,7 @@ export const VaccinationEventComponent = ({
           onPress={() => savePCDForm(surveyForm, updatedPcdForm)}
           style={localStyles.saveButton}
           textStyle={localStyles.saveButtonTextStyle}
-          isDisabled={!isPCDValid}
+          isDisabled={!isPCDValid || isDeletedVaccinationEvent}
         />
         <PageButton
           text={buttonStrings.save_changes}
@@ -273,13 +288,14 @@ export const VaccinationEventComponent = ({
           }
           style={localStyles.saveButton}
           textStyle={localStyles.saveButtonTextStyle}
-          isDisabled={!isSupplementalDataValid}
+          isDisabled={!isSupplementalDataValid || isDeletedVaccinationEvent}
         />
         <PageButton
           text={isEditingTransaction ? buttonStrings.save_changes : buttonStrings.edit}
           style={localStyles.saveButton}
           textStyle={localStyles.saveButtonTextStyle}
           onPress={isEditingTransaction ? trySave : tryEdit}
+          isDisabled={isDeletedVaccinationEvent}
         />
       </FlexRow>
       <PaperModalContainer isVisible={isModalOpen} onClose={toggleModal}>
