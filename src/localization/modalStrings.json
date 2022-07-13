@@ -14,6 +14,7 @@
     "delete_these_invoices": "Are you sure you want to delete these invoices?",
     "delete_these_requisitions": "Are you sure you want to delete these requisitions?",
     "delete_these_stocktakes": "Are you sure you want to delete these stocktakes?",
+    "delete_vaccination_event": "Are you sure you want to delete this vaccination event?",
     "delete": "Delete",
     "edit_the_invoice_comment": "Edit the invoice comment",
     "edit_the_requisition_comment": "Edit the requisition comment",
