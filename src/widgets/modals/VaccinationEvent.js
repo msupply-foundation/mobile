@@ -152,8 +152,6 @@ export const VaccinationEventComponent = ({
       isDeletedVaccinationEvent: true,
     });
   }, [patient]);
-  console.log('isDeletedVaccinationEvent: ', isDeletedVaccinationEvent);
-  console.log('isPCDValid: ', isSupplementalDataValid);
 
   return (
     <FlexView>
