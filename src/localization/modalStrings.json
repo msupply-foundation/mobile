@@ -8,6 +8,7 @@
     "confirm": "Confirm",
     "confirm_double_dose": "This patient already has a vaccination recorded within the last 24 hours, do you want to proceed?",
     "vaccine_event_not_editable": "Vaccinator and stock details can only be modified on the device it was originally entered on. Please find the tablet used to enter the vaccination.",
+    "vaccine_event_not_editable_store": "Vaccinator and stock details can only be modified on {0} store. Please find the tablet used to enter the vaccination.",
     "create": "Create",
     "delete_these_fridges": "Are you sure you want to delete these fridges?",
     "create_cash_transaction": "Create new cash transaction",

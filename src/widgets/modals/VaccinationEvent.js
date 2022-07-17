@@ -70,6 +70,10 @@ export const VaccinationEventComponent = ({
   const vaccinationEventNameNote = UIDatabase.get('NameNote', vaccinationEventId);
   const vaccinationEvent = vaccinationEventNameNote.data;
   const transaction = UIDatabase.get('Transaction', vaccinationEvent?.extra?.prescription?.id);
+  const nameNoteStoreName = vaccinationEvent?.storeName;
+  const alertText = nameNoteStoreName
+    ? modalStrings.formatString(modalStrings.vaccine_event_not_editable_store, nameNoteStoreName)
+    : modalStrings.vaccine_event_not_editable;
   const transactionBatch = UIDatabase.objects('TransactionBatch').filtered(
     'transaction.id == $0',
     transaction?.id
@@ -299,7 +303,7 @@ export const VaccinationEventComponent = ({
       </FlexRow>
       <PaperModalContainer isVisible={isModalOpen} onClose={toggleModal}>
         <PaperConfirmModal
-          questionText={modalStrings.vaccine_event_not_editable}
+          questionText={alertText}
           confirmText={modalStrings.confirm}
           onConfirm={toggleModal}
         />
