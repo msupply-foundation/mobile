@@ -46,6 +46,9 @@ const createSurveyNameNote = patient => (dispatch, getState) => {
   // the seed has any fields which are required to be filled.
   const [surveySchema = {}] = selectSurveySchemas(getState);
   const { jsonSchema } = surveySchema;
+  if (newNameNote.data) {
+    newNameNote.data.version = surveySchema.version;
+  }
   const isValid = validateJsonSchemaData(jsonSchema, newNameNote.data);
   dispatch(select(newNameNote, isValid));
 };
