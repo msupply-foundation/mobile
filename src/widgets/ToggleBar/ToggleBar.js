@@ -56,9 +56,7 @@ export const ToggleBarComponent = props => {
     const defaultOffTextStyle = isDisabled ? textOffDisabledStyle : textOffStyle;
 
     buttons.forEach((button, i) => {
-      const currentTextStyle = button.isOn
-        ? [localStyles.textOnStyle, textOnStyle]
-        : [localStyles.textOffStyle, defaultOffTextStyle];
+      const currentTextStyle = button.isOn ? textOnStyle : defaultOffTextStyle;
       const currentToggleStyle = button.isOn ? defaultOnStyle : defaultOffStyle;
       const Container = isDisabled ? View : TouchableOpacity;
 
@@ -123,7 +121,7 @@ const localStyles = StyleSheet.create({
     borderColor: WARMER_GREY,
     width: 142,
   },
-  toggleTextDisabledSelected: {
+  textOffDisabledStyle: {
     fontFamily: APP_FONT_FAMILY,
     fontSize: 12,
     color: WARMER_GREY,
@@ -137,9 +135,9 @@ ToggleBarComponent.propTypes = {
   toggleOffStyle: ViewPropTypes.style,
   toggleOnStyle: ViewPropTypes.style,
   textOffStyle: Text.propTypes.style,
-  textOffDisabledStyle: Text.propTypes.style,
   textOnStyle: Text.propTypes.style,
   isDisabled: PropTypes.bool,
+  textOffDisabledStyle: Text.propTypes.style,
   toggleOnDisabledStyle: PropTypes.object,
   toggleOffDisabledStyle: PropTypes.object,
 };
@@ -149,9 +147,9 @@ ToggleBarComponent.defaultProps = {
   toggleOffStyle: localStyles.toggleOffStyle,
   toggleOnStyle: localStyles.toggleOnStyle,
   textOffStyle: globalStyles.toggleText,
-  textOffDisabledStyle: globalStyles.toggleTextDisabledSelected,
   textOnStyle: globalStyles.toggleTextSelected,
+  isDisabled: false,
+  textOffDisabledStyle: localStyles.textOffDisabledStyle,
   toggleOnDisabledStyle: localStyles.toggleOnDisabledStyle,
   toggleOffDisabledStyle: localStyles.toggleOffDisabledStyle,
-  isDisabled: false,
 };
