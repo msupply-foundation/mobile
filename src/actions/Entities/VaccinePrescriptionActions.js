@@ -238,7 +238,7 @@ const createSupplementaryData = () => (dispatch, getState) => {
   // Get the schema and perform initial validation
   const [supplementalDataSchema = {}] = selectSupplementalDataSchemas(getState());
   const { jsonSchema } = supplementalDataSchema;
-
+  lastSupplementalData.version = supplementalDataSchema.version;
   const isValid = validateJsonSchemaData(jsonSchema, lastSupplementalData);
 
   if (isValid) {
