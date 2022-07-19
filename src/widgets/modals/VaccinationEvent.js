@@ -84,7 +84,7 @@ export const VaccinationEventComponent = ({
   const [isDeleteModalOpen, toggleDeleteModal] = useToggle(false);
   const [vaccinator, setVaccinator] = useState(transactionBatch?.medicineAdministrator);
   const [vaccine, setVaccine] = useState(
-    vaccines.filter(item => item.id === transactionBatch?.itemId)
+    vaccines.filter(item => item.id === transactionBatch?.itemId)[0]
   );
   const vaccineDropDownValues = vaccines.map(({ code, name }) => `${code}: ${name}`);
 
