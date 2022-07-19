@@ -256,7 +256,7 @@ const PatientSelectComponent = ({
           rowKey={keyExtractor(item)}
           columns={columns}
           onPress={name => {
-            if (!name?.isDeceased) {
+            if (name?.isDeceased) {
               toggleIsDeceasedAlert();
               return;
             }
