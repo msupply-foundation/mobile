@@ -57,8 +57,8 @@ export const VaccinationEventComponent = ({
   patient,
   savePCDForm,
   saveSupplementalData,
-  supplementalDataSchema,
-  surveySchema,
+  supplementalDataSchemas,
+  surveySchemas,
   vaccinationEventId,
   vaccinationEventSchema,
   vaccines,
@@ -114,10 +114,16 @@ export const VaccinationEventComponent = ({
   const surveyForm = pcdNameNoteId
     ? UIDatabase.get('NameNote', pcdNameNoteId)
     : selectMostRecentNameNote(patient, 'PCD', vaccinationEvent.entryDate);
+  const [surveySchema] = surveyForm.data.version
+    ? surveySchemas.filtered(`version=='${surveyForm.data.version}'`)
+    : surveySchemas;
 
   const customDataObject = vaccinationEvent?.extra?.prescription?.customData
     ? JSON.parse(vaccinationEvent.extra.prescription.customData)
     : {};
+  const [supplementalDataSchema] = customDataObject.version
+    ? supplementalDataSchemas.filtered(`version=='${customDataObject.version}'`)
+    : supplementalDataSchemas;
 
   const parsedVaccinationEvent = {
     ...vaccinationEvent,
@@ -323,19 +329,17 @@ export const VaccinationEventComponent = ({
 
 const mapStateToProps = () => {
   const surveySchemas = selectSurveySchemas();
-  const [surveySchema] = surveySchemas;
 
   const vaccinationEventSchemas = selectVaccinationEventSchemas();
   const [vaccinationEventSchema] = vaccinationEventSchemas;
 
   const supplementalDataSchemas = selectSupplementalDataSchemas();
-  const [supplementalDataSchema] = supplementalDataSchemas;
 
   const vaccines = UIDatabase.objects('Vaccine').sorted('name');
 
   return {
-    supplementalDataSchema,
-    surveySchema,
+    supplementalDataSchemas,
+    surveySchemas,
     vaccinationEventSchema,
     vaccines,
   };
@@ -436,8 +440,8 @@ VaccinationEventComponent.propTypes = {
   patient: PropTypes.object,
   savePCDForm: PropTypes.func.isRequired,
   saveSupplementalData: PropTypes.func.isRequired,
-  supplementalDataSchema: PropTypes.object.isRequired,
-  surveySchema: PropTypes.object.isRequired,
+  supplementalDataSchemas: PropTypes.object.isRequired,
+  surveySchemas: PropTypes.object.isRequired,
   vaccinationEventId: PropTypes.string,
   vaccinationEventSchema: PropTypes.object.isRequired,
   vaccines: PropTypes.oneOfType([PropTypes.array, PropTypes.object]).isRequired,
