@@ -22,7 +22,7 @@ export const DatePicker = ({
   const { focusController } = useJSONFormOptions();
   const ref = focusController.useRegisteredRef();
 
-  const [selectedDate, setSelectedDate] = useState(null);
+  const [selectedDate, setSelectedDate] = useState('');
 
   const handleChange = dateString => {
     onChange(dateString);
@@ -35,7 +35,7 @@ export const DatePicker = ({
       ? alternateFormatDate
       : moment(value, DATE_FORMAT.DD_MM_YYYY, true);
 
-    setSelectedDate(expectedFormateDate.isValid() ? expectedFormateDate.toDate() : null);
+    setSelectedDate(expectedFormateDate.isValid() ? expectedFormateDate.toDate() : value);
   }, [value]);
 
   return (
@@ -46,7 +46,11 @@ export const DatePicker = ({
         underlineColorAndroid={DARKER_GREY}
         placeholder={placeholder}
         editable={!(readonly || disabled)}
-        value={selectedDate ? moment(selectedDate).format(DATE_FORMAT.DD_MM_YYYY) : ''}
+        value={
+          moment(selectedDate, DATE_FORMAT.DD_MM_YYYY, true).isValid()
+            ? moment(selectedDate).format(DATE_FORMAT.DD_MM_YYYY)
+            : selectedDate
+        }
         ref={ref}
         onSubmitEditing={() => focusController.next(ref)}
         onChangeText={handleChange}
