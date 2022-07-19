@@ -152,12 +152,14 @@ const processNameNoteResponse = response =>
       patient_event_ID: patientEventID,
       name_ID: nameID,
       entry_date: entryDate,
+      is_deleted: isDeleted,
     }) => ({
       id,
       data,
       patientEventID,
       nameID,
       entryDate: moment(entryDate).isValid() ? moment(entryDate).toDate() : moment().toDate(),
+      isDeleted,
     })
   );
 
