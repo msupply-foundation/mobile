@@ -162,7 +162,6 @@ const mapStateToProps = state => {
   const [surveySchema] = completedForm.version
     ? surveySchemas.filtered(`version=='${completedForm.version}'`)
     : surveySchemas;
-  console.log('completedForm.version: ', completedForm.version);
   const nameNote = selectCreatingNameNote(state);
   const canEditPatient = selectCanEditPatient(state);
 
