@@ -31,11 +31,11 @@ export const DatePicker = ({
 
   React.useEffect(() => {
     const alternateFormatDate = moment(value, 'YYYY-MM-DD', true);
-    const expectedFormateDate = alternateFormatDate.isValid()
+    const expectedFormatDate = alternateFormatDate.isValid()
       ? alternateFormatDate
       : moment(value, DATE_FORMAT.DD_MM_YYYY, true);
 
-    setSelectedDate(expectedFormateDate.isValid() ? expectedFormateDate.toDate() : value);
+    setSelectedDate(expectedFormatDate.isValid() ? expectedFormatDate.toDate() : value);
   }, [value]);
 
   return (
