@@ -160,7 +160,7 @@ const mapStateToProps = state => {
   const canSaveForm = selectCanSaveForm(state) && selectNameNoteIsValid(state);
   const surveySchemas = selectSurveySchemas();
   const [surveySchema] = completedForm.version
-    ? surveySchemas.filter(`version=='${completedForm.version}'`)
+    ? surveySchemas.filtered(`version=='${completedForm.version}'`)
     : surveySchemas;
   console.log('completedForm.version: ', completedForm.version);
   const nameNote = selectCreatingNameNote(state);
