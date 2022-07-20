@@ -17,6 +17,7 @@ import { generalStrings, modalStrings } from '../../localization/index';
 export const PatientEditModalComponent = ({
   isDisabled,
   onSaveForm,
+  onDeleteForm,
   onCancel,
   inputConfig,
   surveySchema,
@@ -64,6 +65,12 @@ export const PatientEditModalComponent = ({
             isDisabled={!canSave}
             textStyle={styles.saveButtonTextStyle}
             text={generalStrings.save}
+          />
+          <PageButton
+            onPress={onDeleteForm}
+            style={styles.cancelButton}
+            textStyle={styles.saveButtonTextStyle}
+            text={generalStrings.delete}
           />
           <PageButton
             onPress={onCancel}
@@ -116,6 +123,7 @@ PatientEditModalComponent.defaultProps = {
 PatientEditModalComponent.propTypes = {
   isDisabled: PropTypes.bool,
   onSaveForm: PropTypes.func.isRequired,
+  onDeleteForm: PropTypes.func.isRequired,
   onCancel: PropTypes.func.isRequired,
   inputConfig: PropTypes.array.isRequired,
   surveyForm: PropTypes.object,
@@ -127,12 +135,16 @@ PatientEditModalComponent.propTypes = {
 
 const mergeProps = (stateProps, dispatchProps, ownProps) => {
   const { completedForm } = stateProps;
-  const { onSave, onSaveSurvey, ...otherDispatchProps } = dispatchProps;
-  const { surveySchema } = ownProps;
+  const { onSave, onDelete, onSaveSurvey, ...otherDispatchProps } = dispatchProps;
+  const { surveySchema, patient } = ownProps;
 
   const onSaveForm = () => {
     onSave(completedForm);
     if (surveySchema) onSaveSurvey();
+  };
+
+  const onDeleteForm = () => {
+    onDelete(patient.id);
   };
 
   return {
@@ -140,6 +152,7 @@ const mergeProps = (stateProps, dispatchProps, ownProps) => {
     ...otherDispatchProps,
     ...stateProps,
     onSaveForm,
+    onDeleteForm,
   };
 };
 
@@ -156,6 +169,7 @@ const dispatchToProps = dispatch => ({
   onSaveSurvey: () => dispatch(NameNoteActions.saveEditing()),
   onUpdateForm: (form, validator) => dispatch(NameNoteActions.updateForm(form, validator)),
   onSave: patientDetails => dispatch(PatientActions.patientUpdate(patientDetails)),
+  onDelete: patientID => dispatch(PatientActions.patientDelete(patientID)),
 });
 
 export const PatientEditModal = connect(

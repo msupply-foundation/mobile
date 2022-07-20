@@ -22,6 +22,7 @@ export const PATIENT_ACTIONS = {
   SAVE_ADR: 'Patient/saveADR',
   CANCEL_ADR: 'Patient/cancelADR',
   REFRESH: 'Patient/refresh',
+  PATIENT_DELETE: 'Patient/delete',
 };
 
 const closeModal = () => ({ type: PATIENT_ACTIONS.COMPLETE });
@@ -32,6 +33,14 @@ const refresh = () => ({ type: PATIENT_ACTIONS.REFRESH });
 const makePatientVisibility = async name => {
   const response = await createPatientVisibility(name);
   return response;
+};
+
+const patientDelete = patientID => {
+  UIDatabase.write(() => {
+    UIDatabase.update('Name', { id: patientID, isDeleted: true });
+  });
+
+  return { type: PATIENT_ACTIONS.PATIENT_DELETE };
 };
 
 const patientUpdate = patientDetails => async (dispatch, getState) => {
@@ -180,6 +189,7 @@ export const PatientActions = {
   closeADRModal,
   createPatient,
   patientUpdate,
+  patientDelete,
   editPatient,
   closeModal,
   sortPatientHistory,
