@@ -90,11 +90,11 @@ export const VaccinationEventComponent = ({
 
   const [{ updatedPcdForm, isPCDValid }, setPCDForm] = useState({
     updatedPcdForm: null,
-    isPCDValid: false,
+    isPCDValid: true,
   });
   const [{ updatedSupplementalDataForm, isSupplementalDataValid }, setSupplementalData] = useState({
     updatedSupplementalDataForm: null,
-    isSupplementalDataValid: false,
+    isSupplementalDataValid: true,
   });
 
   const [{ isDeletedVaccinationEvent }, setIsDeletedVaccinationEvent] = useState({
