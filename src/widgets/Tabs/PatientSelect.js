@@ -235,7 +235,6 @@ const PatientSelectComponent = ({
       case 'patientHistory':
         return patientId => {
           const foundPatient = UIDatabase.get('Name', patientId);
-          console.log(foundPatient);
           const patientsPreviousVaccinations = selectVaccinePatientHistory(foundPatient);
 
           setPatientHistory({ patient: foundPatient, history: patientsPreviousVaccinations });
