@@ -2,6 +2,7 @@
   "gb": {
     "adr_form_for": "ADR Form for:",
     "are_you_sure_delete_sensor": "Are you sure you want to delete this sensor?",
+    "are_you_sure_delete_patient": "Are you sure you want to delete this patient?",
     "add_at_least_one_item_before_finalising": "You need to add at least one item before finalising",
     "and": "and",
     "cancel": "Cancel",
