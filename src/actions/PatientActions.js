@@ -5,6 +5,7 @@
 
 import { batch } from 'react-redux';
 
+import { ToastAndroid } from 'react-native';
 import { createRecord, UIDatabase } from '../database';
 import { selectCurrentUser } from '../selectors/user';
 
@@ -35,11 +36,15 @@ const makePatientVisibility = async name => {
   return response;
 };
 
-const patientDelete = patientID => {
+const patientDelete = () => (dispatch, getState) => {
+  const { patient } = getState();
+  const { currentPatient } = patient;
   UIDatabase.write(() => {
-    UIDatabase.update('Name', { id: patientID, isDeleted: true });
+    UIDatabase.update('Name', { id: currentPatient.id, isDeleted: true });
   });
 
+  ToastAndroid.show('Patient successfully deleted', ToastAndroid.LONG);
+  dispatch(closeModal());
   return { type: PATIENT_ACTIONS.PATIENT_DELETE };
 };
 

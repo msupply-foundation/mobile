@@ -32,6 +32,7 @@ import {
   selectSortedData,
   selectLookupModalOpen,
 } from '../selectors/dispensary';
+
 import { selectPrescriberModalOpen, selectCanEditPrescriber } from '../selectors/prescriber';
 import { selectInsuranceModalOpen, selectCanEditInsurancePolicy } from '../selectors/insurance';
 import {

@@ -56,6 +56,7 @@ export const PatientReducer = (state = patientInitialState(), action) => {
       };
     }
 
+    case PATIENT_ACTIONS.PATIENT_DELETE:
     case PATIENT_ACTIONS.COMPLETE: {
       const { currentPatient } = state;
       return { ...patientInitialState(), currentPatient };
