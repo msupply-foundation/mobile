@@ -11,6 +11,7 @@ import { selectCurrentUser } from '../selectors/user';
 
 import { createPatientVisibility } from '../sync/lookupApiUtils';
 import { DispensaryActions } from './DispensaryActions';
+import { dispensingStrings } from '../localization';
 
 export const PATIENT_ACTIONS = {
   PATIENT_EDIT: 'Patient/patientEdit',
@@ -43,7 +44,7 @@ const patientDelete = () => (dispatch, getState) => {
     UIDatabase.update('Name', { id: currentPatient.id, isDeleted: true });
   });
 
-  ToastAndroid.show('Patient successfully deleted', ToastAndroid.LONG);
+  ToastAndroid.show(dispensingStrings.patient_deleted, ToastAndroid.LONG);
   dispatch(closeModal());
   return { type: PATIENT_ACTIONS.PATIENT_DELETE };
 };

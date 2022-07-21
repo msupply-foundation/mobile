@@ -9,6 +9,7 @@ import { FlexRow } from '../FlexRow';
 import { JSONForm } from '../JSONForm/JSONForm';
 import { NameNoteActions } from '../../actions/Entities/NameNoteActions';
 import { selectNameNoteIsValid, selectCreatingNameNote } from '../../selectors/Entities/nameNote';
+import { selectSortedPatientHistory } from '../../selectors/patient';
 import { selectCompletedForm, selectCanSaveForm } from '../../selectors/form';
 import { PatientActions } from '../../actions/PatientActions';
 import globalStyles, { SUSSOL_ORANGE } from '../../globalStyles';
@@ -25,8 +26,10 @@ export const PatientEditModalComponent = ({
   onUpdateForm,
   nameNoteIsValid,
   canSaveForm,
+  hasVaccineEventsForm,
 }) => {
   let canSave = canSaveForm;
+  const hasVaccineEvents = hasVaccineEventsForm;
   if (canSave) {
     canSave = surveySchema && surveyForm ? nameNoteIsValid : !isDisabled;
   }
@@ -69,6 +72,7 @@ export const PatientEditModalComponent = ({
           <PageButton
             onPress={onDeleteForm}
             style={styles.cancelButton}
+            isDisabled={hasVaccineEvents}
             textStyle={styles.saveButtonTextStyle}
             text={generalStrings.delete}
           />
@@ -131,6 +135,7 @@ PatientEditModalComponent.propTypes = {
   surveySchema: PropTypes.object,
   onUpdateForm: PropTypes.func.isRequired,
   canSaveForm: PropTypes.bool.isRequired,
+  hasVaccineEventsForm: PropTypes.bool.isRequired,
 };
 
 const mergeProps = (stateProps, dispatchProps, ownProps) => {
@@ -161,8 +166,16 @@ const stateToProps = state => {
   const nameNote = selectCreatingNameNote(state);
   const completedForm = selectCompletedForm(state);
   const canSaveForm = selectCanSaveForm(state);
+  const patientHistory = selectSortedPatientHistory(state);
+  const hasVaccineEventsForm = patientHistory.length > 0;
 
-  return { canSaveForm, completedForm, nameNoteIsValid, surveyForm: nameNote?.data ?? null };
+  return {
+    canSaveForm,
+    hasVaccineEventsForm,
+    completedForm,
+    nameNoteIsValid,
+    surveyForm: nameNote?.data ?? null,
+  };
 };
 
 const dispatchToProps = dispatch => ({
