@@ -234,7 +234,7 @@ const PatientSelectComponent = ({
     switch (colKey) {
       case 'patientHistory':
         return patientId => {
-          const foundPatient = data.find(({ id }) => patientId === id);
+          const foundPatient = UIDatabase.get('Name', patientId);
           const patientsPreviousVaccinations = selectVaccinePatientHistory(foundPatient);
 
           setPatientHistory({ patient: foundPatient, history: patientsPreviousVaccinations });
@@ -256,14 +256,15 @@ const PatientSelectComponent = ({
           rowKey={keyExtractor(item)}
           columns={columns}
           onPress={name => {
-            if (name?.isDeceased) {
+            const selectedPatient = UIDatabase.get('Name', name?.id);
+            if (selectedPatient.isDeceased) {
               toggleIsDeceasedAlert();
               return;
             }
 
             // Only show a spinner when the name doesn't exist in the database, as we need to
             // send a request to the server to add a name store join.
-            if (UIDatabase.get('Name', name?.id)) {
+            if (selectedPatient) {
               selectPatient(name);
             } else {
               withLoadingIndicator(() => selectPatient(name));
