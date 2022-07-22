@@ -13,7 +13,7 @@ import { selectSortedPatientHistory } from '../../selectors/patient';
 import { selectCompletedForm, selectCanSaveForm } from '../../selectors/form';
 import { PatientActions } from '../../actions/PatientActions';
 import globalStyles, { SUSSOL_ORANGE } from '../../globalStyles';
-import { generalStrings, modalStrings, navStrings } from '../../localization/index';
+import { generalStrings, modalStrings, buttonStrings } from '../../localization/index';
 import { PaperModalContainer } from '../PaperModal/PaperModalContainer';
 import { PaperConfirmModal } from '../PaperModal/PaperConfirmModal';
 import { useToggle } from '../../hooks/index';
@@ -93,7 +93,7 @@ export const PatientEditModalComponent = ({
         <PaperConfirmModal
           questionText={modalStrings.are_you_sure_delete_patient}
           confirmText={generalStrings.remove}
-          cancelText={navStrings.go_back}
+          cancelText={buttonStrings.cancel}
           onConfirm={onDeleteForm}
           onCancel={toggleRemoveModal}
         />
