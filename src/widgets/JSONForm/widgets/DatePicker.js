@@ -22,7 +22,7 @@ export const DatePicker = ({
   const { focusController } = useJSONFormOptions();
   const ref = focusController.useRegisteredRef();
 
-  const [selectedDate, setSelectedDate] = useState('');
+  const [selectedDate, setSelectedDate] = useState(Date());
 
   const handleChange = dateString => {
     onChange(dateString);
