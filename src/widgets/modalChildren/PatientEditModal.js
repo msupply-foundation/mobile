@@ -13,7 +13,7 @@ import { selectSortedPatientHistory } from '../../selectors/patient';
 import { selectCompletedForm, selectCanSaveForm } from '../../selectors/form';
 import { PatientActions } from '../../actions/PatientActions';
 import globalStyles, { SUSSOL_ORANGE } from '../../globalStyles';
-import { generalStrings, modalStrings, buttonStrings } from '../../localization/index';
+import { generalStrings, modalStrings, buttonStrings, navStrings } from '../../localization/index';
 import { PaperModalContainer } from '../PaperModal/PaperModalContainer';
 import { PaperConfirmModal } from '../PaperModal/PaperConfirmModal';
 import { useToggle } from '../../hooks/index';
@@ -38,6 +38,7 @@ export const PatientEditModalComponent = ({
   }
 
   const [removeModalOpen, toggleRemoveModal] = useToggle();
+  const [cantDeleteModalOpen, toggleCantDeleteModal] = useToggle();
 
   return (
     <FlexRow style={{ flexDirection: 'column' }} flex={1}>
@@ -75,9 +76,8 @@ export const PatientEditModalComponent = ({
             text={generalStrings.save}
           />
           <PageButton
-            onPress={toggleRemoveModal}
+            onPress={hasVaccineEvents ? toggleCantDeleteModal : toggleRemoveModal}
             style={styles.cancelButton}
-            isDisabled={hasVaccineEvents}
             textStyle={styles.saveButtonTextStyle}
             text={generalStrings.delete}
           />
@@ -89,6 +89,13 @@ export const PatientEditModalComponent = ({
           />
         </View>
       </FlexRow>
+      <PaperModalContainer isVisible={cantDeleteModalOpen} onClose={toggleCantDeleteModal}>
+        <PaperConfirmModal
+          questionText={modalStrings.patient_cant_delete_with_vaccine_events}
+          confirmText={navStrings.go_back}
+          onConfirm={toggleCantDeleteModal}
+        />
+      </PaperModalContainer>
       <PaperModalContainer isVisible={removeModalOpen} onClose={toggleRemoveModal}>
         <PaperConfirmModal
           questionText={modalStrings.are_you_sure_delete_patient}
