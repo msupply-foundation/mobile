@@ -38,7 +38,7 @@ export const PatientEditModalComponent = ({
   }
 
   const [removeModalOpen, toggleRemoveModal] = useToggle();
-  const [cantDeleteModalOpen, toggleCantDeleteModal] = useToggle();
+  const [cannotDeleteModalOpen, toggleCannotDeleteModal] = useToggle();
 
   return (
     <FlexRow style={{ flexDirection: 'column' }} flex={1}>
@@ -76,7 +76,7 @@ export const PatientEditModalComponent = ({
             text={generalStrings.save}
           />
           <PageButton
-            onPress={hasVaccineEvents ? toggleCantDeleteModal : toggleRemoveModal}
+            onPress={hasVaccineEvents ? toggleCannotDeleteModal : toggleRemoveModal}
             style={styles.cancelButton}
             textStyle={styles.saveButtonTextStyle}
             text={generalStrings.delete}
@@ -89,11 +89,11 @@ export const PatientEditModalComponent = ({
           />
         </View>
       </FlexRow>
-      <PaperModalContainer isVisible={cantDeleteModalOpen} onClose={toggleCantDeleteModal}>
+      <PaperModalContainer isVisible={cannotDeleteModalOpen} onClose={toggleCannotDeleteModal}>
         <PaperConfirmModal
           questionText={modalStrings.patient_cant_delete_with_vaccine_events}
           confirmText={navStrings.go_back}
-          onConfirm={toggleCantDeleteModal}
+          onConfirm={toggleCannotDeleteModal}
         />
       </PaperModalContainer>
       <PaperModalContainer isVisible={removeModalOpen} onClose={toggleRemoveModal}>
