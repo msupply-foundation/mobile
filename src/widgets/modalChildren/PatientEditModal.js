@@ -37,6 +37,8 @@ export const PatientEditModalComponent = ({
     canSave = surveySchema && surveyForm ? nameNoteIsValid : !isDisabled;
   }
 
+  const canDelete = !isDisabled;
+
   const [removeModalOpen, toggleRemoveModal] = useToggle();
   const [cannotDeleteModalOpen, toggleCannotDeleteModal] = useToggle();
 
@@ -77,6 +79,7 @@ export const PatientEditModalComponent = ({
           />
           <PageButton
             onPress={hasVaccineEvents ? toggleCannotDeleteModal : toggleRemoveModal}
+            isDisabled={!canDelete}
             style={styles.cancelButton}
             textStyle={styles.saveButtonTextStyle}
             text={generalStrings.delete}
