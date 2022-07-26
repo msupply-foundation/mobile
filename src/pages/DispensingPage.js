@@ -32,7 +32,6 @@ import {
   selectSortedData,
   selectLookupModalOpen,
 } from '../selectors/dispensary';
-
 import { selectPrescriberModalOpen, selectCanEditPrescriber } from '../selectors/prescriber';
 import { selectInsuranceModalOpen, selectCanEditInsurancePolicy } from '../selectors/insurance';
 import {
@@ -341,6 +340,7 @@ const localStyles = {
 const mapStateToProps = state => {
   const { patient, prescriber, insurance, dispensary } = state;
   const { sortKey, isAscending, searchTerm, columns } = dispensary;
+
   const isLookupModalOpen = selectLookupModalOpen(state);
 
   const { currentPatient } = patient;
@@ -356,7 +356,6 @@ const mapStateToProps = state => {
   );
   const insuranceModalOpen = selectInsuranceModalOpen(state);
   const data = selectSortedData(state);
-
   const patientHistory =
     patient.currentPatient && patient.currentPatient.transactions
       ? selectSortedPatientHistory({ patient })
