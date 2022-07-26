@@ -16,6 +16,9 @@ export const selectPatientHistory = ({ patient }) => {
   const { currentPatient } = patient;
   const { transactions } = currentPatient;
 
+  // If there is no transactions return empty array
+  if (!transactions) return [];
+
   // Create a query string `transaction.id == "{id} OR transaction.id == "{id}" ...`
   // finding all transaction batches for the patient.
   const inQuery = transactions.map(({ id }) => `transaction.id == "${id}"`).join(' OR ');
