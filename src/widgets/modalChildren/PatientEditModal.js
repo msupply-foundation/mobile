@@ -9,14 +9,19 @@ import { FlexRow } from '../FlexRow';
 import { JSONForm } from '../JSONForm/JSONForm';
 import { NameNoteActions } from '../../actions/Entities/NameNoteActions';
 import { selectNameNoteIsValid, selectCreatingNameNote } from '../../selectors/Entities/nameNote';
+import { selectSortedPatientHistory, selectIsCreatePatient } from '../../selectors/patient';
 import { selectCompletedForm, selectCanSaveForm } from '../../selectors/form';
 import { PatientActions } from '../../actions/PatientActions';
 import globalStyles, { SUSSOL_ORANGE } from '../../globalStyles';
-import { generalStrings, modalStrings } from '../../localization/index';
+import { generalStrings, modalStrings, buttonStrings, navStrings } from '../../localization/index';
+import { PaperModalContainer } from '../PaperModal/PaperModalContainer';
+import { PaperConfirmModal } from '../PaperModal/PaperConfirmModal';
+import { useToggle } from '../../hooks/index';
 
 export const PatientEditModalComponent = ({
   isDisabled,
   onSaveForm,
+  onDeleteForm,
   onCancel,
   inputConfig,
   surveySchema,
@@ -24,11 +29,20 @@ export const PatientEditModalComponent = ({
   onUpdateForm,
   nameNoteIsValid,
   canSaveForm,
+  hasVaccineEventsForm,
+  isCreatePatient,
 }) => {
   let canSave = canSaveForm;
+  const hasVaccineEvents = hasVaccineEventsForm;
   if (canSave) {
     canSave = surveySchema && surveyForm ? nameNoteIsValid : !isDisabled;
   }
+
+  const canDelete = !isDisabled;
+  const showDelete = !isCreatePatient;
+
+  const [removeModalOpen, toggleRemoveModal] = useToggle();
+  const [cannotDeleteModalOpen, toggleCannotDeleteModal] = useToggle();
 
   return (
     <FlexRow style={{ flexDirection: 'column' }} flex={1}>
@@ -65,6 +79,14 @@ export const PatientEditModalComponent = ({
             textStyle={styles.saveButtonTextStyle}
             text={generalStrings.save}
           />
+          {showDelete && (
+            <PageButton
+              onPress={hasVaccineEvents ? toggleCannotDeleteModal : toggleRemoveModal}
+              style={styles.cancelButton}
+              textStyle={styles.saveButtonTextStyle}
+              text={generalStrings.delete}
+            />
+          )}
           <PageButton
             onPress={onCancel}
             style={styles.cancelButton}
@@ -73,6 +95,23 @@ export const PatientEditModalComponent = ({
           />
         </View>
       </FlexRow>
+      <PaperModalContainer isVisible={cannotDeleteModalOpen} onClose={toggleCannotDeleteModal}>
+        <PaperConfirmModal
+          questionText={modalStrings.patient_cant_delete_with_vaccine_events}
+          confirmText={navStrings.go_back}
+          onConfirm={toggleCannotDeleteModal}
+        />
+      </PaperModalContainer>
+      <PaperModalContainer isVisible={removeModalOpen} onClose={toggleRemoveModal}>
+        <PaperConfirmModal
+          questionText={modalStrings.are_you_sure_delete_patient}
+          confirmText={generalStrings.remove}
+          cancelText={buttonStrings.cancel}
+          onConfirm={onDeleteForm}
+          isDisabled={!canDelete}
+          onCancel={toggleRemoveModal}
+        />
+      </PaperModalContainer>
     </FlexRow>
   );
 };
@@ -111,11 +150,13 @@ PatientEditModalComponent.defaultProps = {
   surveyForm: null,
   surveySchema: null,
   nameNoteIsValid: true,
+  isCreatePatient: false,
 };
 
 PatientEditModalComponent.propTypes = {
   isDisabled: PropTypes.bool,
   onSaveForm: PropTypes.func.isRequired,
+  onDeleteForm: PropTypes.func.isRequired,
   onCancel: PropTypes.func.isRequired,
   inputConfig: PropTypes.array.isRequired,
   surveyForm: PropTypes.object,
@@ -123,11 +164,13 @@ PatientEditModalComponent.propTypes = {
   surveySchema: PropTypes.object,
   onUpdateForm: PropTypes.func.isRequired,
   canSaveForm: PropTypes.bool.isRequired,
+  hasVaccineEventsForm: PropTypes.bool.isRequired,
+  isCreatePatient: PropTypes.bool,
 };
 
 const mergeProps = (stateProps, dispatchProps, ownProps) => {
   const { completedForm } = stateProps;
-  const { onSave, onSaveSurvey, ...otherDispatchProps } = dispatchProps;
+  const { onSave, onDelete, onSaveSurvey, ...otherDispatchProps } = dispatchProps;
   const { surveySchema } = ownProps;
 
   const onSaveForm = () => {
@@ -135,11 +178,16 @@ const mergeProps = (stateProps, dispatchProps, ownProps) => {
     if (surveySchema) onSaveSurvey();
   };
 
+  const onDeleteForm = () => {
+    onDelete();
+  };
+
   return {
     ...ownProps,
     ...otherDispatchProps,
     ...stateProps,
     onSaveForm,
+    onDeleteForm,
   };
 };
 
@@ -148,14 +196,25 @@ const stateToProps = state => {
   const nameNote = selectCreatingNameNote(state);
   const completedForm = selectCompletedForm(state);
   const canSaveForm = selectCanSaveForm(state);
+  const patientHistory = selectSortedPatientHistory(state);
+  const isCreatePatient = selectIsCreatePatient(state);
+  const hasVaccineEventsForm = patientHistory.length > 0;
 
-  return { canSaveForm, completedForm, nameNoteIsValid, surveyForm: nameNote?.data ?? null };
+  return {
+    canSaveForm,
+    hasVaccineEventsForm,
+    completedForm,
+    nameNoteIsValid,
+    isCreatePatient,
+    surveyForm: nameNote?.data ?? null,
+  };
 };
 
 const dispatchToProps = dispatch => ({
   onSaveSurvey: () => dispatch(NameNoteActions.saveEditing()),
   onUpdateForm: (form, validator) => dispatch(NameNoteActions.updateForm(form, validator)),
   onSave: patientDetails => dispatch(PatientActions.patientUpdate(patientDetails)),
+  onDelete: () => dispatch(PatientActions.patientDelete()),
 });
 
 export const PatientEditModal = connect(

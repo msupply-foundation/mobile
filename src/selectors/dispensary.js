@@ -44,10 +44,11 @@ export const selectDataSet = ({ dispensary }) => {
 };
 
 export const selectData = ({ dispensary }) => {
-  const dataSet = selectDataSet({ dispensary });
-  const { data } = dispensary;
+  const { dataSet, data } = dispensary;
 
-  return dataSet === 'patient' ? data.filtered('isDeleted == false') : data;
+  return [RECORD_TYPES.PATIENT, 'patientWithAdverseDrugReactions'].includes(dataSet)
+    ? data.filtered('isDeleted == $0', false)
+    : data;
 };
 
 export const selectDataSetInUse = ({ dispensary }) => {

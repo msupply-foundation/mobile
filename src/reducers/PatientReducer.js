@@ -107,6 +107,7 @@ export const PatientReducer = (state = patientInitialState(), action) => {
       return { ...state, currentPatient: null, creatingADR: false };
     }
 
+    case PATIENT_ACTIONS.PATIENT_DELETE:
     case PATIENT_ACTIONS.REFRESH: {
       return { ...patientInitialState() };
     }
