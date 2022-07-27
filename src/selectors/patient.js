@@ -64,6 +64,16 @@ export const selectPatientModalOpen = ({ patient }) => {
   return [isCreating || isEditing, viewingHistory, creatingADR];
 };
 
+/**
+ * Check if it is create Patient form.
+ * @param { patient } patient
+ * @returns boolean
+ */
+export const selectIsCreatePatient = ({ patient }) => {
+  const { isCreating } = patient;
+  return isCreating;
+};
+
 export const selectCanEditPatient = ({ patient }) => {
   const { currentPatient } = patient;
   const { isEditable = true } = currentPatient ?? {};

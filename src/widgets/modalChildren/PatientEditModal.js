@@ -9,7 +9,7 @@ import { FlexRow } from '../FlexRow';
 import { JSONForm } from '../JSONForm/JSONForm';
 import { NameNoteActions } from '../../actions/Entities/NameNoteActions';
 import { selectNameNoteIsValid, selectCreatingNameNote } from '../../selectors/Entities/nameNote';
-import { selectSortedPatientHistory } from '../../selectors/patient';
+import { selectSortedPatientHistory, selectIsCreatePatient } from '../../selectors/patient';
 import { selectCompletedForm, selectCanSaveForm } from '../../selectors/form';
 import { PatientActions } from '../../actions/PatientActions';
 import globalStyles, { SUSSOL_ORANGE } from '../../globalStyles';
@@ -30,6 +30,7 @@ export const PatientEditModalComponent = ({
   nameNoteIsValid,
   canSaveForm,
   hasVaccineEventsForm,
+  isCreatePatient,
 }) => {
   let canSave = canSaveForm;
   const hasVaccineEvents = hasVaccineEventsForm;
@@ -38,6 +39,7 @@ export const PatientEditModalComponent = ({
   }
 
   const canDelete = !isDisabled;
+  const showDelete = !isCreatePatient;
 
   const [removeModalOpen, toggleRemoveModal] = useToggle();
   const [cannotDeleteModalOpen, toggleCannotDeleteModal] = useToggle();
@@ -77,13 +79,14 @@ export const PatientEditModalComponent = ({
             textStyle={styles.saveButtonTextStyle}
             text={generalStrings.save}
           />
-          <PageButton
-            onPress={hasVaccineEvents ? toggleCannotDeleteModal : toggleRemoveModal}
-            isDisabled={!canDelete}
-            style={styles.cancelButton}
-            textStyle={styles.saveButtonTextStyle}
-            text={generalStrings.delete}
-          />
+          {showDelete && (
+            <PageButton
+              onPress={hasVaccineEvents ? toggleCannotDeleteModal : toggleRemoveModal}
+              style={styles.cancelButton}
+              textStyle={styles.saveButtonTextStyle}
+              text={generalStrings.delete}
+            />
+          )}
           <PageButton
             onPress={onCancel}
             style={styles.cancelButton}
@@ -105,6 +108,7 @@ export const PatientEditModalComponent = ({
           confirmText={generalStrings.remove}
           cancelText={buttonStrings.cancel}
           onConfirm={onDeleteForm}
+          isDisabled={!canDelete}
           onCancel={toggleRemoveModal}
         />
       </PaperModalContainer>
@@ -146,6 +150,7 @@ PatientEditModalComponent.defaultProps = {
   surveyForm: null,
   surveySchema: null,
   nameNoteIsValid: true,
+  isCreatePatient: false,
 };
 
 PatientEditModalComponent.propTypes = {
@@ -160,6 +165,7 @@ PatientEditModalComponent.propTypes = {
   onUpdateForm: PropTypes.func.isRequired,
   canSaveForm: PropTypes.bool.isRequired,
   hasVaccineEventsForm: PropTypes.bool.isRequired,
+  isCreatePatient: PropTypes.bool,
 };
 
 const mergeProps = (stateProps, dispatchProps, ownProps) => {
@@ -191,6 +197,7 @@ const stateToProps = state => {
   const completedForm = selectCompletedForm(state);
   const canSaveForm = selectCanSaveForm(state);
   const patientHistory = selectSortedPatientHistory(state);
+  const isCreatePatient = selectIsCreatePatient(state);
   const hasVaccineEventsForm = patientHistory.length > 0;
 
   return {
@@ -198,6 +205,7 @@ const stateToProps = state => {
     hasVaccineEventsForm,
     completedForm,
     nameNoteIsValid,
+    isCreatePatient,
     surveyForm: nameNote?.data ?? null,
   };
 };
