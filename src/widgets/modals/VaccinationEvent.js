@@ -86,7 +86,9 @@ export const VaccinationEventComponent = ({
   const [vaccine, setVaccine] = useState(
     vaccines.filter(item => item.id === transactionBatch?.itemId)[0]
   );
-  const vaccineDropDownValues = vaccines.map(({ code, name }) => `${code}: ${name}`);
+  const vaccineDropDownValues = vaccines
+    .filter(v => v.totalQuantity !== 0)
+    .map(({ code, name }) => `${code}: ${name}`);
 
   const [{ updatedPcdForm, isPCDValid }, setPCDForm] = useState({
     updatedPcdForm: null,
