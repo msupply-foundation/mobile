@@ -82,9 +82,13 @@ const styles = StyleSheet.create({
   },
 });
 
+Checkbox.defaultProps = {
+  value: false,
+};
+
 Checkbox.propTypes = {
   options: PropTypes.object.isRequired,
-  value: PropTypes.bool.isRequired,
+  value: PropTypes.bool,
   onChange: PropTypes.func.isRequired,
   onBlur: PropTypes.func.isRequired,
   id: PropTypes.string.isRequired,

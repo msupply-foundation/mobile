@@ -80,8 +80,11 @@ const FormControlComponent = ({
   const isFocused = useIsFocused();
 
   React.useEffect(() => {
-    onInitialiseForm();
-    setRefs({ length: inputConfig.length });
+    // Only update state if component comes in focus
+    if (isFocused) {
+      onInitialiseForm();
+      setRefs({ length: inputConfig.length });
+    }
   }, [isFocused]);
 
   const debouncedUpdateForm = useDebounce(onUpdateForm, 500);
