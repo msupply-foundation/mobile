@@ -129,6 +129,9 @@ export const VaccinationEventComponent = ({
   };
 
   const trySave = useCallback(() => {
+    setIsDeletedVaccinationEvent({
+      isDeletedVaccinationEvent: true,
+    });
     const vaccineChanged = vaccine.code !== transactionBatch?.itemBatch?.item?.code;
     const vaccinatorChanged =
       JSON.stringify(vaccinator) !== JSON.stringify(transactionBatch.medicineAdministrator);
@@ -143,10 +146,10 @@ export const VaccinationEventComponent = ({
         vaccinationEventNameNote
       );
       toggleEditTransaction();
-      setIsDeletedVaccinationEvent({
-        isDeletedVaccinationEvent: true,
-      });
     } else {
+      setIsDeletedVaccinationEvent({
+        isDeletedVaccinationEvent: false,
+      });
       ToastAndroid.show(vaccineStrings.vaccination_not_updated, ToastAndroid.LONG);
     }
   }, [patient, transactionBatch, vaccine]);
