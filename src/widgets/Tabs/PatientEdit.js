@@ -4,12 +4,12 @@
  * Sustainable Solutions (NZ) Ltd. 2021
  */
 
-import React, { useCallback, useRef, useState } from 'react';
+import React, { useCallback, useRef } from 'react';
 import PropTypes from 'prop-types';
 import { ToastAndroid, View } from 'react-native';
-import { useIsFocused } from '@react-navigation/native';
 import { connect } from 'react-redux';
 import * as Animatable from 'react-native-animatable';
+import useButtonEnabled from '../../hooks/useButtonEnabled';
 import { FormControl } from '../FormControl';
 import { PageButton } from '../PageButton';
 import { FlexRow } from '../FlexRow';
@@ -66,18 +66,8 @@ const PatientEditComponent = ({
 }) => {
   const { pageTopViewContainer } = globalStyles;
   const [isDeceasedModalOpen, toggleIsDeceasedAlert] = useToggle(false);
-  const [nextButtonEnabled, setNextButtonEnabled] = useState(true);
 
-  const isFocused = useIsFocused();
-
-  React.useEffect(() => {
-    // Enable next button when component goes out of focus
-    // This combined with the way nextButtonEnabled is being used below, would ensure
-    // and Next button cannot be clicked multiple times
-    if (!isFocused) {
-      setNextButtonEnabled(true);
-    }
-  }, [isFocused]);
+  const { enabled: nextButtonEnabled, setEnabled: setNextButtonEnabled } = useButtonEnabled();
 
   const formRef = useRef(null);
   const savePatient = useCallback(
