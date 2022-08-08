@@ -4,9 +4,10 @@
  * Sustainable Solutions (NZ) Ltd. 2021
  */
 
-import React, { useCallback, useRef } from 'react';
+import React, { useCallback, useRef, useState } from 'react';
 import PropTypes from 'prop-types';
 import { ToastAndroid, View } from 'react-native';
+import { useIsFocused } from '@react-navigation/native';
 import { connect } from 'react-redux';
 import * as Animatable from 'react-native-animatable';
 import { FormControl } from '../FormControl';
@@ -65,20 +66,38 @@ const PatientEditComponent = ({
 }) => {
   const { pageTopViewContainer } = globalStyles;
   const [isDeceasedModalOpen, toggleIsDeceasedAlert] = useToggle(false);
+  const [nextButtonEnabled, setNextButtonEnabled] = useState(true);
+
+  const isFocused = useIsFocused();
+
+  React.useEffect(() => {
+    // Enable next button when component goes out of focus
+    // This combined with the way nextButtonEnabled is being used below, would ensure
+    // and Next button cannot be clicked multiple times
+    if (!isFocused) {
+      setNextButtonEnabled(true);
+    }
+  }, [isFocused]);
+
   const formRef = useRef(null);
   const savePatient = useCallback(
     e => {
+      setNextButtonEnabled(false);
       updatePatientDetails(completedForm);
+
       if (completedForm.isDeceased) {
         toggleIsDeceasedAlert();
+        setNextButtonEnabled(true);
         return;
       }
 
       formRef?.current?.submit(e);
+
       if (canSaveForm) {
         onCompleted();
       } else {
         ToastAndroid.show(dispensingStrings.validation_failed, ToastAndroid.LONG);
+        setNextButtonEnabled(true);
       }
     },
     [completedForm, canSaveForm]
@@ -127,6 +146,7 @@ const PatientEditComponent = ({
         <PageButtonWithOnePress text={buttonStrings.cancel} onPress={onCancelPrescription} />
         <PageButton
           text={buttonStrings.next}
+          isDisabled={!nextButtonEnabled}
           onPress={savePatient}
           style={{ marginLeft: 'auto' }}
         />
