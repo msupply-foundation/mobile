@@ -4,22 +4,23 @@
  * Sustainable Solutions (NZ) Ltd. 2019
  */
 
-import React, { useCallback } from 'react';
+import React, { useCallback, useMemo } from 'react';
 import PropTypes from 'prop-types';
 import { View } from 'react-native';
 import { connect } from 'react-redux';
 
-import { getItemLayout, getPageDispatchers } from './dataTableUtilities';
+import { getItemLayout, getPageDispatchers, PageActions } from './dataTableUtilities';
 
 import { DataTable, DataTableHeaderRow, DataTableRow } from '../widgets/DataTable';
-import { DataTablePageView, SearchBar } from '../widgets';
+import { DataTablePageView, SearchBar, ToggleBar } from '../widgets';
 
 import globalStyles from '../globalStyles';
 import { useSyncListener } from '../hooks';
 
-import { generalStrings } from '../localization';
+import { generalStrings, buttonStrings } from '../localization';
 import { SupplierCreditActions } from '../actions/SupplierCreditActions';
 import { RowDetailActions } from '../actions/RowDetailActions';
+import { ROUTES } from '../navigation';
 
 /**
  * Renders a mSupply mobile page with Items and their stock levels.
@@ -49,11 +50,16 @@ export const Stock = ({
   onFilterData,
   onSortColumn,
   refund,
+  showAll,
+  toggleStockOut,
 }) => {
   //  Refresh data on retrieving item or itembatch records from sync.
   useSyncListener(refreshData, ['Item', 'ItemBatch']);
 
   const refundCallback = React.useCallback(() => itemId => refund(itemId), []);
+
+  console.log(data.length);
+  console.log(searchTerm);
 
   const renderRow = useCallback(
     listItem => {
@@ -83,17 +89,33 @@ export const Stock = ({
     />
   );
 
-  const { pageTopSectionContainer } = globalStyles;
+  const toggles = useMemo(
+    () => [{ text: buttonStrings.hide_stockouts, onPress: toggleStockOut, isOn: !showAll }],
+    [showAll]
+  );
+
+  console.log(showAll);
+
+  const {
+    pageTopSectionContainer,
+    pageTopRightSectionContainer,
+    pageTopLeftSectionContainer,
+  } = globalStyles;
   return (
     <DataTablePageView captureUncaughtGestures={false}>
       <View style={pageTopSectionContainer}>
-        <SearchBar
-          onChangeText={onFilterData}
-          value={searchTerm}
-          onFocusOrBlur={selectedRow && onDeselectRow}
-          // eslint-disable-next-line max-len
-          placeholder={`${generalStrings.search_by} ${generalStrings.code} ${generalStrings.or} ${generalStrings.name}`}
-        />
+        <View style={pageTopLeftSectionContainer}>
+          <SearchBar
+            onChangeText={onFilterData}
+            value={searchTerm}
+            onFocusOrBlur={selectedRow && onDeselectRow}
+            // eslint-disable-next-line max-len
+            placeholder={`${generalStrings.search_by} ${generalStrings.code} ${generalStrings.or} ${generalStrings.name}`}
+          />
+        </View>
+        <View style={pageTopRightSectionContainer}>
+          <ToggleBar toggles={toggles} />
+        </View>
       </View>
 
       <DataTable
@@ -113,6 +135,7 @@ const mapDispatchToProps = dispatch => ({
   ...getPageDispatchers(dispatch, '', 'stock'),
   onSelectRow: rowKey => dispatch(RowDetailActions.openItemDetail(rowKey)),
   refund: rowKey => dispatch(SupplierCreditActions.createFromItem(rowKey)),
+  onFilterData: value => dispatch(PageActions.filterDataWithZeroStockToggle(value, ROUTES.STOCK)),
 });
 
 const mapStateToProps = state => {
@@ -126,6 +149,7 @@ export const StockPage = connect(mapStateToProps, mapDispatchToProps)(Stock);
 
 Stock.defaultProps = {
   selectedRow: null,
+  showAll: true,
 };
 
 Stock.propTypes = {
@@ -143,4 +167,6 @@ Stock.propTypes = {
   onFilterData: PropTypes.func.isRequired,
   onSortColumn: PropTypes.func.isRequired,
   refund: PropTypes.func.isRequired,
+  showAll: PropTypes.bool,
+  toggleStockOut: PropTypes.func.isRequired,
 };

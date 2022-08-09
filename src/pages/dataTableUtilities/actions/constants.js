@@ -21,6 +21,7 @@ export const ACTIONS = {
   FILTER_DATA_WITH_FINALISED_TOGGLE: 'filterDataWithFinalisedToggle',
   FILTER_DATA_WITH_OVER_STOCK_TOGGLE: 'filterDataWithOverStockToggle',
   TOGGLE_COLUMN_SET: 'toggleColumnSet',
+  FILTER_DATA_WITH_ZERO_STOCK_TOGGLE: 'filterDataWithZeroStockToggle',
 
   // pageAction constants
   OPEN_MODAL: 'openModal',
