@@ -58,9 +58,6 @@ export const Stock = ({
 
   const refundCallback = React.useCallback(() => itemId => refund(itemId), []);
 
-  console.log(data.length);
-  console.log(searchTerm);
-
   const renderRow = useCallback(
     listItem => {
       const { item, index } = listItem;
@@ -90,11 +87,9 @@ export const Stock = ({
   );
 
   const toggles = useMemo(
-    () => [{ text: buttonStrings.hide_stockouts, onPress: toggleStockOut, isOn: !showAll }],
+    () => [{ text: buttonStrings.hide_zero_stocks, onPress: toggleStockOut, isOn: !showAll }],
     [showAll]
   );
-
-  console.log(showAll);
 
   const {
     pageTopSectionContainer,
