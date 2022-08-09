@@ -38,7 +38,8 @@
     "customer_data": "Customer Data",
     "factory_reset": "Factory Reset",
     "check_connection": "Check connection",
-    "connection_status": "Connection successful"
+    "connection_status": "Connection successful",
+    "hide_zero_stocks": "Hide zero stocks"
   },
   "fr": {
     "back": "Précédent",
@@ -77,7 +78,8 @@
     "customer_data": "Données Clients",
     "factory_reset": "Réinitialiser",
     "check_connection": "Vérifiez la connexion",
-    "connection_status": "Connexion réussie"
+    "connection_status": "Connexion réussie",
+    "hide_zero_stocks": "Masquer les stocks zéro"
   },
   "gil": {
     "add_master_list_items": "Rinea am list",
@@ -96,7 +98,8 @@
     "new_supplier_invoice": "Bebwan am oota\nman pharmacy",
     "past": "Are I mwaina",
     "use_requested_quantities": "Kabongana maitina\nae kainnanoaki",
-    "use_suggested_quantities": "Kabongana te\nmwaiti are e katauaki"
+    "use_suggested_quantities": "Kabongana te\nmwaiti are e katauaki",
+    "hide_zero_stocks": "Hide zero stocks"
   },
   "tl": {
     "add_master_list_items": "Utiliza Lista Master",
@@ -115,7 +118,8 @@
     "new_supplier_invoice": "Distribuidor nia Invoice Foun",
     "past": "Pasadu",
     "use_suggested_quantities": "Kuantidade Sujere",
-    "use_requested_quantities": "Kuantidade Ezije"
+    "use_requested_quantities": "Kuantidade Ezije",
+    "hide_zero_stocks": "Hide zero stocks"
   },
   "la": {
     "add_batch": "​ໃສ​່​ເລກ​ຊຸດ​ຜະ​ລິດ",
@@ -135,7 +139,8 @@
     "new_supplier_invoice": "ໃບ​ຮັບ​ສິນ​ຄ້າໃໝ່",
     "past": "ໃນທີ່​ຜ່ານ​ມາ",
     "use_suggested_quantities": "ນຳໃຊ້ຈຳ​ນວນທີ່​ຖືກແນະ​ນຳ",
-    "use_requested_quantities": "ນຳໃຊ້ຈຳ​ນວນທີ່​ສະ​ເໜີ​ຂໍ"
+    "use_requested_quantities": "ນຳໃຊ້ຈຳ​ນວນທີ່​ສະ​ເໜີ​ຂໍ",
+    "hide_zero_stocks": "Hide zero stocks"
   },
   "my": {
     "add_fridge": "အအေးပေးစက်အတွင်း သိမ်းဆည်းသည်",
@@ -163,7 +168,8 @@
     "past": "ယခင်",
     "save_changes": "ပြောင်းလဲမှုအားသိမ်းဆည်းသည်",
     "use_requested_quantities": "တောင်းခံထားသော အ‌ရေအတွက်ကို သုံးသည်",
-    "use_suggested_quantities": "အကြံပြုထားသော အရေအတွက်ကို သုံးသည်"
+    "use_suggested_quantities": "အကြံပြုထားသော အရေအတွက်ကို သုံးသည်",
+    "hide_zero_stocks": "Hide zero stocks"
   },
   "pt": {
     "back": "Voltar",
@@ -202,7 +208,8 @@
     "customer_data": "Dados do cliente",
     "factory_reset": "Configuração inicial",
     "check_connection": "Check connection",
-    "connection_status": "Conexão ativa"
+    "connection_status": "Conexão ativa",
+    "hide_zero_stocks": "Hide zero stocks"
   },
   "es": {
     "next": "Siguiente",
@@ -231,6 +238,7 @@
     "use_requested_quantities": "Usar Cantidades Solicitadas",
     "use_suggested_quantities": "Usar Cantidades Sugeridas",
     "view_regimen_data": "Ver Datos del Régimen",
-    "check_connection": "Check connection"
+    "check_connection": "Check connection",
+    "hide_zero_stocks": "Ocultar existencias cero"
   }
 }
