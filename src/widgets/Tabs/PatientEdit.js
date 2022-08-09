@@ -9,6 +9,7 @@ import PropTypes from 'prop-types';
 import { ToastAndroid, View } from 'react-native';
 import { connect } from 'react-redux';
 import * as Animatable from 'react-native-animatable';
+import useButtonEnabled from '../../hooks/useButtonEnabled';
 import { FormControl } from '../FormControl';
 import { PageButton } from '../PageButton';
 import { FlexRow } from '../FlexRow';
@@ -65,20 +66,28 @@ const PatientEditComponent = ({
 }) => {
   const { pageTopViewContainer } = globalStyles;
   const [isDeceasedModalOpen, toggleIsDeceasedAlert] = useToggle(false);
+
+  const { enabled: nextButtonEnabled, setEnabled: setNextButtonEnabled } = useButtonEnabled();
+
   const formRef = useRef(null);
   const savePatient = useCallback(
     e => {
+      setNextButtonEnabled(false);
       updatePatientDetails(completedForm);
+
       if (completedForm.isDeceased) {
         toggleIsDeceasedAlert();
+        setNextButtonEnabled(true);
         return;
       }
 
       formRef?.current?.submit(e);
+
       if (canSaveForm) {
         onCompleted();
       } else {
         ToastAndroid.show(dispensingStrings.validation_failed, ToastAndroid.LONG);
+        setNextButtonEnabled(true);
       }
     },
     [completedForm, canSaveForm]
@@ -127,6 +136,7 @@ const PatientEditComponent = ({
         <PageButtonWithOnePress text={buttonStrings.cancel} onPress={onCancelPrescription} />
         <PageButton
           text={buttonStrings.next}
+          isDisabled={!nextButtonEnabled}
           onPress={savePatient}
           style={{ marginLeft: 'auto' }}
         />
