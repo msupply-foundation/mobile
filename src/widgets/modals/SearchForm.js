@@ -169,6 +169,16 @@ const mapStateToProps = state => {
 const mapDispatchToProps = dispatch => ({
   close: () => dispatch(DispensaryActions.closeLookupModal()),
   selectPatient: async patient => {
+    const localPatient = UIDatabase.get('Name', patient.id);
+
+    if (localPatient.isDeleted) {
+      ToastAndroid.show(
+        'The patient has been deleted. You cannot sync this patient back.',
+        ToastAndroid.LONG
+      );
+      return;
+    }
+
     const result = await PatientActions.makePatientVisibility(patient);
 
     if (result) {

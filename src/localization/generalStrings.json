@@ -99,7 +99,8 @@
     "no_locations": "You don't have any locations to assign! Contact your administrator.",
     "no_options": "No options available. Please contact your administrator!",
     "no_vvm_status": "No vaccine vial monitor statuses available. Please contact your administrator!",
-    "no_reasons": "No requisition line variance reasons available. Please contact your administrator!"
+    "no_reasons": "No requisition line variance reasons available. Please contact your administrator!",
+    "no_records": "No record(s) found."
   },
   "fr": {
     "oh_no": "Oh non!",

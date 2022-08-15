@@ -3,7 +3,7 @@
 import React, { useCallback } from 'react';
 import PropTypes from 'prop-types';
 import * as Animatable from 'react-native-animatable';
-import { FlatList, TouchableOpacity } from 'react-native';
+import { FlatList, TouchableOpacity, View, Text } from 'react-native';
 import Cell from './DataTable/Cell';
 import { dataTableStyles, GREY } from '../globalStyles/index';
 import { HeaderCell, HeaderRow, TouchableNoFeedback } from './DataTable/index';
@@ -38,8 +38,10 @@ export const SimpleTable = React.memo(
         alternateRow: alternateRowStyle,
         row: basicRowStyle,
         headerRow,
+        emptyRow,
         headerCells,
       } = dataTableStyles;
+
       const renderCells = useCallback(
         rowData => {
           const { id } = rowData;
@@ -91,6 +93,15 @@ export const SimpleTable = React.memo(
         [selectedRows, disabledRows, selectRow, isDisabled]
       );
 
+      const renderEmpty = useCallback(
+        () => (
+          <View style={emptyRow}>
+            <Text style={{ textAlign: 'center' }}>{generalStrings.no_records}</Text>
+          </View>
+        ),
+        []
+      );
+
       const renderHeaderCells = useCallback(
         () =>
           columns.map(({ title, width, alignText }, index) => (
@@ -120,6 +131,7 @@ export const SimpleTable = React.memo(
           renderItem={renderRow}
           stickyHeaderIndices={[0]}
           ListHeaderComponent={renderHeaders}
+          ListEmptyComponent={renderEmpty}
           extraData={selectedRows}
           style={style}
           {...flatListProps}
@@ -135,10 +147,11 @@ SimpleTable.defaultProps = {
   selectRow: null,
   isDisabled: false,
   style: null,
+  data: null,
 };
 
 SimpleTable.propTypes = {
-  data: PropTypes.oneOfType([PropTypes.array, PropTypes.object]).isRequired,
+  data: PropTypes.oneOfType([PropTypes.array, PropTypes.object]),
   columns: PropTypes.array.isRequired,
   selectRow: PropTypes.func,
   selectedRows: PropTypes.object,
