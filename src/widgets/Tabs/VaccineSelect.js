@@ -118,9 +118,10 @@ const VaccineSelectComponent = ({
     }, 2000);
   }, []);
 
-  const confirmPrescription = React.useCallback(() => runWithLoadingIndicator(onConfirm), [
-    onConfirm,
-  ]);
+  const confirmPrescription = React.useCallback(() => {
+    runWithLoadingIndicator(onConfirm);
+    setOkConfirmButtonEnabled(false);
+  }, [onConfirm]);
 
   const confirmAndRepeatPrescription = React.useCallback(
     () => runWithLoadingIndicator(okAndRepeat),
