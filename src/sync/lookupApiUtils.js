@@ -131,8 +131,6 @@ const getPatientQueryString = ({
     { [PARAMETERS.limit.key]: limit, type: PARAMETERS.limit.type },
   ];
 
-  console.log('queryParams', queryParams);
-
   return getQueryString(queryParams);
 };
 

@@ -28,7 +28,7 @@ import { PrescriberActions } from '../../actions/PrescriberActions';
 import { getColumns } from '../../pages/dataTableUtilities';
 import { SimpleTable } from '../SimpleTable';
 
-import { modalStrings, generalStrings } from '../../localization';
+import { modalStrings, generalStrings, dispensingStrings } from '../../localization';
 
 import { APP_FONT_FAMILY, DARK_GREY, ROW_BLUE, WHITE, SUSSOL_ORANGE } from '../../globalStyles';
 
@@ -172,10 +172,7 @@ const mapDispatchToProps = dispatch => ({
     const localPatient = UIDatabase.get('Name', patient.id);
 
     if (localPatient.isDeleted) {
-      ToastAndroid.show(
-        'The patient has been deleted. You cannot sync this patient back.',
-        ToastAndroid.LONG
-      );
+      ToastAndroid.show(dispensingStrings.patient_already_deleted, ToastAndroid.LONG);
       return;
     }
 
