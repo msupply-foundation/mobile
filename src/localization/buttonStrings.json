@@ -13,6 +13,8 @@
     "create_automatic_order": "Create Automatic Order",
     "current": "Current",
     "done": "Done",
+    "delete_vaccination_event": "Delete vaccination event",
+    "edit": "Edit",
     "export_data": "Export Data",
     "import_data": "Import Data",
     "hide_stockouts": "Hide Stockouts",

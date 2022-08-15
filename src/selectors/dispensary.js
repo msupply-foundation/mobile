@@ -44,8 +44,11 @@ export const selectDataSet = ({ dispensary }) => {
 };
 
 export const selectData = ({ dispensary }) => {
-  const { data } = dispensary;
-  return data;
+  const { dataSet, data } = dispensary;
+
+  return [RECORD_TYPES.PATIENT, 'patientWithAdverseDrugReactions'].includes(dataSet)
+    ? data.filtered('isDeleted == $0', false)
+    : data;
 };
 
 export const selectDataSetInUse = ({ dispensary }) => {

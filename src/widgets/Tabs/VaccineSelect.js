@@ -4,7 +4,7 @@
  * Sustainable Solutions (NZ) Ltd. 2021
  */
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { useNavigation } from '@react-navigation/native';
 import { Dimensions, Text, StyleSheet, TextInput, View } from 'react-native';
@@ -46,6 +46,7 @@ import { PaperModalContainer } from '../PaperModal/PaperModalContainer';
 import { PaperConfirmModal } from '../PaperModal/PaperConfirmModal';
 import { useToggle } from '../../hooks/useToggle';
 import { PageButton } from '../PageButton';
+import useButtonEnabled from '../../hooks/useButtonEnabled';
 
 const ListEmptyComponent = () => (
   <FlexView flex={1} justifyContent="center" alignItems="center">
@@ -85,6 +86,10 @@ const VaccineSelectComponent = ({
   wasPatientVaccinatedWithinOneDay,
 }) => {
   const { pageTopViewContainer } = globalStyles;
+  const {
+    enabled: okConfirmButtonEnabled,
+    setEnabled: setOkConfirmButtonEnabled,
+  } = useButtonEnabled(false);
   const [confirmDoubleDoseModalOpen, toggleConfirmDoubleDoseModal] = useToggle();
   const [confirmAndRepeatDoubleDoseModalOpen, toggleConfirmAndRepeatDoubleDoseModal] = useToggle();
   const vaccineColumns = React.useMemo(() => getColumns(TABS.ITEM), []);
@@ -105,9 +110,18 @@ const VaccineSelectComponent = ({
   );
   const runWithLoadingIndicator = useLoadingIndicator();
 
-  const confirmPrescription = React.useCallback(() => runWithLoadingIndicator(onConfirm), [
-    onConfirm,
-  ]);
+  useEffect(() => {
+    // Wait for two seconds before enabling confirm button
+    // to avoid accidental form submission.
+    setTimeout(() => {
+      setOkConfirmButtonEnabled(true);
+    }, 2000);
+  }, []);
+
+  const confirmPrescription = React.useCallback(() => {
+    runWithLoadingIndicator(onConfirm);
+    setOkConfirmButtonEnabled(false);
+  }, [onConfirm]);
 
   const confirmAndRepeatPrescription = React.useCallback(
     () => runWithLoadingIndicator(okAndRepeat),
@@ -200,7 +214,7 @@ const VaccineSelectComponent = ({
           debounceTimer={1000}
           text={buttonStrings.confirm}
           style={{ marginLeft: 'auto' }}
-          isDisabled={!selectedBatches && !hasRefused}
+          isDisabled={(!selectedBatches && !hasRefused) || !okConfirmButtonEnabled}
           onPress={
             wasPatientVaccinatedWithinOneDay ? toggleConfirmDoubleDoseModal : confirmPrescription
           }
@@ -209,7 +223,7 @@ const VaccineSelectComponent = ({
           debounceTimer={1000}
           text={generalStrings.ok_and_next}
           style={{ marginLeft: 5 }}
-          isDisabled={!selectedBatches && !hasRefused}
+          isDisabled={(!selectedBatches && !hasRefused) || !okConfirmButtonEnabled}
           onPress={
             wasPatientVaccinatedWithinOneDay
               ? toggleConfirmAndRepeatDoubleDoseModal

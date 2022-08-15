@@ -6,7 +6,6 @@
  */
 
 import React from 'react';
-
 import { ToastAndroid, View } from 'react-native';
 
 import { connect } from 'react-redux';
@@ -14,7 +13,7 @@ import PropTypes from 'prop-types';
 import * as Animatable from 'react-native-animatable';
 import { FlexRow } from '../FlexRow';
 import { FlexView } from '../FlexView';
-
+import useButtonEnabled from '../../hooks/useButtonEnabled';
 import globalStyles from '../../globalStyles/index';
 import { buttonStrings, dispensingStrings, vaccineStrings } from '../../localization/index';
 import { JSONForm } from '../JSONForm/JSONForm';
@@ -40,37 +39,54 @@ const VaccineSupplementalDataComponent = ({
   onComplete,
   onFormUpdate,
   siteSchema,
-}) => (
-  <FlexView style={pageTopViewContainer}>
-    <Paper
-      headerText={vaccineStrings.vaccine_dispense_supplemental_data_title}
-      contentContainerStyle={{ flex: 1 }}
-      style={{ flex: 1 }}
-    >
-      <AfterInteractions placeholder={null}>
-        <Animatable.View animation="fadeIn" duration={1000} useNativeDriver style={{ flex: 1 }}>
-          <JSONForm
-            formData={formData}
-            surveySchema={siteSchema}
-            onChange={(changed, validator) => {
-              onFormUpdate(changed.formData, validator);
-            }}
-          >
-            <View />
-          </JSONForm>
-        </Animatable.View>
-      </AfterInteractions>
-    </Paper>
-    <FlexRow flex={0} justifyContent="flex-end" alignItems="flex-end">
-      <PageButtonWithOnePress text={buttonStrings.cancel} onPress={onCancel} />
-      <PageButton
-        text={buttonStrings.next}
-        onPress={() => onComplete(isValid)}
-        style={{ marginLeft: 'auto' }}
-      />
-    </FlexRow>
-  </FlexView>
-);
+}) => {
+  const { enabled: nextButtonEnabled, setEnabled: setNextButtonEnabled } = useButtonEnabled();
+
+  const submitForm = () => {
+    setNextButtonEnabled(false);
+
+    if (isValid) {
+      onComplete();
+      return;
+    }
+
+    ToastAndroid.show(dispensingStrings.validation_failed, ToastAndroid.LONG);
+    setNextButtonEnabled(true);
+  };
+
+  return (
+    <FlexView style={pageTopViewContainer}>
+      <Paper
+        headerText={vaccineStrings.vaccine_dispense_supplemental_data_title}
+        contentContainerStyle={{ flex: 1 }}
+        style={{ flex: 1 }}
+      >
+        <AfterInteractions placeholder={null}>
+          <Animatable.View animation="fadeIn" duration={1000} useNativeDriver style={{ flex: 1 }}>
+            <JSONForm
+              formData={formData}
+              surveySchema={siteSchema}
+              onChange={(changed, validator) => {
+                onFormUpdate(changed.formData, validator);
+              }}
+            >
+              <View />
+            </JSONForm>
+          </Animatable.View>
+        </AfterInteractions>
+      </Paper>
+      <FlexRow flex={0} justifyContent="flex-end" alignItems="flex-end">
+        <PageButtonWithOnePress text={buttonStrings.cancel} onPress={onCancel} />
+        <PageButton
+          text={buttonStrings.next}
+          isDisabled={!nextButtonEnabled}
+          onPress={() => submitForm()}
+          style={{ marginLeft: 'auto' }}
+        />
+      </FlexRow>
+    </FlexView>
+  );
+};
 
 VaccineSupplementalDataComponent.propTypes = {
   formData: PropTypes.object,
@@ -88,13 +104,7 @@ const mapDispatchToProps = dispatch => {
     dispatch(VaccinePrescriptionActions.updateSupplementalData(data, validator));
   };
 
-  const onComplete = isValid => {
-    if (isValid) {
-      dispatch(WizardActions.nextTab());
-    } else {
-      ToastAndroid.show(dispensingStrings.validation_failed, ToastAndroid.LONG);
-    }
-  };
+  const onComplete = () => dispatch(WizardActions.nextTab());
 
   return { onCancel, onComplete, onFormUpdate };
 };

@@ -7,6 +7,7 @@ const initialState = () => ({
     patientEventID: '',
     nameID: '',
     entryDate: 0,
+    isDeleted: false,
   },
   isValid: false,
 });

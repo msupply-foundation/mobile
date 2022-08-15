@@ -8,7 +8,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 import { StyleSheet, Text, TouchableOpacity, ViewPropTypes, View } from 'react-native';
-import globalStyles, { WARMER_GREY, SUSSOL_ORANGE } from '../../globalStyles';
+import globalStyles, { WARMER_GREY, SUSSOL_ORANGE, APP_FONT_FAMILY } from '../../globalStyles';
 
 /**
  * Renders a bar of multiple toggling buttons, defined by the array 'toggles' passed in.
@@ -38,10 +38,12 @@ export const ToggleBarComponent = props => {
     toggleOffStyle,
     toggleOnStyle,
     textOffStyle,
+    textOffDisabledStyle,
     textOnStyle,
     toggles,
     isDisabled,
     toggleOnDisabledStyle,
+    toggleOffDisabledStyle,
     ...containerProps
   } = props;
 
@@ -50,12 +52,12 @@ export const ToggleBarComponent = props => {
     const renderOutput = [];
 
     const defaultOnStyle = isDisabled ? toggleOnDisabledStyle : toggleOnStyle;
+    const defaultOffStyle = isDisabled ? toggleOffDisabledStyle : toggleOffStyle;
+    const defaultOffTextStyle = isDisabled ? textOffDisabledStyle : textOffStyle;
 
     buttons.forEach((button, i) => {
-      const currentTextStyle = button.isOn
-        ? [localStyles.textOnStyle, textOnStyle]
-        : [localStyles.textOffStyle, textOffStyle];
-      const currentToggleStyle = button.isOn ? defaultOnStyle : toggleOffStyle;
+      const currentTextStyle = button.isOn ? textOnStyle : defaultOffTextStyle;
+      const currentToggleStyle = button.isOn ? defaultOnStyle : defaultOffStyle;
       const Container = isDisabled ? View : TouchableOpacity;
 
       renderOutput.push(
@@ -113,6 +115,17 @@ const localStyles = StyleSheet.create({
     backgroundColor: WARMER_GREY,
     width: 142,
   },
+  toggleOffDisabledStyle: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderColor: WARMER_GREY,
+    width: 142,
+  },
+  textOffDisabledStyle: {
+    fontFamily: APP_FONT_FAMILY,
+    fontSize: 12,
+    color: WARMER_GREY,
+  },
 });
 
 ToggleBarComponent.propTypes = {
@@ -124,7 +137,9 @@ ToggleBarComponent.propTypes = {
   textOffStyle: Text.propTypes.style,
   textOnStyle: Text.propTypes.style,
   isDisabled: PropTypes.bool,
+  textOffDisabledStyle: Text.propTypes.style,
   toggleOnDisabledStyle: PropTypes.object,
+  toggleOffDisabledStyle: PropTypes.object,
 };
 
 ToggleBarComponent.defaultProps = {
@@ -133,6 +148,8 @@ ToggleBarComponent.defaultProps = {
   toggleOnStyle: localStyles.toggleOnStyle,
   textOffStyle: globalStyles.toggleText,
   textOnStyle: globalStyles.toggleTextSelected,
-  toggleOnDisabledStyle: localStyles.toggleOnDisabledStyle,
   isDisabled: false,
+  textOffDisabledStyle: localStyles.textOffDisabledStyle,
+  toggleOnDisabledStyle: localStyles.toggleOnDisabledStyle,
+  toggleOffDisabledStyle: localStyles.toggleOffDisabledStyle,
 };

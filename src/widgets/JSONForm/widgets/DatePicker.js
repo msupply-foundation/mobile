@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { TextInput } from 'react-native';
 import moment from 'moment';
 import PropTypes from 'prop-types';
@@ -21,10 +21,22 @@ export const DatePicker = ({
 }) => {
   const { focusController } = useJSONFormOptions();
   const ref = focusController.useRegisteredRef();
+
+  const [selectedDate, setSelectedDate] = useState('');
+
   const handleChange = dateString => {
     onChange(dateString);
     onBlur(id, dateString);
   };
+
+  React.useEffect(() => {
+    const alternateFormatDate = moment(value, 'YYYY-MM-DD', true);
+    const expectedFormatDate = alternateFormatDate.isValid()
+      ? alternateFormatDate
+      : moment(value, DATE_FORMAT.DD_MM_YYYY, true);
+
+    setSelectedDate(expectedFormatDate.isValid() ? expectedFormatDate.toDate() : value);
+  }, [value]);
 
   return (
     <FlexRow>
@@ -34,7 +46,11 @@ export const DatePicker = ({
         underlineColorAndroid={DARKER_GREY}
         placeholder={placeholder}
         editable={!(readonly || disabled)}
-        value={value}
+        value={
+          moment(selectedDate, DATE_FORMAT.DD_MM_YYYY, true).isValid()
+            ? moment(selectedDate).format(DATE_FORMAT.DD_MM_YYYY)
+            : selectedDate
+        }
         ref={ref}
         onSubmitEditing={() => focusController.next(ref)}
         onChangeText={handleChange}
@@ -45,7 +61,7 @@ export const DatePicker = ({
       />
       <DatePickerButton
         isDisabled={readonly || disabled}
-        initialValue={new Date()}
+        initialValue={selectedDate || moment().toDate()}
         minimumDate={options.dateRange === 'future' ? new Date() : null}
         maximumDate={options.dateRange === 'past' ? new Date() : null}
         onDateChanged={date => handleChange(moment(date).format(DATE_FORMAT.DD_MM_YYYY))}

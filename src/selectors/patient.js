@@ -16,6 +16,9 @@ export const selectPatientHistory = ({ patient }) => {
   const { currentPatient } = patient;
   const { transactions } = currentPatient;
 
+  // If there is no transactions return empty array
+  if (!transactions) return [];
+
   // Create a query string `transaction.id == "{id} OR transaction.id == "{id}" ...`
   // finding all transaction batches for the patient.
   const inQuery = transactions.map(({ id }) => `transaction.id == "${id}"`).join(' OR ');
@@ -59,6 +62,16 @@ export const selectPatientInsurancePolicies = ({ patient }) => {
 export const selectPatientModalOpen = ({ patient }) => {
   const { creatingADR, viewingHistory, isCreating, isEditing } = patient;
   return [isCreating || isEditing, viewingHistory, creatingADR];
+};
+
+/**
+ * Check if it is create Patient form.
+ * @param { patient } patient
+ * @returns boolean
+ */
+export const selectIsCreatePatient = ({ patient }) => {
+  const { isCreating } = patient;
+  return isCreating;
 };
 
 export const selectCanEditPatient = ({ patient }) => {

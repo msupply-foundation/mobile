@@ -52,7 +52,7 @@ export class DemoSiteRequest {
   // TODO: Could be extracted to a helper file to be used elsewhere.
   // eslint-disable-next-line class-methods-use-this
   validateEmail(text) {
-    const reg = /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/;
+    const reg = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
     return reg.test(text);
   }
 
