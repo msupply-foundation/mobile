@@ -256,16 +256,22 @@ const PatientSelectComponent = ({
           rowKey={keyExtractor(item)}
           columns={columns}
           onPress={name => {
-            const selectedPatient = UIDatabase.get('Name', name?.id);
-            if (selectedPatient.isDeceased) {
-              toggleIsDeceasedAlert();
-              return;
-            }
+            const localPatient = UIDatabase.get('Name', name?.id);
 
             // Only show a spinner when the name doesn't exist in the database, as we need to
             // send a request to the server to add a name store join.
-            if (selectedPatient) {
-              selectPatient(name);
+            if (localPatient) {
+              if (localPatient.isDeceased) {
+                toggleIsDeceasedAlert();
+                return;
+              }
+
+              if (localPatient.isDeleted) {
+                ToastAndroid.show(dispensingStrings.patient_already_deleted, ToastAndroid.LONG);
+                return;
+              }
+
+              selectPatient(localPatient);
             } else {
               withLoadingIndicator(() => selectPatient(name));
             }
