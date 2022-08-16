@@ -384,7 +384,7 @@ const mapDispatchToProps = dispatch => {
       const patient = createDefaultName('patient', id);
       dispatch(NameActions.create(patient));
       dispatch(NameNoteActions.createSurveyNameNote(patient));
-      dispatch(WizardActions.nextTab());
+      dispatch(WizardActions.switchTab(1));
     });
   const updateForm = (key, value) => dispatch(FormActions.updateForm(key, value));
 
