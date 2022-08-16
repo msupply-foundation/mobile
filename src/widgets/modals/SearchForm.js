@@ -171,8 +171,12 @@ const mapDispatchToProps = dispatch => ({
   selectPatient: async patient => {
     const localPatient = UIDatabase.get('Name', patient.id);
 
-    if (localPatient.isDeleted) {
-      ToastAndroid.show(dispensingStrings.patient_already_deleted, ToastAndroid.LONG);
+    if (localPatient) {
+      const toastMessage = localPatient.isDeleted
+        ? dispensingStrings.patient_already_deleted
+        : dispensingStrings.patient_already_exists;
+
+      ToastAndroid.show(toastMessage, ToastAndroid.LONG);
       return;
     }
 
