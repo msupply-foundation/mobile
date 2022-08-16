@@ -38,7 +38,8 @@
     "customer_data": "Customer Data",
     "factory_reset": "Factory Reset",
     "check_connection": "Check connection",
-    "connection_status": "Connection successful"
+    "connection_status": "Connection successful",
+    "hide_zero_stocks": "Hide zero stocks"
   },
   "fr": {
     "back": "Précédent",

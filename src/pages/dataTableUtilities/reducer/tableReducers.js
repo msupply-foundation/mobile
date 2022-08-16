@@ -137,6 +137,33 @@ export const filterDataWithOverStockToggle = (state, action) => {
 };
 
 /**
+ * Filters the backingData with REALM - first applying show/hide zero stock filtering
+ * toggle. Sorting is held stable.
+ *
+ */
+export const filterDataWithZeroStockToggle = (state, action) => {
+  const { backingData, filterDataKeys, sortKey, isAscending, showAll } = state;
+  const { payload } = action;
+  const { searchTerm } = payload;
+
+  // Apply query filtering
+  const queryString = filterDataKeys.map(filterTerm => `${filterTerm} CONTAINS[c] $0`).join(' OR ');
+  const queryFilteredData = backingData.filtered(queryString, searchTerm.trim()).slice();
+
+  // Filter by toggle status - showing or not showing zero stocked records.
+  const stockFilteredData = !showAll
+    ? queryFilteredData.slice().filter(item => item.hasStock)
+    : queryFilteredData.slice();
+
+  // Sort the data by the current sorting parameters.
+  const sortedData = sortKey
+    ? sortDataBy(stockFilteredData, sortKey, isAscending)
+    : stockFilteredData;
+
+  return { ...state, data: sortedData, searchTerm };
+};
+
+/**
  * Simply refresh's the data object in state to correctly match the
  * backingData. Used for when side effects such as finalizing manipulate
  * the state of a page from outside the reducer.
@@ -232,18 +259,15 @@ export const hideOverStocked = state => {
 
   return { ...state, data: newData, showAll: false };
 };
-
 /**
  * Filters by backingData elements `hasStock` field.
  */
 export const toggleStockOut = state => {
-  const { backingData, showAll } = state;
+  const { backingData } = state;
 
-  const newToggleState = !showAll;
+  const newData = backingData.filter(item => item.hasStock);
 
-  const newData = newToggleState ? backingData.slice() : backingData.filter(item => item.hasStock);
-
-  return { ...state, data: newData, showAll: newToggleState, searchTerm: '' };
+  return { ...state, data: newData, showAll: false, searchTerm: '' };
 };
 
 /**
@@ -285,4 +309,5 @@ export const TableReducerLookup = {
   filterDataWithFinalisedToggle,
   filterDataWithOverStockToggle,
   toggleColumnSet,
+  filterDataWithZeroStockToggle,
 };

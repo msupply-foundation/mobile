@@ -185,6 +185,7 @@ const stockInitialiser = () => {
     filterDataKeys: ['name', 'code'],
     sortKey: 'name',
     isAscending: true,
+    showAll: true,
     selectedRow: null,
     route: ROUTES.STOCK,
     columns: getColumns(ROUTES.STOCK),
