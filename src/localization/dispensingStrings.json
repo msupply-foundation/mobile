@@ -72,7 +72,8 @@
     "edit_supplemental_data": "Edit additional details",
     "refused_vaccine": "Refused vaccine",
     "validation_failed": "Some required fields are not completed.",
-    "patient_deleted": "Patient successfully deleted"
+    "patient_deleted": "Patient successfully deleted",
+    "patient_already_deleted": "'The patient has already been deleted. You cannot sync this patient back."
   },
   "fr": {
     "vaccination_history": "Historique de vaccination pour",

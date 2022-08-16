@@ -46,7 +46,7 @@ const patientDelete = () => (dispatch, getState) => {
 
   ToastAndroid.show(dispensingStrings.patient_deleted, ToastAndroid.LONG);
   dispatch(closeModal());
-  return { type: PATIENT_ACTIONS.PATIENT_DELETE };
+  return { type: PATIENT_ACTIONS.PATIENT_DELETE, payload: { patient } };
 };
 
 const patientUpdate = patientDetails => async (dispatch, getState) => {

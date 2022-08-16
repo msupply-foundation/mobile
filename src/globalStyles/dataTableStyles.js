@@ -188,6 +188,13 @@ export const dataTableStyles = {
     backgroundColor: 'white',
     flexDirection: 'row',
   },
+  emptyRow: {
+    backgroundColor: 'white',
+    height: 250,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
   headerCells: {
     left: {
       height: 40,
