@@ -123,10 +123,10 @@ const VaccineSelectComponent = ({
     setOkConfirmButtonEnabled(false);
   }, [onConfirm]);
 
-  const confirmAndRepeatPrescription = React.useCallback(
-    () => runWithLoadingIndicator(okAndRepeat),
-    [okAndRepeat]
-  );
+  const confirmAndRepeatPrescription = React.useCallback(() => {
+    runWithLoadingIndicator(okAndRepeat);
+    setOkConfirmButtonEnabled(false);
+  }, [okAndRepeat]);
 
   const onModalClose = confirmDoubleDoseModalOpen
     ? toggleConfirmDoubleDoseModal
