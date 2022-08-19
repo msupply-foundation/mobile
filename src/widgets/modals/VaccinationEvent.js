@@ -226,7 +226,7 @@ export const VaccinationEventComponent = ({
       });
       ToastAndroid.show(vaccineStrings.vaccination_not_updated, ToastAndroid.LONG);
     }
-  }, [patient, transactionBatch, vaccine]);
+  }, [patient, transactionBatch, vaccine, vaccinator, customDataObject, vaccinationEventNameNote]);
 
   const tryDelete = useCallback(() => {
     deleteVaccinationEvent(patient, transactionBatch, vaccinationEventNameNote);
@@ -235,7 +235,7 @@ export const VaccinationEventComponent = ({
     setIsDeletedVaccinationEvent({
       isDeletedVaccinationEvent: true,
     });
-  }, [patient]);
+  }, [patient, transactionBatch, vaccinationEventNameNote]);
 
   return (
     <FlexView>
