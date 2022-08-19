@@ -11,6 +11,7 @@ export const VaccinatorDropDown = ({ value, onChange, style }) => {
   return (
     <DropDown
       style={{ ...style, ...styles.dropdown }}
+      isDisabled={values.length <= 0}
       values={values}
       onValueChange={(_, i) => onChange(medicineAdmins[i])}
       selectedValue={value?.displayString}

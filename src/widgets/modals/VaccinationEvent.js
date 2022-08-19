@@ -85,7 +85,7 @@ export const VaccinationEventComponent = ({
   const [isEditingTransaction, toggleEditTransaction] = useToggle(false);
   const [isModalOpen, toggleModal] = useToggle(false);
   const [isDeleteModalOpen, toggleDeleteModal] = useToggle(false);
-  const [vaccineDropDownValues, setVaccineDropDownValues] = useToggle(false);
+  const [vaccineDropDownValues, setVaccineDropDownValues] = useState([]);
 
   const [{ updatedPcdForm, isPCDValid }, setPCDForm] = useState({
     updatedPcdForm: null,
@@ -335,6 +335,7 @@ export const VaccinationEventComponent = ({
                       />
                       <Title title={vaccineStrings.vaccines} size="medium" />
                       <DropDown
+                        isDisabled={vaccineDropDownValues.length === 0}
                         style={(localStyles.dropdown, { width: null, flex: 1 })}
                         values={vaccineDropDownValues}
                         onValueChange={(_, i) => setVaccine(vaccines[i])}
@@ -365,6 +366,7 @@ export const VaccinationEventComponent = ({
       </FlexRow>
       <FlexRow flex={0} justifyContent="center">
         <PageButton
+          disabled={!(!!surveySchema && !!surveyForm)}
           text={buttonStrings.save_changes}
           onPress={() => savePCDForm(surveyForm, updatedPcdForm)}
           style={localStyles.saveButton}
@@ -372,6 +374,7 @@ export const VaccinationEventComponent = ({
           isDisabled={!isPCDValid || isDeletedVaccinationEvent}
         />
         <PageButton
+          disabled={!(!!vaccinationEventSchema && !!vaccinationEvent && !!parsedVaccinationEvent)}
           text={buttonStrings.save_changes}
           onPress={() =>
             saveSupplementalData(vaccinationEventNameNote, updatedSupplementalDataForm)
