@@ -71,21 +71,19 @@ export const VaccinationEventComponent = ({
   const [transaction, setTransaction] = useState();
   const [transactionBatch, setTransactionBatch] = useState();
   const [alertText, setAlertText] = useState('Something went wrong');
-
   const [{ isDeletedVaccinationEvent }, setIsDeletedVaccinationEvent] = useState({
     isDeletedVaccinationEvent: false,
   });
-
   const [surveyForm, setSurveyForm] = useState();
   const [customDataObject, setCustomDataObject] = useState();
   const [parsedVaccinationEvent, setParsedVaccinationEvent] = useState();
-
+  const [vaccineDropDownValues, setVaccineDropDownValues] = useState([]);
   const [vaccinator, setVaccinator] = useState();
   const [vaccine, setVaccine] = useState();
+
   const [isEditingTransaction, toggleEditTransaction] = useToggle(false);
   const [isModalOpen, toggleModal] = useToggle(false);
   const [isDeleteModalOpen, toggleDeleteModal] = useToggle(false);
-  const [vaccineDropDownValues, setVaccineDropDownValues] = useState([]);
 
   const [{ updatedPcdForm, isPCDValid }, setPCDForm] = useState({
     updatedPcdForm: null,
