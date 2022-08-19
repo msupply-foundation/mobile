@@ -98,7 +98,10 @@ export const VaccinationEventComponent = ({
   useEffect(() => {
     const result = vaccines
       .filter(v => v.totalQuantity !== 0)
-      .map(({ code, name }) => `${code}: ${name}`);
+      .map(({ id, code, name }) => ({
+        id,
+        name: `${code}: ${name}`,
+      }));
     setVaccineDropDownValues(result);
   }, [vaccines]);
 
@@ -335,8 +338,13 @@ export const VaccinationEventComponent = ({
                       <DropDown
                         isDisabled={vaccineDropDownValues.length === 0}
                         style={(localStyles.dropdown, { width: null, flex: 1 })}
-                        values={vaccineDropDownValues}
-                        onValueChange={(_, i) => setVaccine(vaccines[i])}
+                        values={vaccineDropDownValues.map(item => item.name)}
+                        onValueChange={(_, i) => {
+                          const selectedVaccine = vaccines.find(
+                            item => item.id === vaccineDropDownValues[i].id
+                          );
+                          return setVaccine(selectedVaccine);
+                        }}
                         selectedValue={`${vaccine?.code}: ${vaccine?.name}`}
                       />
                     </FlexColumn>
