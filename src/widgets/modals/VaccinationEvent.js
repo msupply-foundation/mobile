@@ -1,6 +1,6 @@
 /* eslint-disable react/jsx-curly-newline */
 /* eslint-disable react/forbid-prop-types */
-import React, { useCallback, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { View, StyleSheet, Text, ToastAndroid } from 'react-native';
 import PropTypes from 'prop-types';
 import { batch, connect } from 'react-redux';
@@ -66,42 +66,131 @@ export const VaccinationEventComponent = ({
   const pcdFormRef = useRef(null);
   const supplementalFormRef = useRef(null);
   const vaccinationFormRef = useRef(null);
+  const [vaccinationEventNameNote, setVaccinationEventNameNote] = useState();
+  const [vaccinationEvent, setVaccinationEvent] = useState();
+  const [transaction, setTransaction] = useState();
+  const [transactionBatch, setTransactionBatch] = useState();
+  const [alertText, setAlertText] = useState('Something went wrong');
 
-  const vaccinationEventNameNote = UIDatabase.get('NameNote', vaccinationEventId);
-  const vaccinationEvent = vaccinationEventNameNote.data;
-  const transaction = UIDatabase.get('Transaction', vaccinationEvent?.extra?.prescription?.id);
-  const nameNoteStoreName = vaccinationEvent?.storeName;
-  const alertText = nameNoteStoreName
-    ? modalStrings.formatString(modalStrings.vaccine_event_not_editable_store, nameNoteStoreName)
-    : modalStrings.vaccine_event_not_editable;
-  const transactionBatch = UIDatabase.objects('TransactionBatch').filtered(
-    'transaction.id == $0',
-    transaction?.id
-  )[0];
+  const [{ isDeletedVaccinationEvent }, setIsDeletedVaccinationEvent] = useState({
+    isDeletedVaccinationEvent: false,
+  });
 
+  const [surveyForm, setSurveyForm] = useState();
+  const [customDataObject, setCustomDataObject] = useState();
+  const [parsedVaccinationEvent, setParsedVaccinationEvent] = useState();
+
+  const [vaccinator, setVaccinator] = useState();
+  const [vaccine, setVaccine] = useState();
   const [isEditingTransaction, toggleEditTransaction] = useToggle(false);
   const [isModalOpen, toggleModal] = useToggle(false);
   const [isDeleteModalOpen, toggleDeleteModal] = useToggle(false);
-  const [vaccinator, setVaccinator] = useState(transactionBatch?.medicineAdministrator);
-  const [vaccine, setVaccine] = useState(
-    vaccines.filter(item => item.id === transactionBatch?.itemId)[0]
-  );
-  const vaccineDropDownValues = vaccines
-    .filter(v => v.totalQuantity !== 0)
-    .map(({ code, name }) => `${code}: ${name}`);
+  const [vaccineDropDownValues, setVaccineDropDownValues] = useToggle(false);
 
   const [{ updatedPcdForm, isPCDValid }, setPCDForm] = useState({
     updatedPcdForm: null,
     isPCDValid: true,
   });
+
   const [{ updatedSupplementalDataForm, isSupplementalDataValid }, setSupplementalData] = useState({
     updatedSupplementalDataForm: null,
     isSupplementalDataValid: true,
   });
 
-  const [{ isDeletedVaccinationEvent }, setIsDeletedVaccinationEvent] = useState({
-    isDeletedVaccinationEvent: vaccinationEventNameNote.isDeleted,
-  });
+  useEffect(() => {
+    const result = vaccines
+      .filter(v => v.totalQuantity !== 0)
+      .map(({ code, name }) => `${code}: ${name}`);
+    setVaccineDropDownValues(result);
+  }, [vaccines]);
+
+  useEffect(() => {
+    const result = UIDatabase.get('NameNote', vaccinationEventId);
+    setVaccinationEventNameNote(result);
+  }, [vaccinationEventId]);
+
+  useEffect(() => {
+    if (vaccinationEventNameNote?.data) {
+      setVaccinationEvent(vaccinationEventNameNote?.data);
+    }
+  }, [vaccinationEventNameNote]);
+
+  useEffect(() => {
+    if (customDataObject) {
+      setSupplementalData({
+        updatedSupplementalDataForm: customDataObject,
+        isSupplementalDataValid: true,
+      });
+    }
+  }, [customDataObject]);
+
+  useEffect(() => {
+    if (vaccinationEvent) {
+      const result = vaccinationEvent?.extra?.prescription?.customData
+        ? JSON.parse(vaccinationEvent.extra.prescription.customData)
+        : {};
+
+      setCustomDataObject(result);
+
+      const result2 = {
+        ...vaccinationEvent,
+        extra: {
+          prescription: { ...vaccinationEvent.extra.prescription, customData: result },
+        },
+      };
+      setParsedVaccinationEvent(result2);
+    }
+  }, [vaccinationEvent]);
+
+  useEffect(() => {
+    if (vaccinationEvent) {
+      const { pcdNameNoteId } = vaccinationEvent;
+      const result = pcdNameNoteId
+        ? UIDatabase.get('NameNote', pcdNameNoteId)
+        : selectMostRecentNameNote(patient, 'PCD', vaccinationEvent.entryDate);
+      setSurveyForm(result);
+    }
+  }, [vaccinationEvent]);
+
+  useEffect(() => {
+    if (vaccinationEventNameNote?.isDeleted) {
+      setIsDeletedVaccinationEvent({
+        isDeletedVaccinationEvent: !!vaccinationEventNameNote?.isDeleted,
+      });
+    }
+  }, [vaccinationEventNameNote]);
+
+  useEffect(() => {
+    if (vaccinationEvent) {
+      setTransaction(UIDatabase.get('Transaction', vaccinationEvent?.extra?.prescription?.id));
+      const nameNoteStoreName = vaccinationEvent?.storeName;
+
+      const localString = modalStrings.vaccine_event_not_editable_store;
+
+      const alert = nameNoteStoreName
+        ? modalStrings.formatString(localString, nameNoteStoreName)
+        : modalStrings.vaccine_event_not_editable;
+      setAlertText(alert);
+    }
+  }, [vaccinationEvent]);
+
+  useEffect(() => {
+    if (transaction?.id) {
+      const result = UIDatabase.objects('TransactionBatch').filtered(
+        'transaction.id == $0',
+        transaction?.id
+      )[0];
+
+      setTransactionBatch(result);
+    }
+  }, [transaction]);
+
+  useEffect(() => {
+    if (transactionBatch) {
+      setVaccinator(transactionBatch?.medicineAdministrator);
+      setVaccine(vaccines.filter(item => item.id === transactionBatch?.itemId)[0]);
+    }
+  }, [transactionBatch]);
 
   // User cannot edit 'Vaccination Event' panel if vaccination was done on a different tablet/store
   const tryEdit = useCallback(() => {
@@ -111,22 +200,6 @@ export const VaccinationEventComponent = ({
       toggleEditTransaction();
     }
   }, [transaction]);
-
-  const { pcdNameNoteId } = vaccinationEvent;
-  const surveyForm = pcdNameNoteId
-    ? UIDatabase.get('NameNote', pcdNameNoteId)
-    : selectMostRecentNameNote(patient, 'PCD', vaccinationEvent.entryDate);
-
-  const customDataObject = vaccinationEvent?.extra?.prescription?.customData
-    ? JSON.parse(vaccinationEvent.extra.prescription.customData)
-    : {};
-
-  const parsedVaccinationEvent = {
-    ...vaccinationEvent,
-    extra: {
-      prescription: { ...vaccinationEvent.extra.prescription, customData: customDataObject },
-    },
-  };
 
   const trySave = useCallback(() => {
     setIsDeletedVaccinationEvent({
@@ -194,32 +267,41 @@ export const VaccinationEventComponent = ({
         </FlexRow>
         <FlexRow flex={1}>
           <View style={localStyles.formContainer}>
-            <Paper
-              Header={
-                <Title title={vaccineStrings.vaccine_event_supplemental_data_title} size="large" />
-              }
-              contentContainerStyle={{ flex: 1 }}
-              style={{ flex: 1 }}
-              headerContainerStyle={localStyles.title}
-            >
-              <JSONForm
-                ref={supplementalFormRef}
-                formData={customDataObject ?? null}
-                surveySchema={supplementalDataSchema}
-                onChange={(changed, validator) => {
-                  setSupplementalData({
-                    updatedSupplementalDataForm: changed.formData,
-                    isSupplementalDataValid: validator(changed.formData),
-                  });
-                }}
-                disabled={isDeletedVaccinationEvent}
+            {!!supplementalDataSchema && !!customDataObject ? (
+              <Paper
+                // eslint-disable-next-line prettier/prettier
+                Header={(
+                  <Title
+                    title={vaccineStrings.vaccine_event_supplemental_data_title}
+                    size="large"
+                  />
+                  // eslint-disable-next-line prettier/prettier
+                )}
+                contentContainerStyle={{ flex: 1 }}
+                style={{ flex: 1 }}
+                headerContainerStyle={localStyles.title}
               >
-                <></>
-              </JSONForm>
-            </Paper>
+                <JSONForm
+                  ref={supplementalFormRef}
+                  formData={customDataObject}
+                  surveySchema={supplementalDataSchema}
+                  onChange={(changed, validator) => {
+                    setSupplementalData({
+                      updatedSupplementalDataForm: changed.formData,
+                      isSupplementalDataValid: validator(changed.formData),
+                    });
+                  }}
+                  disabled={isDeletedVaccinationEvent}
+                >
+                  <></>
+                </JSONForm>
+              </Paper>
+            ) : (
+              <NoPCDForm />
+            )}
           </View>
         </FlexRow>
-        {!!vaccinationEventSchema && !!vaccinationEvent && (
+        {!!vaccinationEventSchema && !!vaccinationEvent && !!parsedVaccinationEvent && (
           <FlexRow flex={1}>
             <View style={localStyles.formContainer}>
               <Paper
