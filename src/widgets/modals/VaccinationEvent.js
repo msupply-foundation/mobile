@@ -372,22 +372,24 @@ export const VaccinationEventComponent = ({
       </FlexRow>
       <FlexRow flex={0} justifyContent="center">
         <PageButton
-          disabled={!(!!surveySchema && !!surveyForm)}
           text={buttonStrings.save_changes}
           onPress={() => savePCDForm(surveyForm, updatedPcdForm)}
           style={localStyles.saveButton}
           textStyle={localStyles.saveButtonTextStyle}
-          isDisabled={!isPCDValid || isDeletedVaccinationEvent}
+          isDisabled={!isPCDValid || isDeletedVaccinationEvent || !(!!surveySchema && !!surveyForm)}
         />
         <PageButton
-          disabled={!(!!vaccinationEventSchema && !!vaccinationEvent && !!parsedVaccinationEvent)}
           text={buttonStrings.save_changes}
           onPress={() =>
             saveSupplementalData(vaccinationEventNameNote, updatedSupplementalDataForm)
           }
           style={localStyles.saveButton}
           textStyle={localStyles.saveButtonTextStyle}
-          isDisabled={!isSupplementalDataValid || isDeletedVaccinationEvent}
+          isDisabled={
+            !isSupplementalDataValid ||
+            isDeletedVaccinationEvent ||
+            !(!!vaccinationEventSchema && !!vaccinationEvent && !!parsedVaccinationEvent)
+          }
         />
         <PageButton
           text={isEditingTransaction ? buttonStrings.save_changes : buttonStrings.edit}
