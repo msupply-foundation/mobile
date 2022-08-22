@@ -96,34 +96,29 @@ export const VaccinationEventComponent = ({
   });
 
   useEffect(() => {
-    const result = vaccines
-      .filter(v => v.totalQuantity !== 0)
-      .map(({ id, code, name }) => ({
-        id,
-        name: `${code}: ${name}`,
-      }));
-    setVaccineDropDownValues(result);
-  }, [vaccines]);
+    setVaccineDropDownValues(
+      vaccines
+        .filter(v => v.totalQuantity !== 0)
+        .map(({ id, code, name }) => ({
+          id,
+          name: `${code}: ${name}`,
+        }))
+    );
 
-  useEffect(() => {
-    const result = UIDatabase.get('NameNote', vaccinationEventId);
-    setVaccinationEventNameNote(result);
-  }, [vaccinationEventId]);
+    setVaccinationEventNameNote(UIDatabase.get('NameNote', vaccinationEventId));
+  }, [vaccines, vaccinationEventId]);
 
   useEffect(() => {
     if (vaccinationEventNameNote?.data) {
       setVaccinationEvent(vaccinationEventNameNote?.data);
     }
-  }, [vaccinationEventNameNote]);
 
-  useEffect(() => {
-    if (customDataObject) {
-      setSupplementalData({
-        updatedSupplementalDataForm: customDataObject,
-        isSupplementalDataValid: true,
+    if (vaccinationEventNameNote?.isDeleted) {
+      setIsDeletedVaccinationEvent({
+        isDeletedVaccinationEvent: !!vaccinationEventNameNote?.isDeleted,
       });
     }
-  }, [customDataObject]);
+  }, [vaccinationEventNameNote]);
 
   useEffect(() => {
     if (vaccinationEvent) {
@@ -140,29 +135,13 @@ export const VaccinationEventComponent = ({
         },
       };
       setParsedVaccinationEvent(result2);
-    }
-  }, [vaccinationEvent]);
 
-  useEffect(() => {
-    if (vaccinationEvent) {
       const { pcdNameNoteId } = vaccinationEvent;
-      const result = pcdNameNoteId
+      const surveyFormData = pcdNameNoteId
         ? UIDatabase.get('NameNote', pcdNameNoteId)
         : selectMostRecentNameNote(patient, 'PCD', vaccinationEvent.entryDate);
-      setSurveyForm(result);
-    }
-  }, [vaccinationEvent]);
+      setSurveyForm(surveyFormData);
 
-  useEffect(() => {
-    if (vaccinationEventNameNote?.isDeleted) {
-      setIsDeletedVaccinationEvent({
-        isDeletedVaccinationEvent: !!vaccinationEventNameNote?.isDeleted,
-      });
-    }
-  }, [vaccinationEventNameNote]);
-
-  useEffect(() => {
-    if (vaccinationEvent) {
       setTransaction(UIDatabase.get('Transaction', vaccinationEvent?.extra?.prescription?.id));
       const nameNoteStoreName = vaccinationEvent?.storeName;
 
@@ -174,6 +153,15 @@ export const VaccinationEventComponent = ({
       setAlertText(alert);
     }
   }, [vaccinationEvent]);
+
+  useEffect(() => {
+    if (customDataObject) {
+      setSupplementalData({
+        updatedSupplementalDataForm: customDataObject,
+        isSupplementalDataValid: true,
+      });
+    }
+  }, [customDataObject]);
 
   useEffect(() => {
     if (transaction?.id) {
