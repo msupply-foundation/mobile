@@ -23,6 +23,7 @@ import globalStyles, {
   SUSSOL_ORANGE,
   DANGER_RED,
 } from '../../globalStyles';
+import { Spinner } from '..';
 import { buttonStrings, generalStrings, modalStrings, vaccineStrings } from '../../localization';
 import { PageButton } from '../PageButton';
 import { NameActions, NameNoteActions, VaccinePrescriptionActions } from '../../actions';
@@ -66,6 +67,7 @@ export const VaccinationEventComponent = ({
   const pcdFormRef = useRef(null);
   const supplementalFormRef = useRef(null);
   const vaccinationFormRef = useRef(null);
+  const [loading, setLoading] = useState(true);
   const [vaccinationEventNameNote, setVaccinationEventNameNote] = useState();
   const [vaccinationEvent, setVaccinationEvent] = useState();
   const [transaction, setTransaction] = useState();
@@ -160,6 +162,7 @@ export const VaccinationEventComponent = ({
         updatedSupplementalDataForm: customDataObject,
         isSupplementalDataValid: true,
       });
+      setLoading(false);
     }
   }, [customDataObject]);
 
@@ -224,6 +227,14 @@ export const VaccinationEventComponent = ({
       isDeletedVaccinationEvent: true,
     });
   }, [patient, transactionBatch, vaccinationEventNameNote]);
+
+  if (loading) {
+    return (
+      <View style={globalStyles.loadingIndicatorContainer}>
+        <Spinner isSpinning={loading} color={SUSSOL_ORANGE} />
+      </View>
+    );
+  }
 
   return (
     <FlexView>
