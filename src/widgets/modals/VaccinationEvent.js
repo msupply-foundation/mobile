@@ -254,7 +254,7 @@ export const VaccinationEventComponent = ({
                         isPCDValid: validator(changed.formData),
                       });
                     }}
-                    disabled={isDeletedVaccinationEvent}
+                    disabled={isDeletedVaccinationEvent || !transaction}
                   >
                     <></>
                   </JSONForm>
@@ -291,7 +291,7 @@ export const VaccinationEventComponent = ({
                       isSupplementalDataValid: validator(changed.formData),
                     });
                   }}
-                  disabled={isDeletedVaccinationEvent}
+                  disabled={isDeletedVaccinationEvent || !transaction}
                 >
                   <></>
                 </JSONForm>
@@ -372,7 +372,7 @@ export const VaccinationEventComponent = ({
       <FlexRow flex={0} justifyContent="center">
         <PageButton
           text={buttonStrings.save_changes}
-          onPress={() => savePCDForm(surveyForm, updatedPcdForm)}
+          onPress={() => (!transaction ? toggleModal() : savePCDForm(surveyForm, updatedPcdForm))}
           style={localStyles.saveButton}
           textStyle={localStyles.saveButtonTextStyle}
           isDisabled={!isPCDValid || isDeletedVaccinationEvent || !(!!surveySchema && !!surveyForm)}
@@ -380,7 +380,9 @@ export const VaccinationEventComponent = ({
         <PageButton
           text={buttonStrings.save_changes}
           onPress={() =>
-            saveSupplementalData(vaccinationEventNameNote, updatedSupplementalDataForm)
+            !transaction
+              ? toggleModal()
+              : saveSupplementalData(vaccinationEventNameNote, updatedSupplementalDataForm)
           }
           style={localStyles.saveButton}
           textStyle={localStyles.saveButtonTextStyle}
