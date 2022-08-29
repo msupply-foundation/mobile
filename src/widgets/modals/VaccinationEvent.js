@@ -71,6 +71,7 @@ export const VaccinationEventComponent = ({
   const [vaccinationEventNameNote, setVaccinationEventNameNote] = useState();
   const [vaccinationEvent, setVaccinationEvent] = useState();
   const [transaction, setTransaction] = useState();
+  const [isCurrentStoreVaccineEvent, setIsCurrentStoreVaccineEvent] = useState(false);
   const [transactionBatch, setTransactionBatch] = useState();
   const [alertText, setAlertText] = useState('Something went wrong');
   const [{ isDeletedVaccinationEvent }, setIsDeletedVaccinationEvent] = useState({
@@ -168,6 +169,7 @@ export const VaccinationEventComponent = ({
 
   useEffect(() => {
     if (transaction?.id) {
+      setIsCurrentStoreVaccineEvent(true);
       const result = UIDatabase.objects('TransactionBatch').filtered(
         'transaction.id == $0',
         transaction?.id
@@ -186,12 +188,12 @@ export const VaccinationEventComponent = ({
 
   // User cannot edit 'Vaccination Event' panel if vaccination was done on a different tablet/store
   const tryEdit = useCallback(() => {
-    if (!transaction) {
+    if (!isCurrentStoreVaccineEvent) {
       toggleModal();
     } else {
       toggleEditTransaction();
     }
-  }, [transaction]);
+  }, [isCurrentStoreVaccineEvent]);
 
   const trySave = useCallback(() => {
     setIsDeletedVaccinationEvent({
@@ -254,7 +256,7 @@ export const VaccinationEventComponent = ({
                         isPCDValid: validator(changed.formData),
                       });
                     }}
-                    disabled={isDeletedVaccinationEvent}
+                    disabled={isDeletedVaccinationEvent || !isCurrentStoreVaccineEvent}
                   >
                     <></>
                   </JSONForm>
@@ -291,7 +293,7 @@ export const VaccinationEventComponent = ({
                       isSupplementalDataValid: validator(changed.formData),
                     });
                   }}
-                  disabled={isDeletedVaccinationEvent}
+                  disabled={isDeletedVaccinationEvent || !isCurrentStoreVaccineEvent}
                 >
                   <></>
                 </JSONForm>
@@ -372,7 +374,9 @@ export const VaccinationEventComponent = ({
       <FlexRow flex={0} justifyContent="center">
         <PageButton
           text={buttonStrings.save_changes}
-          onPress={() => savePCDForm(surveyForm, updatedPcdForm)}
+          onPress={() =>
+            !isCurrentStoreVaccineEvent ? toggleModal() : savePCDForm(surveyForm, updatedPcdForm)
+          }
           style={localStyles.saveButton}
           textStyle={localStyles.saveButtonTextStyle}
           isDisabled={!isPCDValid || isDeletedVaccinationEvent || !(!!surveySchema && !!surveyForm)}
@@ -380,7 +384,9 @@ export const VaccinationEventComponent = ({
         <PageButton
           text={buttonStrings.save_changes}
           onPress={() =>
-            saveSupplementalData(vaccinationEventNameNote, updatedSupplementalDataForm)
+            !isCurrentStoreVaccineEvent
+              ? toggleModal()
+              : saveSupplementalData(vaccinationEventNameNote, updatedSupplementalDataForm)
           }
           style={localStyles.saveButton}
           textStyle={localStyles.saveButtonTextStyle}
