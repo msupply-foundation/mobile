@@ -63,7 +63,12 @@ const updateForm = (data, validator) => ({
 const saveEditing = () => (dispatch, getState) => {
   const nameNote = selectCreatingNameNote(getState()) ?? {};
   const patient = UIDatabase.get('Name', nameNote?.nameID);
-  const isDirty = JSON.stringify(patient?.mostRecentPCD?.data) !== JSON.stringify(nameNote?.data);
+  const isDirty =
+    !(
+      nameNote?.data &&
+      Object.keys(nameNote?.data).length === 0 &&
+      Object.getPrototypeOf(nameNote?.data) === Object.prototype
+    ) && JSON.stringify(patient?.mostRecentPCD?.data) !== JSON.stringify(nameNote?.data);
   if (isDirty) {
     UIDatabase.write(() => createRecord(UIDatabase, 'NameNote', nameNote));
   }
