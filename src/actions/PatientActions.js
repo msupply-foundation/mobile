@@ -150,7 +150,7 @@ const patientUpdate = patientDetails => async (dispatch, getState) => {
     createdDate,
   };
 
-  UIDatabase.write(() => createRecord(UIDatabase, 'Patient', patientRecord));
+  UIDatabase.write(() => createRecord(UIDatabase, 'Patient', patientRecord, false));
 
   batch(() => {
     dispatch(closeModal());
