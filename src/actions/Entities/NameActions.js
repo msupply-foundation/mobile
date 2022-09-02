@@ -104,7 +104,7 @@ const saveEditing = () => (dispatch, getState) => {
 
   const patientRecord = { ...currentPatient, dateOfBirth, createdDate, name };
 
-  UIDatabase.write(() => createRecord(UIDatabase, 'Patient', patientRecord));
+  UIDatabase.write(() => createRecord(UIDatabase, 'Patient', patientRecord, true));
   dispatch(reset());
 };
 
