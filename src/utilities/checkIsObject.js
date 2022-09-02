@@ -8,3 +8,6 @@
 
 export const checkIsObject = object =>
   !!(object && typeof object === 'object' && object.constructor === Object);
+
+export const checkIsObjectEmpty = object =>
+  checkIsObject(object) && Object.keys(object).length === 0;

@@ -17,7 +17,7 @@ export { requestPermission } from './requestPermission';
 export { backupValidation, selectDocument } from './fileSystem';
 export { debounce } from './underscoreMethods';
 export { getModalTitle, MODAL_KEYS } from './getModalTitle';
-export { checkIsObject } from './checkIsObject';
+export { checkIsObject, checkIsObjectEmpty } from './checkIsObject';
 export { validateReport } from './validateReport';
 export { chunk } from './chunk';
 export { parsePositiveIntegerInterfaceInput } from './parsers';
