@@ -11,7 +11,7 @@ import {
   selectSelectedSupplementalData,
   selectSelectedVaccinator,
 } from '../../selectors/Entities/vaccinePrescription';
-import { selectEditingNameId } from '../../selectors/Entities/name';
+import { selectEditingNameId, selectEditingName } from '../../selectors/Entities/name';
 import { NameActions } from './NameActions';
 import { NameNoteActions } from './NameNoteActions';
 import { goBack, gotoVaccineDispensingPage } from '../../navigation/actions';
@@ -230,6 +230,7 @@ const getPcdNameNoteID = patientId => {
     .sorted('entryDate', true);
   return patientNameNotes.length > 0 ? patientNameNotes[0].id : '';
 };
+
 const createSupplementaryData = () => (dispatch, getState) => {
   // Create a supplementaryData object which is seeded with the data that was last
   // entered against a prescription
@@ -281,7 +282,14 @@ const confirm = () => (dispatch, getState) => {
     });
   }
   batch(() => {
-    dispatch(NameActions.saveEditing());
+    const { isEditable = true } = selectEditingName(getState());
+
+    // We are already not allowing patient update for patient that do not belong
+    // to the current store. This check will stop unnecessary updates.
+    if (isEditable) {
+      dispatch(NameActions.saveEditing());
+    }
+
     dispatch(NameNoteActions.saveEditing());
     dispatch(reset());
   });
