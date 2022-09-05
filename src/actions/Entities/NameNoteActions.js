@@ -9,6 +9,7 @@ import {
 import { selectSurveySchemas } from '../../selectors/formSchema';
 import { validateJsonSchemaData } from '../../utilities/ajvValidator';
 import { vaccineStrings } from '../../localization';
+import { checkIsObjectEmpty } from '../../utilities';
 
 export const NAME_NOTE_ACTIONS = {
   SELECT: 'NAME_NOTE/select',
@@ -63,7 +64,9 @@ const updateForm = (data, validator) => ({
 const saveEditing = () => (dispatch, getState) => {
   const nameNote = selectCreatingNameNote(getState()) ?? {};
   const patient = UIDatabase.get('Name', nameNote?.nameID);
-  const isDirty = JSON.stringify(patient?.mostRecentPCD?.data) !== JSON.stringify(nameNote?.data);
+  const isDirty =
+    !checkIsObjectEmpty(nameNote?.data) &&
+    JSON.stringify(patient?.mostRecentPCD?.data) !== JSON.stringify(nameNote?.data);
   if (isDirty) {
     UIDatabase.write(() => createRecord(UIDatabase, 'NameNote', nameNote));
   }

@@ -73,7 +73,7 @@ const select = name => async dispatch => {
     const result = await createPatientVisibility(name);
     if (result) {
       UIDatabase.write(() => {
-        selectedName = createRecord(UIDatabase, 'Patient', name);
+        selectedName = createRecord(UIDatabase, 'Patient', name, true);
       });
     } else {
       ToastAndroid.show(generalStrings.problem_connecting_please_try_again, ToastAndroid.LONG);
@@ -104,7 +104,7 @@ const saveEditing = () => (dispatch, getState) => {
 
   const patientRecord = { ...currentPatient, dateOfBirth, createdDate, name };
 
-  UIDatabase.write(() => createRecord(UIDatabase, 'Patient', patientRecord));
+  UIDatabase.write(() => createRecord(UIDatabase, 'Patient', patientRecord, true));
   dispatch(reset());
 };
 

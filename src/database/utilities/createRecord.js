@@ -247,7 +247,7 @@ const createNameNote = (
  *    country, female, supplyingStoreId, isActive
  *  }
  */
-const createPatient = (database, patientDetails) => {
+const createPatient = (database, patientDetails, createNameNotes) => {
   const {
     id: patientId,
     barcode: patientBarcode,
@@ -344,7 +344,9 @@ const createPatient = (database, patientDetails) => {
     createdDate,
   });
 
-  nameNotes?.forEach(nameNote => createNameNote(database, nameNote));
+  if (createNameNotes) {
+    nameNotes?.forEach(nameNote => createNameNote(database, nameNote));
+  }
 
   return patient;
 };
