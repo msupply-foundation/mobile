@@ -159,10 +159,10 @@ export const VaccinationEventComponent = ({
 
   useEffect(() => {
     if (customDataObject) {
-      setSupplementalData({
+      setSupplementalData(prevState => ({
+        ...prevState,
         updatedSupplementalDataForm: customDataObject,
-        isSupplementalDataValid: true,
-      });
+      }));
       setLoading(false);
     }
   }, [customDataObject]);
@@ -209,7 +209,7 @@ export const VaccinationEventComponent = ({
         transactionBatch,
         vaccine,
         vaccinator,
-        customDataObject,
+        updatedSupplementalDataForm,
         vaccinationEventNameNote
       );
       toggleEditTransaction();
@@ -219,7 +219,14 @@ export const VaccinationEventComponent = ({
       });
       ToastAndroid.show(vaccineStrings.vaccination_not_updated, ToastAndroid.LONG);
     }
-  }, [patient, transactionBatch, vaccine, vaccinator, customDataObject, vaccinationEventNameNote]);
+  }, [
+    patient,
+    transactionBatch,
+    vaccine,
+    vaccinator,
+    updatedSupplementalDataForm,
+    vaccinationEventNameNote,
+  ]);
 
   const tryDelete = useCallback(() => {
     deleteVaccinationEvent(patient, transactionBatch, vaccinationEventNameNote);
@@ -269,7 +276,7 @@ export const VaccinationEventComponent = ({
         </FlexRow>
         <FlexRow flex={1}>
           <View style={localStyles.formContainer}>
-            {!!supplementalDataSchema && !!customDataObject ? (
+            {!!supplementalDataSchema && !!updatedSupplementalDataForm ? (
               <Paper
                 // eslint-disable-next-line prettier/prettier
                 Header={(
@@ -285,7 +292,7 @@ export const VaccinationEventComponent = ({
               >
                 <JSONForm
                   ref={supplementalFormRef}
-                  formData={customDataObject}
+                  formData={updatedSupplementalDataForm}
                   surveySchema={supplementalDataSchema}
                   onChange={(changed, validator) => {
                     setSupplementalData({
