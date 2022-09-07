@@ -287,7 +287,7 @@ const confirm = () => (dispatch, getState) => {
     // We are already not allowing patient update for patient that do not belong
     // to the current store. This check will stop unnecessary updates.
     if (isEditable) {
-      dispatch(NameActions.saveEditing());
+      dispatch(NameActions.saveEditing(false));
     }
 
     dispatch(NameNoteActions.saveEditing());
