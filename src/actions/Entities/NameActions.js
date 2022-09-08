@@ -96,7 +96,7 @@ const filter = (key, value) => ({ type: NAME_ACTIONS.FILTER, payload: { key, val
 
 const sort = sortKey => ({ type: NAME_ACTIONS.SORT, payload: { sortKey } });
 
-const saveEditing = () => (dispatch, getState) => {
+const saveEditing = (shouldCreateNameNames = true) => (dispatch, getState) => {
   const currentPatient = selectEditingName(getState());
   const createdDate = currentPatient?.createdDate ? new Date(currentPatient.createdDate) : null;
   const dateOfBirth = new Date(currentPatient.dateOfBirth);
@@ -104,7 +104,7 @@ const saveEditing = () => (dispatch, getState) => {
 
   const patientRecord = { ...currentPatient, dateOfBirth, createdDate, name };
 
-  UIDatabase.write(() => createRecord(UIDatabase, 'Patient', patientRecord, true));
+  UIDatabase.write(() => createRecord(UIDatabase, 'Patient', patientRecord, shouldCreateNameNames));
   dispatch(reset());
 };
 
