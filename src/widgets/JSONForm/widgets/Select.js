@@ -41,7 +41,7 @@ export const Select = ({
       const { default: defaultValue } = schema;
       onChange(defaultValue);
     }
-  });
+  }, [value, options, schema, onChange]);
 
   return (
     <Picker

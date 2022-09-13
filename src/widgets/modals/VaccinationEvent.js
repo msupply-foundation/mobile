@@ -22,6 +22,7 @@ import globalStyles, {
   GREY,
   SUSSOL_ORANGE,
   DANGER_RED,
+  WARMER_GREY,
 } from '../../globalStyles';
 import { Spinner } from '..';
 import { buttonStrings, generalStrings, modalStrings, vaccineStrings } from '../../localization';
@@ -384,7 +385,12 @@ export const VaccinationEventComponent = ({
           onPress={() =>
             !isCurrentStoreVaccineEvent ? toggleModal() : savePCDForm(surveyForm, updatedPcdForm)
           }
-          style={localStyles.saveButton}
+          style={[
+            localStyles.saveButton,
+            isDeletedVaccinationEvent || !isCurrentStoreVaccineEvent
+              ? localStyles.saveButtonCantEdit
+              : '',
+          ]}
           textStyle={localStyles.saveButtonTextStyle}
           isDisabled={!isPCDValid || isDeletedVaccinationEvent || !(!!surveySchema && !!surveyForm)}
         />
@@ -395,7 +401,12 @@ export const VaccinationEventComponent = ({
               ? toggleModal()
               : saveSupplementalData(vaccinationEventNameNote, updatedSupplementalDataForm)
           }
-          style={localStyles.saveButton}
+          style={[
+            localStyles.saveButton,
+            isDeletedVaccinationEvent || !isCurrentStoreVaccineEvent
+              ? localStyles.saveButtonCantEdit
+              : '',
+          ]}
           textStyle={localStyles.saveButtonTextStyle}
           isDisabled={
             !isSupplementalDataValid ||
@@ -405,7 +416,12 @@ export const VaccinationEventComponent = ({
         />
         <PageButton
           text={isEditingTransaction ? buttonStrings.save_changes : buttonStrings.edit}
-          style={localStyles.saveButton}
+          style={[
+            localStyles.saveButton,
+            isDeletedVaccinationEvent || !isCurrentStoreVaccineEvent
+              ? localStyles.saveButtonCantEdit
+              : '',
+          ]}
           textStyle={localStyles.saveButtonTextStyle}
           onPress={isEditingTransaction ? trySave : tryEdit}
           isDisabled={isDeletedVaccinationEvent}
@@ -514,6 +530,9 @@ const localStyles = StyleSheet.create({
     flex: 1,
     backgroundColor: SUSSOL_ORANGE,
     alignSelf: 'center',
+  },
+  saveButtonCantEdit: {
+    backgroundColor: WARMER_GREY,
   },
   saveButtonTextStyle: {
     ...globalStyles.buttonText,
