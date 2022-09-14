@@ -388,7 +388,7 @@ export const VaccinationEventComponent = ({
           style={[
             localStyles.saveButton,
             isDeletedVaccinationEvent || !isCurrentStoreVaccineEvent
-              ? localStyles.saveButtonCantEdit
+              ? localStyles.saveButtonCannotEdit
               : '',
           ]}
           textStyle={localStyles.saveButtonTextStyle}
@@ -404,7 +404,7 @@ export const VaccinationEventComponent = ({
           style={[
             localStyles.saveButton,
             isDeletedVaccinationEvent || !isCurrentStoreVaccineEvent
-              ? localStyles.saveButtonCantEdit
+              ? localStyles.saveButtonCannotEdit
               : '',
           ]}
           textStyle={localStyles.saveButtonTextStyle}
@@ -419,7 +419,7 @@ export const VaccinationEventComponent = ({
           style={[
             localStyles.saveButton,
             isDeletedVaccinationEvent || !isCurrentStoreVaccineEvent
-              ? localStyles.saveButtonCantEdit
+              ? localStyles.saveButtonCannotEdit
               : '',
           ]}
           textStyle={localStyles.saveButtonTextStyle}
@@ -531,7 +531,7 @@ const localStyles = StyleSheet.create({
     backgroundColor: SUSSOL_ORANGE,
     alignSelf: 'center',
   },
-  saveButtonCantEdit: {
+  saveButtonCannotEdit: {
     backgroundColor: WARMER_GREY,
   },
   saveButtonTextStyle: {
