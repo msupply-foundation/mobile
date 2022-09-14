@@ -263,11 +263,12 @@ export const hideOverStocked = state => {
  * Filters by backingData elements `hasStock` field.
  */
 export const toggleStockOut = state => {
-  const { backingData } = state;
+  const { backingData, showAll } = state;
+  const newToggleState = !showAll;
 
-  const newData = backingData.filter(item => item.hasStock);
+  const newData = newToggleState ? backingData.slice() : backingData.filter(item => item.hasStock);
 
-  return { ...state, data: newData, showAll: false, searchTerm: '' };
+  return { ...state, data: newData, showAll: newToggleState, searchTerm: '' };
 };
 
 /**
