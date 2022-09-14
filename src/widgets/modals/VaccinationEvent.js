@@ -1,7 +1,7 @@
 /* eslint-disable react/jsx-curly-newline */
 /* eslint-disable react/forbid-prop-types */
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { View, StyleSheet, Text, ToastAndroid } from 'react-native';
+import { View, Text, ToastAndroid } from 'react-native';
 import PropTypes from 'prop-types';
 import { batch, connect } from 'react-redux';
 import { FlexRow } from '../FlexRow';
@@ -22,6 +22,7 @@ import globalStyles, {
   GREY,
   SUSSOL_ORANGE,
   DANGER_RED,
+  WARMER_GREY,
 } from '../../globalStyles';
 import { Spinner } from '..';
 import { buttonStrings, generalStrings, modalStrings, vaccineStrings } from '../../localization';
@@ -245,14 +246,18 @@ export const VaccinationEventComponent = ({
     );
   }
 
+  const isDisabled = isDeletedVaccinationEvent || !isCurrentStoreVaccineEvent;
+
+  const styles = getStyles({ isDisabled });
+
   return (
     <FlexView>
-      <FlexRow flex={1} style={localStyles.formContainer}>
+      <FlexRow flex={1} style={styles.formContainer}>
         <FlexRow flex={1}>
-          <View style={localStyles.formContainer}>
+          <View style={styles.formContainer}>
             {!!surveySchema && !!surveyForm ? (
               <FlexRow flex={1}>
-                <View style={localStyles.formContainer}>
+                <View style={styles.formContainer}>
                   <JSONForm
                     ref={pcdFormRef}
                     formData={surveyForm.data ?? null}
@@ -263,7 +268,7 @@ export const VaccinationEventComponent = ({
                         isPCDValid: validator(changed.formData),
                       });
                     }}
-                    disabled={isDeletedVaccinationEvent || !isCurrentStoreVaccineEvent}
+                    disabled={isDisabled}
                   >
                     <></>
                   </JSONForm>
@@ -275,7 +280,7 @@ export const VaccinationEventComponent = ({
           </View>
         </FlexRow>
         <FlexRow flex={1}>
-          <View style={localStyles.formContainer}>
+          <View style={styles.formContainer}>
             {!!supplementalDataSchema && !!updatedSupplementalDataForm ? (
               <Paper
                 // eslint-disable-next-line prettier/prettier
@@ -288,7 +293,7 @@ export const VaccinationEventComponent = ({
                 )}
                 contentContainerStyle={{ flex: 1 }}
                 style={{ flex: 1 }}
-                headerContainerStyle={localStyles.title}
+                headerContainerStyle={styles.title}
               >
                 <JSONForm
                   ref={supplementalFormRef}
@@ -300,7 +305,7 @@ export const VaccinationEventComponent = ({
                       isSupplementalDataValid: validator(changed.formData),
                     });
                   }}
-                  disabled={isDeletedVaccinationEvent || !isCurrentStoreVaccineEvent}
+                  disabled={isDisabled}
                 >
                   <></>
                 </JSONForm>
@@ -312,14 +317,14 @@ export const VaccinationEventComponent = ({
         </FlexRow>
         {!!vaccinationEventSchema && !!vaccinationEvent && !!parsedVaccinationEvent && (
           <FlexRow flex={1}>
-            <View style={localStyles.formContainer}>
+            <View style={styles.formContainer}>
               <Paper
                 Header={
                   <Title title={vaccineStrings.vaccine_event_transact_data_title} size="large" />
                 }
                 contentContainerStyle={{ flex: 1 }}
                 style={{ flex: 1 }}
-                headerContainerStyle={localStyles.title}
+                headerContainerStyle={styles.title}
               >
                 {!isEditingTransaction ? (
                   <JSONForm
@@ -345,7 +350,7 @@ export const VaccinationEventComponent = ({
                       <Title title={vaccineStrings.vaccines} size="medium" />
                       <DropDown
                         isDisabled={vaccineDropDownValues.length === 0}
-                        style={(localStyles.dropdown, { width: null, flex: 1 })}
+                        style={(styles.dropdown, { width: null, flex: 1 })}
                         values={vaccineDropDownValues.map(item => item.name)}
                         onValueChange={(_, i) => {
                           const selectedVaccine = vaccines.find(
@@ -360,8 +365,8 @@ export const VaccinationEventComponent = ({
                       <PageButton
                         text={buttonStrings.delete_vaccination_event}
                         onPress={toggleDeleteModal}
-                        style={localStyles.deleteButton}
-                        textStyle={localStyles.saveButtonTextStyle}
+                        style={styles.deleteButton}
+                        textStyle={styles.saveButtonTextStyle}
                       />
                     </FlexRow>
                     <FlexRow flex={1} style={{ marginBottom: 10 }}>
@@ -384,8 +389,8 @@ export const VaccinationEventComponent = ({
           onPress={() =>
             !isCurrentStoreVaccineEvent ? toggleModal() : savePCDForm(surveyForm, updatedPcdForm)
           }
-          style={localStyles.saveButton}
-          textStyle={localStyles.saveButtonTextStyle}
+          style={styles.saveButton}
+          textStyle={styles.saveButtonTextStyle}
           isDisabled={!isPCDValid || isDeletedVaccinationEvent || !(!!surveySchema && !!surveyForm)}
         />
         <PageButton
@@ -395,8 +400,8 @@ export const VaccinationEventComponent = ({
               ? toggleModal()
               : saveSupplementalData(vaccinationEventNameNote, updatedSupplementalDataForm)
           }
-          style={localStyles.saveButton}
-          textStyle={localStyles.saveButtonTextStyle}
+          style={styles.saveButton}
+          textStyle={styles.saveButtonTextStyle}
           isDisabled={
             !isSupplementalDataValid ||
             isDeletedVaccinationEvent ||
@@ -405,8 +410,8 @@ export const VaccinationEventComponent = ({
         />
         <PageButton
           text={isEditingTransaction ? buttonStrings.save_changes : buttonStrings.edit}
-          style={localStyles.saveButton}
-          textStyle={localStyles.saveButtonTextStyle}
+          style={styles.saveButton}
+          textStyle={styles.saveButtonTextStyle}
           onPress={isEditingTransaction ? trySave : tryEdit}
           isDisabled={isDeletedVaccinationEvent}
         />
@@ -501,24 +506,13 @@ const mapDispatchToProps = dispatch => {
   return { editTransaction, savePCDForm, saveSupplementalData, deleteVaccinationEvent };
 };
 
-const localStyles = StyleSheet.create({
+const getStyles = context => ({
   dropdown: { height: 35, marginTop: 0, marginBottom: 0, marginLeft: 0 },
   formContainer: {
     flex: 1,
     flexDirection: 'row',
     backgroundColor: 'white',
     alignItems: 'stretch',
-  },
-  saveButton: {
-    ...globalStyles.button,
-    flex: 1,
-    backgroundColor: SUSSOL_ORANGE,
-    alignSelf: 'center',
-  },
-  saveButtonTextStyle: {
-    ...globalStyles.buttonText,
-    color: 'white',
-    fontSize: 14,
   },
   title: {
     textAlignVertical: 'center',
@@ -532,6 +526,20 @@ const localStyles = StyleSheet.create({
     flex: 1,
     backgroundColor: DANGER_RED,
     alignSelf: 'center',
+  },
+  saveButton: [
+    {
+      ...globalStyles.button,
+      flex: 1,
+      backgroundColor: SUSSOL_ORANGE,
+      alignSelf: 'center',
+    },
+    context.isDisabled && { backgroundColor: WARMER_GREY },
+  ],
+  saveButtonTextStyle: {
+    ...globalStyles.buttonText,
+    color: 'white',
+    fontSize: 14,
   },
 });
 
