@@ -61,7 +61,7 @@ export const DatePicker = ({
         isDisabled={readonly || disabled}
         initialValue={
           moment(selectedTextValue, DATE_FORMAT.DD_MM_YYYY, true).isValid()
-            ? moment(selectedTextValue, DATE_FORMAT.DD_MM_YYYY, true)
+            ? moment(selectedTextValue, DATE_FORMAT.DD_MM_YYYY, true).toDate()
             : moment().toDate()
         }
         minimumDate={options.dateRange === 'future' ? new Date() : null}
