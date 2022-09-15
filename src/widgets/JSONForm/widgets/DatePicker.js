@@ -22,7 +22,7 @@ export const DatePicker = ({
   const { focusController } = useJSONFormOptions();
   const ref = focusController.useRegisteredRef();
 
-  const [selectedDate, setSelectedDate] = useState('');
+  const [selectedTextValue, setSelectedTextValue] = useState('');
 
   const handleChange = dateString => {
     onChange(dateString);
@@ -35,7 +35,9 @@ export const DatePicker = ({
       ? alternateFormatDate
       : moment(value, DATE_FORMAT.DD_MM_YYYY, true);
 
-    setSelectedDate(expectedFormatDate.isValid() ? expectedFormatDate.toDate() : value);
+    setSelectedTextValue(
+      expectedFormatDate.isValid() ? expectedFormatDate.format(DATE_FORMAT.DD_MM_YYYY) : value
+    );
   }, [value]);
 
   return (
@@ -46,11 +48,7 @@ export const DatePicker = ({
         underlineColorAndroid={DARKER_GREY}
         placeholder={placeholder}
         editable={!(readonly || disabled)}
-        value={
-          moment(selectedDate, DATE_FORMAT.DD_MM_YYYY, true).isValid()
-            ? moment(selectedDate).format(DATE_FORMAT.DD_MM_YYYY)
-            : selectedDate
-        }
+        value={selectedTextValue}
         ref={ref}
         onSubmitEditing={() => focusController.next(ref)}
         onChangeText={handleChange}
@@ -61,7 +59,11 @@ export const DatePicker = ({
       />
       <DatePickerButton
         isDisabled={readonly || disabled}
-        initialValue={selectedDate || moment().toDate()}
+        initialValue={
+          moment(selectedTextValue, DATE_FORMAT.DD_MM_YYYY, true).isValid()
+            ? moment(selectedTextValue, DATE_FORMAT.DD_MM_YYYY, true)
+            : moment().toDate()
+        }
         minimumDate={options.dateRange === 'future' ? new Date() : null}
         maximumDate={options.dateRange === 'past' ? new Date() : null}
         onDateChanged={date => handleChange(moment(date).format(DATE_FORMAT.DD_MM_YYYY))}
