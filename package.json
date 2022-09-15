@@ -5,7 +5,7 @@
   },
   "name": "mSupplyMobile",
   "//": "version must be in the format ${majorNumber}.${minorNumber}.${patchNumber}-rc${releaseCandidateNumber}",
-  "version": "8.5.0",
+  "version": "8.6.0",
   "private": false,
   "license": "MIT",
   "description": "Mobile app for use with the mSupply medical inventory control software",
@@ -16,7 +16,8 @@
   "url": "http://github.com/sussol/mobile",
   "homepage": "http://msupply.org.nz",
   "scripts": {
-    "start": "react-native run-android",
+    "start": "react-native start",
+    "android": "react-native run-android",
     "log": "react-native log-android",
     "shake": "adb shell input keyevent KEYCODE_MENU",
     "rr": "adb shell input text \"RR\"",
