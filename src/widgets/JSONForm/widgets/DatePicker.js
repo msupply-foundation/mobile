@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 import React, { useState } from 'react';
 import { TextInput } from 'react-native';
 import moment from 'moment';
@@ -60,7 +61,10 @@ export const DatePicker = ({
       <DatePickerButton
         isDisabled={readonly || disabled}
         initialValue={
-          moment(selectedTextValue, DATE_FORMAT.DD_MM_YYYY, true).isValid()
+          moment(selectedTextValue, DATE_FORMAT.DD_MM_YYYY, true).isValid() ||
+            moment(selectedTextValue, 'D/M/YYYY', true).isValid() ||
+            moment(selectedTextValue, 'D/MM/YYYY', true).isValid() ||
+            moment(selectedTextValue, 'DD/M/YYYY', true).isValid()
             ? moment(selectedTextValue, DATE_FORMAT.DD_MM_YYYY, true).toDate()
             : moment().toDate()
         }
