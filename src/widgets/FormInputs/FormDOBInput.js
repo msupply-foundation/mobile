@@ -132,6 +132,7 @@ const useDobInput = (initialValue, onChangeDate, onValidate) => {
   const onTypeAge = newAge => {
     const asNumber = Number(newAge);
     const isValid = !Number.isNaN(asNumber) && asNumber < 500;
+    onValidate(newAge);
     typedAge(newAge, isValid);
     onChangeDate(moment().subtract(asNumber, 'years').toDate());
   };
