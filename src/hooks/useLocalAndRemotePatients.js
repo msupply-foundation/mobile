@@ -151,7 +151,7 @@ export const useLocalAndRemotePatients = (initialValue = []) => {
     if (!response || noMore) return;
 
     dispatch({ type: 'getting_more_patients' });
-    const paramsWithLimits = { ...searchParams, limit, offset };
+    const paramsWithLimits = { ...searchParams, limit, offset, isDeleted: false };
 
     // Use RNFetch as the fetch returned from `useFetch` is coupled with it's state in a specific
     // implementation, which we want to change by appending to the result, rather than replacing.
@@ -187,7 +187,7 @@ export const useLocalAndRemotePatients = (initialValue = []) => {
     }
     dispatch({ type: 'fetch_start' });
 
-    const query = 'lastName BEGINSWITH[c] $0 AND firstName BEGINSWITH[c] $1';
+    const query = 'isDeleted == false AND lastName BEGINSWITH[c] $0 AND firstName BEGINSWITH[c] $1';
     let patients = UIDatabase.objects('Patient').filtered(query, lastName, firstName);
 
     if (dateOfBirth) {

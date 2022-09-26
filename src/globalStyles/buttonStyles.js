@@ -12,6 +12,7 @@ export const buttonStyles = {
     fontFamily: APP_FONT_FAMILY,
     fontSize: 10,
     color: SUSSOL_ORANGE,
+    lineHeight: 14,
   },
   disabledButtonText: {
     color: WHITE,

@@ -9,11 +9,14 @@ import PropTypes from 'prop-types';
 import { ToastAndroid, View } from 'react-native';
 import { connect } from 'react-redux';
 import * as Animatable from 'react-native-animatable';
+import useButtonEnabled from '../../hooks/useButtonEnabled';
 import { FormControl } from '../FormControl';
 import { PageButton } from '../PageButton';
 import { FlexRow } from '../FlexRow';
 import { FlexView } from '../FlexView';
 import { PageButtonWithOnePress } from '../PageButtonWithOnePress';
+import { PaperModalContainer } from '../PaperModal/PaperModalContainer';
+import { PaperConfirmModal } from '../PaperModal/PaperConfirmModal';
 
 import { selectCanEditPatient, selectEditingName } from '../../selectors/Entities/name';
 import { selectSurveySchemas } from '../../selectors/formSchema';
@@ -22,8 +25,15 @@ import { WizardActions } from '../../actions/WizardActions';
 import { VaccinePrescriptionActions } from '../../actions/Entities/VaccinePrescriptionActions';
 import { selectCanSaveForm, selectCompletedForm } from '../../selectors/form';
 import { getFormInputConfig } from '../../utilities/formInputConfigs';
+import { useToggle } from '../../hooks/useToggle';
 
-import { buttonStrings, vaccineStrings, dispensingStrings } from '../../localization';
+import {
+  buttonStrings,
+  vaccineStrings,
+  dispensingStrings,
+  modalStrings,
+  generalStrings,
+} from '../../localization';
 import globalStyles from '../../globalStyles';
 import { JSONForm } from '../JSONForm/JSONForm';
 import { NameNoteActions } from '../../actions/Entities/NameNoteActions';
@@ -55,17 +65,29 @@ const PatientEditComponent = ({
   canEditPatient,
 }) => {
   const { pageTopViewContainer } = globalStyles;
-  const formRef = useRef(null);
+  const [isDeceasedModalOpen, toggleIsDeceasedAlert] = useToggle(false);
 
+  const { enabled: nextButtonEnabled, setEnabled: setNextButtonEnabled } = useButtonEnabled();
+
+  const formRef = useRef(null);
   const savePatient = useCallback(
     e => {
+      setNextButtonEnabled(false);
       updatePatientDetails(completedForm);
+
+      if (completedForm.isDeceased) {
+        toggleIsDeceasedAlert();
+        setNextButtonEnabled(true);
+        return;
+      }
+
       formRef?.current?.submit(e);
 
       if (canSaveForm) {
         onCompleted();
       } else {
         ToastAndroid.show(dispensingStrings.validation_failed, ToastAndroid.LONG);
+        setNextButtonEnabled(true);
       }
     },
     [completedForm, canSaveForm]
@@ -114,10 +136,18 @@ const PatientEditComponent = ({
         <PageButtonWithOnePress text={buttonStrings.cancel} onPress={onCancelPrescription} />
         <PageButton
           text={buttonStrings.next}
+          isDisabled={!nextButtonEnabled}
           onPress={savePatient}
           style={{ marginLeft: 'auto' }}
         />
       </FlexRow>
+      <PaperModalContainer isVisible={isDeceasedModalOpen} onClose={toggleIsDeceasedAlert}>
+        <PaperConfirmModal
+          questionText={modalStrings.deceased_patient_vaccination}
+          confirmText={generalStrings.ok}
+          onConfirm={toggleIsDeceasedAlert}
+        />
+      </PaperModalContainer>
     </FlexView>
   );
 };

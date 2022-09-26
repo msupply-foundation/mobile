@@ -18,6 +18,8 @@ import { PageButton } from '../PageButton';
 import { FlexRow } from '../FlexRow';
 import { FlexView } from '../FlexView';
 import { PageButtonWithOnePress } from '../PageButtonWithOnePress';
+import { PaperModalContainer } from '../PaperModal/PaperModalContainer';
+import { PaperConfirmModal } from '../PaperModal/PaperConfirmModal';
 
 import { selectSpecificEntityState } from '../../selectors/Entities';
 
@@ -145,6 +147,7 @@ const PatientSelectComponent = ({
 }) => {
   const withLoadingIndicator = useLoadingIndicator();
   const [isQrModalOpen, toggleQrModal] = useToggle();
+  const [isDeceasedModalOpen, toggleIsDeceasedAlert] = useToggle(false);
   const [{ history, patient } = {}, setPatientHistory] = useState({});
   const [vaccinationEvent, setVaccinationEvent] = useState(null);
 
@@ -231,7 +234,7 @@ const PatientSelectComponent = ({
     switch (colKey) {
       case 'patientHistory':
         return patientId => {
-          const foundPatient = data.find(({ id }) => patientId === id);
+          const foundPatient = UIDatabase.get('Name', patientId);
           const patientsPreviousVaccinations = selectVaccinePatientHistory(foundPatient);
 
           setPatientHistory({ patient: foundPatient, history: patientsPreviousVaccinations });
@@ -253,10 +256,22 @@ const PatientSelectComponent = ({
           rowKey={keyExtractor(item)}
           columns={columns}
           onPress={name => {
+            const localPatient = UIDatabase.get('Name', name?.id);
+
             // Only show a spinner when the name doesn't exist in the database, as we need to
             // send a request to the server to add a name store join.
-            if (UIDatabase.get('Name', name?.id)) {
-              selectPatient(name);
+            if (localPatient) {
+              if (localPatient.isDeceased) {
+                toggleIsDeceasedAlert();
+                return;
+              }
+
+              if (localPatient.isDeleted) {
+                ToastAndroid.show(dispensingStrings.patient_already_deleted, ToastAndroid.LONG);
+                return;
+              }
+
+              selectPatient(localPatient);
             } else {
               withLoadingIndicator(() => selectPatient(name));
             }
@@ -342,8 +357,15 @@ const PatientSelectComponent = ({
         onClose={() => setVaccinationEvent(null)}
         title={`${dispensingStrings.vaccination_details}`}
       >
-        <VaccinationEvent vaccinationEvent={vaccinationEvent} patient={patient} />
+        <VaccinationEvent vaccinationEventId={vaccinationEvent?.id} patient={patient} />
       </ModalContainer>
+      <PaperModalContainer isVisible={isDeceasedModalOpen} onClose={toggleIsDeceasedAlert}>
+        <PaperConfirmModal
+          questionText={modalStrings.deceased_patient_vaccination}
+          confirmText={generalStrings.ok}
+          onConfirm={toggleIsDeceasedAlert}
+        />
+      </PaperModalContainer>
     </FlexView>
   );
 };
@@ -356,7 +378,7 @@ const mapDispatchToProps = dispatch => {
       Keyboard.dismiss();
       const selectedPatient = await dispatch(NameActions.select(patient));
 
-      if (selectedPatient) {
+      if (selectedPatient && !selectedPatient.isDeceased) {
         dispatch(NameNoteActions.createSurveyNameNote(selectedPatient));
         dispatch(WizardActions.nextTab());
       }
@@ -368,7 +390,7 @@ const mapDispatchToProps = dispatch => {
       const patient = createDefaultName('patient', id);
       dispatch(NameActions.create(patient));
       dispatch(NameNoteActions.createSurveyNameNote(patient));
-      dispatch(WizardActions.nextTab());
+      dispatch(WizardActions.switchTab(1));
     });
   const updateForm = (key, value) => dispatch(FormActions.updateForm(key, value));
 

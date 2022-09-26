@@ -305,6 +305,11 @@ export const filterDataWithOverStockToggle = (searchTerm, route) => ({
   payload: { searchTerm, route },
 });
 
+export const filterDataWithZeroStockToggle = (searchTerm, route) => ({
+  type: ACTIONS.FILTER_DATA_WITH_ZERO_STOCK_TOGGLE,
+  payload: { searchTerm, route },
+});
+
 export const TableActionsLookup = {
   sortData,
   filterData,
@@ -331,4 +336,5 @@ export const TableActionsLookup = {
   filterDataWithFinalisedToggle,
   filterDataWithOverStockToggle,
   toggleColumnSet,
+  filterDataWithZeroStockToggle,
 };

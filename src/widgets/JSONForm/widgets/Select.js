@@ -3,7 +3,7 @@ import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { Picker } from '@react-native-community/picker';
 
-import { SUSSOL_ORANGE } from '../../../globalStyles/colors';
+import { SUSSOL_ORANGE, LIGHT_GREY } from '../../../globalStyles/colors';
 
 export const Select = ({
   disabled,
@@ -17,11 +17,21 @@ export const Select = ({
   id,
 }) => {
   let pickers = options.enumOptions.map(({ label, value: enumValue }) => (
-    <Picker.Item key={label} label={label} value={enumValue} color={SUSSOL_ORANGE} />
+    <Picker.Item
+      key={label}
+      label={label}
+      value={enumValue}
+      color={disabled ? LIGHT_GREY : SUSSOL_ORANGE}
+    />
   ));
 
   const placeholderItem = (
-    <Picker.Item key={placeholder} label={placeholder} value={placeholder} color={SUSSOL_ORANGE} />
+    <Picker.Item
+      key={placeholder}
+      label={placeholder}
+      value={placeholder}
+      color={disabled ? LIGHT_GREY : SUSSOL_ORANGE}
+    />
   );
 
   pickers = [placeholderItem, ...pickers];
@@ -31,7 +41,7 @@ export const Select = ({
       const { default: defaultValue } = schema;
       onChange(defaultValue);
     }
-  });
+  }, [value, options, schema, onChange]);
 
   return (
     <Picker

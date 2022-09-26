@@ -18,9 +18,9 @@ const SIZE_VALUES = {
 };
 
 const ICON_SIZE_VALUES = {
-  small: 10,
-  medium: 15,
-  large: 20,
+  small: 8,
+  medium: 13,
+  large: 17,
 };
 
 /**

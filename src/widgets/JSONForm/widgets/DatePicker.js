@@ -1,4 +1,5 @@
-import React from 'react';
+/* eslint-disable prettier/prettier */
+import React, { useState } from 'react';
 import { TextInput } from 'react-native';
 import moment from 'moment';
 import PropTypes from 'prop-types';
@@ -21,10 +22,24 @@ export const DatePicker = ({
 }) => {
   const { focusController } = useJSONFormOptions();
   const ref = focusController.useRegisteredRef();
+
+  const [selectedTextValue, setSelectedTextValue] = useState('');
+
   const handleChange = dateString => {
     onChange(dateString);
     onBlur(id, dateString);
   };
+
+  React.useEffect(() => {
+    const alternateFormatDate = moment(value, 'YYYY-MM-DD', true);
+    const expectedFormatDate = alternateFormatDate.isValid()
+      ? alternateFormatDate
+      : moment(value, DATE_FORMAT.DD_MM_YYYY, true);
+
+    setSelectedTextValue(
+      expectedFormatDate.isValid() ? expectedFormatDate.format(DATE_FORMAT.DD_MM_YYYY) : value
+    );
+  }, [value]);
 
   return (
     <FlexRow>
@@ -34,7 +49,7 @@ export const DatePicker = ({
         underlineColorAndroid={DARKER_GREY}
         placeholder={placeholder}
         editable={!(readonly || disabled)}
-        value={value}
+        value={selectedTextValue}
         ref={ref}
         onSubmitEditing={() => focusController.next(ref)}
         onChangeText={handleChange}
@@ -45,7 +60,14 @@ export const DatePicker = ({
       />
       <DatePickerButton
         isDisabled={readonly || disabled}
-        initialValue={new Date()}
+        initialValue={
+          moment(selectedTextValue, DATE_FORMAT.DD_MM_YYYY, true).isValid() ||
+            moment(selectedTextValue, 'D/M/YYYY', true).isValid() ||
+            moment(selectedTextValue, 'D/MM/YYYY', true).isValid() ||
+            moment(selectedTextValue, 'DD/M/YYYY', true).isValid()
+            ? moment(selectedTextValue, DATE_FORMAT.DD_MM_YYYY, true).toDate()
+            : moment().toDate()
+        }
         minimumDate={options.dateRange === 'future' ? new Date() : null}
         maximumDate={options.dateRange === 'past' ? new Date() : null}
         onDateChanged={date => handleChange(moment(date).format(DATE_FORMAT.DD_MM_YYYY))}

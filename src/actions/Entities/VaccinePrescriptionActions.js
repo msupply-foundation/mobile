@@ -11,12 +11,13 @@ import {
   selectSelectedSupplementalData,
   selectSelectedVaccinator,
 } from '../../selectors/Entities/vaccinePrescription';
-import { selectEditingNameId } from '../../selectors/Entities/name';
+import { selectEditingNameId, selectEditingName } from '../../selectors/Entities/name';
 import { NameActions } from './NameActions';
 import { NameNoteActions } from './NameNoteActions';
 import { goBack, gotoVaccineDispensingPage } from '../../navigation/actions';
 import { selectSupplementalDataSchemas } from '../../selectors/formSchema';
 import { validateJsonSchemaData } from '../../utilities/ajvValidator';
+import { SETTINGS_KEYS } from '../../settings';
 
 export const VACCINE_PRESCRIPTION_ACTIONS = {
   CREATE: 'VACCINE_PRESCRIPTION/create',
@@ -29,7 +30,6 @@ export const VACCINE_PRESCRIPTION_ACTIONS = {
   SELECT_BATCH: 'VACCINE_PRESCRIPTION/selectBatch',
   SELECT_VACCINATOR: 'VACCINE_PRESCRIPTION/selectVaccinator',
   SET_BONUS_DOSE: 'VACCINE_PRESCRIPTION/setBonusDose',
-  TOGGLE_HISTORY: 'VACCINE_PRESCRIPTION/toggleHistory',
   SELECT_DEFAULT_VACCINE: 'VACCINE_PRESCRIPTION/selectDefaultVaccine',
 };
 
@@ -191,6 +191,8 @@ const createVaccinationNameNote = (
 
   // Extract name notes from the patient before saving as this can get huuuge(!)
   const { nameNotes, ...patientObject } = patient.toJSON();
+  const storeId = UIDatabase.getSetting(SETTINGS_KEYS.THIS_STORE_ID);
+  const storeNameId = UIDatabase.getSetting(SETTINGS_KEYS.THIS_STORE_NAME_ID);
 
   const data = {
     refused,
@@ -208,6 +210,8 @@ const createVaccinationNameNote = (
       patient: patientObject,
     },
     pcdNameNoteId: getPcdNameNoteID(patient.id),
+    storeId,
+    storeName: UIDatabase.objects('Name').filtered('id == $0', storeNameId)[0]?.name,
   };
   const newNameNote = {
     id,
@@ -215,6 +219,7 @@ const createVaccinationNameNote = (
     patientEvent,
     entryDate: new Date(),
     _data: JSON.stringify(data),
+    isDeleted: false,
   };
   UIDatabase.write(() => UIDatabase.create('NameNote', newNameNote));
 };
@@ -225,6 +230,7 @@ const getPcdNameNoteID = patientId => {
     .sorted('entryDate', true);
   return patientNameNotes.length > 0 ? patientNameNotes[0].id : '';
 };
+
 const createSupplementaryData = () => (dispatch, getState) => {
   // Create a supplementaryData object which is seeded with the data that was last
   // entered against a prescription
@@ -276,7 +282,14 @@ const confirm = () => (dispatch, getState) => {
     });
   }
   batch(() => {
-    dispatch(NameActions.saveEditing());
+    const { isEditable = true } = selectEditingName(getState());
+
+    // We are already not allowing patient update for patient that do not belong
+    // to the current store. This check will stop unnecessary updates.
+    if (isEditable) {
+      dispatch(NameActions.saveEditing(false));
+    }
+
     dispatch(NameNoteActions.saveEditing());
     dispatch(reset());
   });
@@ -315,10 +328,25 @@ const confirmAndRepeat = () => dispatch =>
     dispatch(gotoVaccineDispensingPage());
   });
 
-const toggleHistory = toggle => ({
-  type: VACCINE_PRESCRIPTION_ACTIONS.TOGGLE_HISTORY,
-  payload: { toggle },
-});
+const returnVaccineToStock = (patientID, transactionBatch) => (dispatch, getState) => {
+  const { user } = getState();
+  const { currentUser } = user;
+  const { totalQuantity } = transactionBatch;
+  const patient = UIDatabase.get('Name', patientID);
+
+  UIDatabase.write(() => {
+    const customerCredit = createRecord(
+      UIDatabase,
+      'CustomerCredit',
+      currentUser,
+      patient,
+      -totalQuantity,
+      'dispensary'
+    );
+    createRecord(UIDatabase, 'RefundLine', customerCredit, transactionBatch);
+    customerCredit.finalise(UIDatabase);
+  });
+};
 
 export const VaccinePrescriptionActions = {
   cancel,
@@ -326,6 +354,7 @@ export const VaccinePrescriptionActions = {
   create,
   createSupplementaryData,
   reset,
+  returnVaccineToStock,
   selectBatch,
   selectSupplementalData,
   selectVaccine,
@@ -334,7 +363,6 @@ export const VaccinePrescriptionActions = {
   selectVaccinator,
   confirmAndRepeat,
   setBonusDose,
-  toggleHistory,
   selectDefaultVaccine,
   updateSupplementalData,
 };

@@ -5,7 +5,7 @@ import PropTypes from 'prop-types';
 import CheckBox from '@react-native-community/checkbox';
 
 import { APP_FONT_FAMILY } from '../../../globalStyles/fonts';
-import { SUSSOL_ORANGE } from '../../../globalStyles/colors';
+import { SUSSOL_ORANGE, WEARY_TARMAC } from '../../../globalStyles/colors';
 import { FlexColumn, FlexRow, FlexView } from '../../index';
 
 const selectValue = (value, selected, all) => {
@@ -41,15 +41,16 @@ export const Checkboxes = ({
   const checkboxes = enumOptions.map(option => {
     const itemDisabled = enumDisabled && enumDisabled.indexOf(option.value) !== -1;
     const checked = checkboxesValue.indexOf(option.value) !== -1;
+    const isDisabled = disabled || itemDisabled || readonly;
 
     return (
       <FlexRow key={`checkbox_row_${option.value}`}>
         <FlexColumn>
           <CheckBox
             value={checked}
-            disabled={disabled || itemDisabled || readonly}
+            disabled={isDisabled}
             onValueChange={_onChange(option)}
-            tintColors={{ true: SUSSOL_ORANGE }}
+            tintColors={{ true: isDisabled ? WEARY_TARMAC : SUSSOL_ORANGE }}
           />
         </FlexColumn>
         <FlexColumn>

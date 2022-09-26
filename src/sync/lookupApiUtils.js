@@ -34,6 +34,7 @@ const TYPES = {
   STRING: 'string',
   DATE: 'date',
   NUMBER: 'number',
+  BOOLEAN: 'boolean',
 };
 
 const PARAMETERS = {
@@ -45,6 +46,7 @@ const PARAMETERS = {
   registrationCode: { key: 'code', type: TYPES.STRING },
   limit: { key: 'limit', type: TYPES.NUMBER },
   offset: { key: 'offset', type: TYPES.NUMBER },
+  isDeleted: { key: 'is_deleted', type: TYPES.BOOLEAN },
 };
 
 class BugsnagError extends Error {
@@ -83,12 +85,15 @@ export const createPolicyRecord = policy => {
 const getQueryString = params => {
   const query = params.reduce((queryObject, param) => {
     const [[key, value], [, type]] = Object.entries(param);
-    if (!value) return queryObject;
+
+    // We still want to allow false to pass through
+    if (value === '' || value === null || value === undefined) return queryObject;
 
     const formatter = {
       [TYPES.STRING]: string => `@${string}@`,
       [TYPES.DATE]: date => moment(date).format('DDMMYYYY'),
       [TYPES.NUMBER]: number => Number(number),
+      [TYPES.BOOLEAN]: boolean => Boolean(boolean),
     };
 
     return { ...queryObject, [key]: formatter[type](value) };
@@ -111,6 +116,7 @@ const getPatientQueryString = ({
   barcode = '',
   dateOfBirth = '',
   policyNumber = '',
+  isDeleted = false,
   limit = null,
   offset = null,
 } = {}) => {
@@ -118,11 +124,13 @@ const getPatientQueryString = ({
     { [PARAMETERS.firstName.key]: firstName, type: PARAMETERS.firstName.type },
     { [PARAMETERS.lastName.key]: lastName, type: PARAMETERS.lastName.type },
     { [PARAMETERS.barcode.key]: barcode, type: PARAMETERS.barcode.type },
+    { [PARAMETERS.isDeleted.key]: isDeleted, type: PARAMETERS.isDeleted.type },
     { [PARAMETERS.dateOfBirth.key]: dateOfBirth, type: PARAMETERS.dateOfBirth.type },
     { [PARAMETERS.policyNumber.key]: policyNumber, type: PARAMETERS.policyNumber.type },
     { [PARAMETERS.offset.key]: offset, type: PARAMETERS.offset.type },
     { [PARAMETERS.limit.key]: limit, type: PARAMETERS.limit.type },
   ];
+
   return getQueryString(queryParams);
 };
 
@@ -152,12 +160,14 @@ const processNameNoteResponse = response =>
       patient_event_ID: patientEventID,
       name_ID: nameID,
       entry_date: entryDate,
+      is_deleted: isDeleted,
     }) => ({
       id,
       data,
       patientEventID,
       nameID,
       entryDate: moment(entryDate).isValid() ? moment(entryDate).toDate() : moment().toDate(),
+      isDeleted,
     })
   );
 

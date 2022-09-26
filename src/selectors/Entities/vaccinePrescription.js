@@ -93,12 +93,6 @@ export const selectFoundBonusDose = state => {
   return bonusDose;
 };
 
-export const selectHistoryIsOpen = state => {
-  const VaccinePrescriptionState = selectSpecificEntityState(state, 'vaccinePrescription');
-  const { historyIsOpen } = VaccinePrescriptionState;
-  return historyIsOpen;
-};
-
 export const selectSelectedSupplementalData = state => {
   const VaccinePrescriptionState = selectSpecificEntityState(state, 'vaccinePrescription');
   const { supplementalData } = VaccinePrescriptionState;

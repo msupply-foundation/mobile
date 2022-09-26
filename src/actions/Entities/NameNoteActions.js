@@ -1,5 +1,6 @@
 import { generateUUID } from 'react-native-database';
 import merge from 'lodash.merge';
+import { ToastAndroid } from 'react-native';
 import { createRecord, UIDatabase } from '../../database/index';
 import {
   selectCreatingNameNote,
@@ -7,6 +8,8 @@ import {
 } from '../../selectors/Entities/nameNote';
 import { selectSurveySchemas } from '../../selectors/formSchema';
 import { validateJsonSchemaData } from '../../utilities/ajvValidator';
+import { vaccineStrings } from '../../localization';
+import { checkIsObjectEmpty } from '../../utilities';
 
 export const NAME_NOTE_ACTIONS = {
   SELECT: 'NAME_NOTE/select',
@@ -22,6 +25,7 @@ const createDefaultNameNote = (nameID = '') => {
     entryDate: new Date(),
     patientEventID: pcd?.id ?? '',
     nameID,
+    isDeleted: false,
   };
 };
 
@@ -60,11 +64,71 @@ const updateForm = (data, validator) => ({
 const saveEditing = () => (dispatch, getState) => {
   const nameNote = selectCreatingNameNote(getState()) ?? {};
   const patient = UIDatabase.get('Name', nameNote?.nameID);
-  const isDirty = JSON.stringify(patient?.mostRecentPCD?.data) !== JSON.stringify(nameNote?.data);
+  const isDirty =
+    !checkIsObjectEmpty(nameNote?.data) &&
+    JSON.stringify(patient?.mostRecentPCD?.data) !== JSON.stringify(nameNote?.data);
   if (isDirty) {
     UIDatabase.write(() => createRecord(UIDatabase, 'NameNote', nameNote));
   }
   dispatch(reset());
+};
+
+const updateNameNote = (originalNote, updatedData) => () => {
+  const { id, patientEvent, name, entryDate, _data, isDeleted } = originalNote;
+
+  // Quick & dirty check if the object was updated, trims out some un-needed updates
+  const isDirty = _data !== JSON.stringify(updatedData);
+
+  if (isDirty) {
+    const updatedNote = {
+      id,
+      patientEvent,
+      name,
+      entryDate: new Date(entryDate),
+      _data: JSON.stringify(updatedData),
+      isDeleted,
+    };
+
+    UIDatabase.write(() => {
+      UIDatabase.update('NameNote', updatedNote);
+      UIDatabase.create('NameNote', createNameNoteAudit(originalNote, updatedData));
+    });
+    ToastAndroid.show(vaccineStrings.vaccination_updated, ToastAndroid.LONG);
+  } else {
+    ToastAndroid.show(vaccineStrings.vaccination_not_updated, ToastAndroid.LONG);
+  }
+};
+
+const deleteNameNote = NameNote => () => {
+  UIDatabase.write(() => {
+    UIDatabase.update('NameNote', { id: NameNote.id, isDeleted: true });
+  });
+};
+
+const createNameNoteAudit = (originalNote, updatedData) => {
+  const { patientEvent, name, entryDate, isDeleted } = originalNote;
+  const [auditEvent] = UIDatabase.objects('PatientEvent').filtered('code == "NameNoteModified"');
+
+  const auditNameNote = {
+    id: generateUUID(),
+    name,
+    auditEvent,
+    entryDate: new Date(),
+    _data: JSON.stringify({
+      patientEvent,
+      old: {
+        entryDate,
+        data: originalNote.data,
+      },
+      new: {
+        entryDate: new Date(),
+        data: updatedData,
+      },
+    }),
+    isDeleted,
+  };
+
+  return auditNameNote;
 };
 
 const createNotes = (nameNotes = []) => {
@@ -80,6 +144,7 @@ const createNotes = (nameNotes = []) => {
           name,
           _data: JSON.stringify(nameNote?.data),
           entryDate: new Date(nameNote?.entryDate),
+          isDeleted: nameNote.isDeleted,
         };
 
         UIDatabase.update('NameNote', toSave);
@@ -99,5 +164,7 @@ export const NameNoteActions = {
   reset,
   createSurveyNameNote,
   updateForm,
+  updateNameNote,
+  deleteNameNote,
   saveEditing,
 };

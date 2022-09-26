@@ -28,7 +28,7 @@ import { PrescriberActions } from '../../actions/PrescriberActions';
 import { getColumns } from '../../pages/dataTableUtilities';
 import { SimpleTable } from '../SimpleTable';
 
-import { modalStrings, generalStrings } from '../../localization';
+import { modalStrings, generalStrings, dispensingStrings } from '../../localization';
 
 import { APP_FONT_FAMILY, DARK_GREY, ROW_BLUE, WHITE, SUSSOL_ORANGE } from '../../globalStyles';
 
@@ -169,6 +169,17 @@ const mapStateToProps = state => {
 const mapDispatchToProps = dispatch => ({
   close: () => dispatch(DispensaryActions.closeLookupModal()),
   selectPatient: async patient => {
+    const localPatient = UIDatabase.get('Name', patient.id);
+
+    if (localPatient) {
+      const toastMessage = localPatient.isDeleted
+        ? dispensingStrings.patient_already_deleted
+        : dispensingStrings.patient_already_exists;
+
+      ToastAndroid.show(toastMessage, ToastAndroid.LONG);
+      return;
+    }
+
     const result = await PatientActions.makePatientVisibility(patient);
 
     if (result) {

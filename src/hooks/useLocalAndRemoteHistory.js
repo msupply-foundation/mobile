@@ -5,6 +5,7 @@ import {
   getServerURL,
   getPatientHistoryResponseProcessor,
 } from '../sync/lookupApiUtils';
+import { convertVaccinationEntryToISOString } from '../utilities/parsers';
 import { useFetch } from './useFetch';
 import { useThrottled } from './useThrottled';
 
@@ -25,12 +26,13 @@ const reducer = (state, action) => {
       const { data: initialData } = state;
       const localTransactionIds = initialData.map(transactions => transactions.id);
 
-      // Name notes do not have transaction ids, create filter instead based on itemCode/confirmDate
+      // Name notes do not have transaction objects
+      // Create filter instead based on itemCode/confirmDate
       const localNameNoteFilter = initialData
-        .filter(transaction => !transaction.id)
+        .filter(record => !record.transaction)
         .map(nameNotes => ({
           itemCode: nameNotes.itemCode,
-          confirmDate: nameNotes.confirmDate,
+          confirmDate: new Date(convertVaccinationEntryToISOString(nameNotes.vaccineDate)),
           select: '>',
         }));
 

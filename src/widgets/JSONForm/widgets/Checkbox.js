@@ -4,6 +4,7 @@ import PropTypes from 'prop-types';
 import { StyleSheet } from 'react-native';
 import { SUSSOL_ORANGE, WARMER_GREY } from '../../../globalStyles/colors';
 import { ToggleBar } from '../../index';
+import { APP_FONT_FAMILY } from '../../../globalStyles';
 
 export const Checkbox = ({
   options: { enumOptions },
@@ -27,9 +28,11 @@ export const Checkbox = ({
   return (
     <ToggleBar
       isDisabled={disabled || readonly}
+      textOffDisabledStyle={styles.textOffDisabledStyle}
       toggleOnStyle={styles.toggleOnStyle}
       toggleOffStyle={styles.toggleOffStyle}
       toggleOnDisabledStyle={styles.toggleOnDisabledStyle}
+      toggleOffDisabledStyle={styles.toggleOffDisabledStyle}
       toggles={toggles}
       style={styles.container}
     />
@@ -38,6 +41,11 @@ export const Checkbox = ({
 
 const styles = StyleSheet.create({
   container: { borderWidth: 0, width: 150 },
+  textOffDisabledStyle: {
+    fontFamily: APP_FONT_FAMILY,
+    fontSize: 12,
+    color: WARMER_GREY,
+  },
   toggleOnStyle: {
     flex: 1,
     alignItems: 'center',
@@ -63,11 +71,24 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     margin: 5,
   },
+  toggleOffDisabledStyle: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderColor: WARMER_GREY,
+    borderRadius: 20,
+    borderWidth: 1,
+    margin: 5,
+  },
 });
+
+Checkbox.defaultProps = {
+  value: false,
+};
 
 Checkbox.propTypes = {
   options: PropTypes.object.isRequired,
-  value: PropTypes.bool.isRequired,
+  value: PropTypes.bool,
   onChange: PropTypes.func.isRequired,
   onBlur: PropTypes.func.isRequired,
   id: PropTypes.string.isRequired,

@@ -73,7 +73,7 @@ const select = name => async dispatch => {
     const result = await createPatientVisibility(name);
     if (result) {
       UIDatabase.write(() => {
-        selectedName = createRecord(UIDatabase, 'Patient', name);
+        selectedName = createRecord(UIDatabase, 'Patient', name, true);
       });
     } else {
       ToastAndroid.show(generalStrings.problem_connecting_please_try_again, ToastAndroid.LONG);
@@ -96,7 +96,7 @@ const filter = (key, value) => ({ type: NAME_ACTIONS.FILTER, payload: { key, val
 
 const sort = sortKey => ({ type: NAME_ACTIONS.SORT, payload: { sortKey } });
 
-const saveEditing = () => (dispatch, getState) => {
+const saveEditing = (shouldCreateNameNames = true) => (dispatch, getState) => {
   const currentPatient = selectEditingName(getState());
   const createdDate = currentPatient?.createdDate ? new Date(currentPatient.createdDate) : null;
   const dateOfBirth = new Date(currentPatient.dateOfBirth);
@@ -104,7 +104,7 @@ const saveEditing = () => (dispatch, getState) => {
 
   const patientRecord = { ...currentPatient, dateOfBirth, createdDate, name };
 
-  UIDatabase.write(() => createRecord(UIDatabase, 'Patient', patientRecord));
+  UIDatabase.write(() => createRecord(UIDatabase, 'Patient', patientRecord, shouldCreateNameNames));
   dispatch(reset());
 };
 

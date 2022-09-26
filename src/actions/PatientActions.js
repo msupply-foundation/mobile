@@ -5,11 +5,13 @@
 
 import { batch } from 'react-redux';
 
+import { ToastAndroid } from 'react-native';
 import { createRecord, UIDatabase } from '../database';
 import { selectCurrentUser } from '../selectors/user';
 
 import { createPatientVisibility } from '../sync/lookupApiUtils';
 import { DispensaryActions } from './DispensaryActions';
+import { dispensingStrings } from '../localization';
 
 export const PATIENT_ACTIONS = {
   PATIENT_EDIT: 'Patient/patientEdit',
@@ -22,6 +24,7 @@ export const PATIENT_ACTIONS = {
   SAVE_ADR: 'Patient/saveADR',
   CANCEL_ADR: 'Patient/cancelADR',
   REFRESH: 'Patient/refresh',
+  PATIENT_DELETE: 'Patient/delete',
 };
 
 const closeModal = () => ({ type: PATIENT_ACTIONS.COMPLETE });
@@ -32,6 +35,18 @@ const refresh = () => ({ type: PATIENT_ACTIONS.REFRESH });
 const makePatientVisibility = async name => {
   const response = await createPatientVisibility(name);
   return response;
+};
+
+const patientDelete = () => (dispatch, getState) => {
+  const { patient } = getState();
+  const { currentPatient } = patient;
+  UIDatabase.write(() => {
+    UIDatabase.update('Name', { id: currentPatient.id, isDeleted: true });
+  });
+
+  ToastAndroid.show(dispensingStrings.patient_deleted, ToastAndroid.LONG);
+  dispatch(closeModal());
+  return { type: PATIENT_ACTIONS.PATIENT_DELETE, payload: { patient } };
 };
 
 const patientUpdate = patientDetails => async (dispatch, getState) => {
@@ -53,6 +68,7 @@ const patientUpdate = patientDetails => async (dispatch, getState) => {
     country: currentCountry,
     supplyingStoreId: currentSupplyingStoreId,
     isActive: currentIsActive,
+    isDeceased: currentIsDeceased,
     female: currentFemale,
     ethnicity: currentEthnicity,
     nationality: currentNationality,
@@ -82,6 +98,7 @@ const patientUpdate = patientDetails => async (dispatch, getState) => {
     country: patientCountry,
     supplyingStoreId: patientSupplyingStoreId,
     female: patientFemale,
+    isDeceased: patientIsDeceased,
     ethnicity: patientEthnicity,
     nationality: patientNationality,
   } = patientDetails ?? {};
@@ -102,6 +119,7 @@ const patientUpdate = patientDetails => async (dispatch, getState) => {
   const billPostalZipCode = patientPostalZipCode ?? currentZipCode;
   const country = patientCountry ?? currentCountry;
   const female = patientFemale ?? currentFemale;
+  const isDeceased = patientIsDeceased ?? currentIsDeceased;
   const supplyingStoreId = patientSupplyingStoreId ?? currentSupplyingStoreId;
   const isActive = currentIsActive;
   const ethnicity = patientEthnicity ?? currentEthnicity;
@@ -124,6 +142,7 @@ const patientUpdate = patientDetails => async (dispatch, getState) => {
     billPostalZipCode,
     country,
     female,
+    isDeceased,
     supplyingStoreId,
     isActive,
     ethnicity,
@@ -131,7 +150,7 @@ const patientUpdate = patientDetails => async (dispatch, getState) => {
     createdDate,
   };
 
-  UIDatabase.write(() => createRecord(UIDatabase, 'Patient', patientRecord));
+  UIDatabase.write(() => createRecord(UIDatabase, 'Patient', patientRecord, false));
 
   batch(() => {
     dispatch(closeModal());
@@ -176,6 +195,7 @@ export const PatientActions = {
   closeADRModal,
   createPatient,
   patientUpdate,
+  patientDelete,
   editPatient,
   closeModal,
   sortPatientHistory,

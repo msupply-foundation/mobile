@@ -24,7 +24,16 @@ export const PaperConfirmModal = ({
       <Text style={localStyles.questionText}>{questionText}</Text>
     </FlexView>
     <FlexRow justifyContent="space-evenly" alignItems="center" style={{ width: '100%' }} flex={1}>
-      <PageButton onPress={onCancel} text={cancelText} textStyle={localStyles.cancelText} />
+      {cancelText ? (
+        <PageButton
+          isDisabled={!onCancel}
+          onPress={onCancel}
+          text={cancelText}
+          textStyle={localStyles.cancelText}
+        />
+      ) : (
+        <></>
+      )}
       <PageButton
         onPress={onConfirm}
         text={confirmText}
@@ -44,13 +53,15 @@ const localStyles = StyleSheet.create({
 
 PaperConfirmModal.defaultProps = {
   Icon: <HazardIcon size={50} />,
+  cancelText: undefined,
+  onCancel: undefined,
 };
 
 PaperConfirmModal.propTypes = {
   Icon: PropTypes.node,
   questionText: PropTypes.string.isRequired,
   confirmText: PropTypes.string.isRequired,
-  cancelText: PropTypes.string.isRequired,
+  cancelText: PropTypes.string,
   onConfirm: PropTypes.func.isRequired,
-  onCancel: PropTypes.func.isRequired,
+  onCancel: PropTypes.func,
 };

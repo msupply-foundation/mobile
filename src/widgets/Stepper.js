@@ -132,7 +132,7 @@ const NewStepperNumber = ({ step, numberOfSteps, currentStep, isActive, isLast, 
 
   const completedStep = currentStep > step;
   const Container = completedStep ? TouchableOpacity : View;
-  const backgroundColor = isActive || completedStep ? DARKER_GREY : TRANSPARENT;
+  const backgroundColor = isActive || completedStep ? WHITE : TRANSPARENT;
   const borderColor = isActive || completedStep ? DARKER_GREY : MISTY_CHARCOAL;
 
   const wrappedOnPress = () => onPress(step);
@@ -141,11 +141,7 @@ const NewStepperNumber = ({ step, numberOfSteps, currentStep, isActive, isLast, 
     <Container onPress={wrappedOnPress} style={container}>
       <Circle size={30} backgroundColor={backgroundColor} borderColor={borderColor}>
         {isActive || completedStep ? (
-          <ConfirmIcon
-            color={DARKER_GREY}
-            size={35}
-            style={{ backgroundColor: WHITE, marginTop: -3 }}
-          />
+          <ConfirmIcon color={DARKER_GREY} size={35} style={{ marginTop: -4, marginLeft: -1 }} />
         ) : (
           <Text style={stepNumber}>{step + 1}</Text>
         )}
