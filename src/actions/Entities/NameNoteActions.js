@@ -74,7 +74,7 @@ const saveEditing = () => (dispatch, getState) => {
 };
 
 const updateNameNote = (originalNote, updatedData) => () => {
-  const { id, patientEvent, name, entryDate, _data, isDeleted } = originalNote;
+  const { id, patientEvent, name, entryDate, _data, isDeleted, storeID } = originalNote;
 
   // Quick & dirty check if the object was updated, trims out some un-needed updates
   const isDirty = _data !== JSON.stringify(updatedData);
@@ -87,6 +87,7 @@ const updateNameNote = (originalNote, updatedData) => () => {
       entryDate: new Date(entryDate),
       _data: JSON.stringify(updatedData),
       isDeleted,
+      storeID,
     };
 
     UIDatabase.write(() => {
@@ -145,6 +146,7 @@ const createNotes = (nameNotes = []) => {
           _data: JSON.stringify(nameNote?.data),
           entryDate: new Date(nameNote?.entryDate),
           isDeleted: nameNote.isDeleted,
+          storeID: nameNote.storeID,
         };
 
         UIDatabase.update('NameNote', toSave);

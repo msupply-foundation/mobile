@@ -1159,6 +1159,7 @@ export const createOrUpdateRecord = (database, settings, recordType, record) => 
         isDeleted: parseBoolean(record.is_deleted),
         name: database.getOrCreate('Name', record.name_ID),
         note: record.note,
+        storeID: record.store_ID,
       });
       break;
     }

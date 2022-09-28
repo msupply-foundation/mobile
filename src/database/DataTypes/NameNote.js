@@ -28,6 +28,7 @@ export class NameNote extends Realm.Object {
       nameID: this.name?.id,
       note: this.note,
       patientEventID: this.patientEvent?.id,
+      storeID: this.storeID,
     };
   }
 }
@@ -43,6 +44,7 @@ NameNote.schema = {
     name: 'Name',
     note: { type: 'string', optional: true },
     patientEvent: 'PatientEvent',
+    storeID: { type: 'string', optional: true },
   },
 };
 

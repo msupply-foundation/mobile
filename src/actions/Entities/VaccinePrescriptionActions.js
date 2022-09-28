@@ -220,6 +220,7 @@ const createVaccinationNameNote = (
     entryDate: new Date(),
     _data: JSON.stringify(data),
     isDeleted: false,
+    storeID: storeId,
   };
   UIDatabase.write(() => UIDatabase.create('NameNote', newNameNote));
 };

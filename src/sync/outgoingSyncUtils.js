@@ -422,7 +422,7 @@ const generateSyncData = (settings, recordType, record) => {
         name_ID: record.name?.id ?? '',
         entry_date: getDateString(record.entryDate),
         data: record.data,
-        store_ID: settings.get(THIS_STORE_ID),
+        store_ID: record.storeID,
         note: record.note,
         is_deleted: String(record.isDeleted),
         // The NameNote table is in the middle of a migration away from the current impl

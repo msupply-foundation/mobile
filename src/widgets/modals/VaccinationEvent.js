@@ -84,6 +84,7 @@ export const VaccinationEventComponent = ({
   const [vaccineDropDownValues, setVaccineDropDownValues] = useState([]);
   const [vaccinator, setVaccinator] = useState();
   const [vaccine, setVaccine] = useState();
+  const [nameNoteStoreID, setNameNoteStoreID] = useState();
 
   const [isEditingTransaction, toggleEditTransaction] = useToggle(false);
   const [isModalOpen, toggleModal] = useToggle(false);
@@ -122,6 +123,10 @@ export const VaccinationEventComponent = ({
         isDeletedVaccinationEvent: !!vaccinationEventNameNote?.isDeleted,
       });
     }
+
+    if (vaccinationEventNameNote?.storeID) {
+      setNameNoteStoreID(vaccinationEventNameNote?.storeID);
+    }
   }, [vaccinationEventNameNote]);
 
   useEffect(() => {
@@ -150,10 +155,9 @@ export const VaccinationEventComponent = ({
       const nameNoteStoreName = vaccinationEvent?.storeName;
 
       const localString = modalStrings.vaccine_event_not_editable_store;
-
       const alert = nameNoteStoreName
         ? modalStrings.formatString(localString, nameNoteStoreName)
-        : modalStrings.vaccine_event_not_editable;
+        : modalStrings.formatString(localString, nameNoteStoreID);
       setAlertText(alert);
     }
   }, [vaccinationEvent]);

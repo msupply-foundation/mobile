@@ -222,7 +222,7 @@ const getPatientUniqueCode = database => {
 
 const createNameNote = (
   database,
-  { id, data, patientEventID, nameID, entryDate = new Date(), isDeleted = false }
+  { id, data, patientEventID, nameID, entryDate = new Date(), isDeleted = false, storeID }
 ) => {
   const patientEvent = database.get('PatientEvent', patientEventID);
   const name = database.get('Name', nameID);
@@ -234,6 +234,7 @@ const createNameNote = (
       patientEvent,
       entryDate: new Date(entryDate),
       isDeleted,
+      storeID,
     });
     newNameNote.data = data;
   }
