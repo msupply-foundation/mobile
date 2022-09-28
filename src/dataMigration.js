@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 /**
  * mSupply Mobile
  * Sustainable Solutions (NZ) Ltd. 2019
@@ -94,7 +95,7 @@ const dataMigrations = [
       // as supplying store during initial sync.
       if (
         settings.get(SETTINGS_KEYS.SUPPLYING_STORE_NAME_ID) ===
-          'B1938F4FFDC2074DB5408B435ACEB198' ||
+        'B1938F4FFDC2074DB5408B435ACEB198' ||
         settings.get(SETTINGS_KEYS.SUPPLYING_STORE_ID) === '734CC3EC70283A4AABC4E645C8B1E11D'
       ) {
         settings.set(SETTINGS_KEYS.SUPPLYING_STORE_NAME_ID, 'E5D7BB38571C1F428AF397240EEB285F');
@@ -277,36 +278,6 @@ const dataMigrations = [
           });
         });
       }
-    },
-  },
-  {
-    version: '8.6.0',
-    migrate: database => {
-      const names = database
-        .objects('Name')
-        .filtered('isDeceased == null || isDeleted == null')
-        .snapshot();
-
-      database.write(() => {
-        names.forEach(name =>
-          database.update('Name', {
-            id: name.id,
-            isDeceased: name.isDeceased === null ? false : name.isDeceased,
-            isDeleted: name.isDeleted === null ? false : name.isDeleted,
-          })
-        );
-      });
-
-      const nameNotes = database.objects('NameNote').filtered('isDeleted == null').snapshot();
-
-      database.write(() => {
-        nameNotes.forEach(nameNote =>
-          database.update('NameNote', {
-            id: nameNote.id,
-            isDeleted: nameNote.isDeleted === null ? false : nameNote.isDeleted,
-          })
-        );
-      });
     },
   },
 ];
