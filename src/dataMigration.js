@@ -279,6 +279,36 @@ const dataMigrations = [
       }
     },
   },
+  {
+    version: '8.6.0',
+    migrate: database => {
+      const names = database
+        .objects('Name')
+        .filtered('isDeceased == null || isDeleted == null')
+        .snapshot();
+
+      database.write(() => {
+        names.forEach(name =>
+          database.update('Name', {
+            id: name.id,
+            isDeceased: name.isDeceased === null ? false : name.isDeceased,
+            isDeleted: name.isDeleted === null ? false : name.isDeleted,
+          })
+        );
+      });
+
+      const nameNotes = database.objects('NameNote').filtered('isDeleted == null').snapshot();
+
+      database.write(() => {
+        nameNotes.forEach(nameNote =>
+          database.update('NameNote', {
+            id: nameNote.id,
+            isDeleted: nameNote.isDeleted === null ? false : nameNote.isDeleted,
+          })
+        );
+      });
+    },
+  },
 ];
 
 export default dataMigrations;

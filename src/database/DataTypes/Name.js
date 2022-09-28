@@ -197,7 +197,7 @@ Name.schema = {
     middleName: { type: 'string', optional: true },
     lastName: { type: 'string', optional: true },
     isActive: { type: 'bool', optional: true },
-    isDeceased: { type: 'bool', optional: true },
+    isDeceased: { type: 'bool', default: false, optional: true },
     isDeleted: { type: 'bool', default: false, optional: true },
     isCustomer: { type: 'bool', default: false },
     isSupplier: { type: 'bool', default: false },
