@@ -13,15 +13,22 @@ import { Button } from 'react-native-ui-components';
 
 import { UserActions } from '../../actions';
 import { SETTINGS_KEYS } from '../../settings';
+import { gotoSettings } from '../../navigation/actions';
 
 import globalStyles, { WHITE, SUSSOL_ORANGE, WARM_GREY } from '../../globalStyles';
 import { Flag, IconButton } from '..';
 import { GenericChoiceList } from '../modalChildren/GenericChoiceList';
 import { ModalContainer } from './ModalContainer';
-import { LanguageIcon } from '../icons';
+import { LanguageIcon, CogIcon } from '../icons';
 import { AuthFormView } from '../AuthFormView';
 
-import { LANGUAGE_NAMES, LANGUAGE_CHOICE, authStrings, navStrings } from '../../localization';
+import {
+  LANGUAGE_NAMES,
+  LANGUAGE_CHOICE,
+  authStrings,
+  navStrings,
+  buttonStrings,
+} from '../../localization';
 import { getModalTitle, MODAL_KEYS } from '../../utilities';
 import { setCurrencyLocalisation } from '../../localization/currency';
 import { setDateLocale } from '../../localization/utilities';
@@ -136,7 +143,8 @@ class LoginModal extends React.Component {
   renderFlag = ({ code }) => <Flag countryCode={code} />;
 
   render() {
-    const { isAuthenticated, settings } = this.props;
+    const { isAuthenticated, settings, toSettings } = this.props;
+    console.log('isAuthenticated ', isAuthenticated);
     const { authStatus, username, password, isLanguageModalOpen } = this.state;
     const storeName = UIDatabase.objects('Name').filtered(
       'id == $0',
@@ -227,6 +235,9 @@ class LoginModal extends React.Component {
               this.setState({ isLanguageModalOpen: true });
             }}
           />
+          <IconButton Icon={<CogIcon />} label={buttonStrings.settings} onPress={toSettings}>
+            {console.log('toSettings ', toSettings)}
+          </IconButton>
           <Text style={globalStyles.authWindowButtonText}>v{this.appVersion}</Text>
         </View>
         <ModalContainer
@@ -253,10 +264,12 @@ LoginModal.propTypes = {
   isAuthenticated: PropTypes.bool.isRequired,
   onAuthentication: PropTypes.func.isRequired,
   settings: PropTypes.object.isRequired,
+  toSettings: PropTypes.func.isRequired,
 };
 
 const mapDispatchToProps = dispatch => ({
   changeCurrentLanguage: code => dispatch(UserActions.setLanguage(code)),
+  toSettings: () => dispatch(gotoSettings()),
 });
 
 export default connect(null, mapDispatchToProps)(LoginModal);

@@ -339,7 +339,7 @@ const mapStateToProps = state => {
     usingCashRegister,
     usingModules,
   } = modules;
-
+  console.log('Menu state ', state);
   const isAdmin = selectCurrentUserIsAdmin(state);
   const hasVaccines = selectHasVaccines(state);
 

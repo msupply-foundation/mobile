@@ -212,6 +212,8 @@ const Settings = ({
     [syncURL]
   );
 
+  console.log('pageInfoColumns ', pageInfoColumns);
+
   return (
     <DataTablePageView>
       <TouchableOpacity style={topRow} onPress={onSave}>

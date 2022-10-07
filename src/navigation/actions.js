@@ -187,6 +187,8 @@ export const gotoSettings = () =>
     },
   });
 
+console.log('gotoSettings ', gotoSettings);
+
 /**
  * Pushes the Realm explorer route onto the main navigation stack.
  */

@@ -11,6 +11,7 @@ export const selectCurrentUser = ({ user }) => {
 export const selectCurrentUserIsAdmin = ({ user }) => {
   const { currentUser } = user;
   const { isAdmin = false } = currentUser ?? {};
+  console.log('isAdmin ', isAdmin);
   return isAdmin;
 };
 
