@@ -53,6 +53,7 @@ class LoginModal extends React.Component {
       username: username || '',
       password: '',
       isLanguageModalOpen: false,
+      isSettingAuthModalOpen: false,
     };
     this.appVersion = packageJson.version;
     this.passwordInputRef = null;
@@ -131,6 +132,12 @@ class LoginModal extends React.Component {
     this.setState({ isLanguageModalOpen: false });
   };
 
+  onHandleSettingAuthModal = () => {
+    this.setState(prevState => ({
+      isSettingAuthModalOpen: !prevState.isSettingAuthModalOpen,
+    }));
+  };
+
   onSelectLanguage = ({ item }) => {
     const { settings, changeCurrentLanguage } = this.props;
     changeCurrentLanguage(item.code);
@@ -145,11 +152,18 @@ class LoginModal extends React.Component {
   render() {
     const { isAuthenticated, settings, toSettings } = this.props;
     console.log('isAuthenticated ', isAuthenticated);
-    const { authStatus, username, password, isLanguageModalOpen } = this.state;
+    const {
+      authStatus,
+      username,
+      password,
+      isLanguageModalOpen,
+      isSettingAuthModalOpen,
+    } = this.state;
     const storeName = UIDatabase.objects('Name').filtered(
       'id == $0',
       settings.get(SETTINGS_KEYS.THIS_STORE_NAME_ID)
     )[0]?.name;
+    console.log('isSettingAuthModalOpen ', isSettingAuthModalOpen);
 
     return (
       <ModalContainer
@@ -235,7 +249,11 @@ class LoginModal extends React.Component {
               this.setState({ isLanguageModalOpen: true });
             }}
           />
-          <IconButton Icon={<CogIcon />} label={buttonStrings.settings} onPress={toSettings}>
+          <IconButton
+            Icon={<CogIcon />}
+            label={buttonStrings.settings}
+            onPress={this.onHandleSettingAuthModal}
+          >
             {console.log('toSettings ', toSettings)}
           </IconButton>
           <Text style={globalStyles.authWindowButtonText}>v{this.appVersion}</Text>
@@ -252,6 +270,34 @@ class LoginModal extends React.Component {
             renderLeftComponent={this.renderFlag}
             highlightValue={LANGUAGE_NAMES[settings.get(SETTINGS_KEYS.CURRENT_LANGUAGE)]}
           />
+        </ModalContainer>
+        <ModalContainer
+          style={[globalStyles.modal, globalStyles.authFormModal]}
+          isVisible={isSettingAuthModalOpen}
+          onClose={this.onHandleSettingAuthModal}
+          title="Authorization"
+        >
+          <View style={[globalStyles.verticalContainer, { flex: 1 }]} backgroundColor={WHITE}>
+            <AuthFormView>
+              <View style={globalStyles.horizontalContainer}>
+                <FormPasswordInput
+                  value={password}
+                  placeholder={authStrings.password}
+                  returnKeyType="next"
+                />
+              </View>
+              <View style={globalStyles.authFormButtonContainer}>
+                <Button
+                  style={[globalStyles.authFormButton, globalStyles.loginButton]}
+                  textStyle={globalStyles.authFormButtonText}
+                  text="Verify"
+                  onPress={this.onLogin}
+                  disabledColor={WARM_GREY}
+                  isDisabled={!this.canAttemptLogin}
+                />
+              </View>
+            </AuthFormView>
+          </View>
         </ModalContainer>
       </ModalContainer>
     );
