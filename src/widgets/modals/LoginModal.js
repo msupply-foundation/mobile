@@ -13,7 +13,6 @@ import { Button } from 'react-native-ui-components';
 
 import { UserActions } from '../../actions';
 import { SETTINGS_KEYS } from '../../settings';
-import { gotoSettings } from '../../navigation/actions';
 
 import globalStyles, { WHITE, SUSSOL_ORANGE, WARM_GREY } from '../../globalStyles';
 import { Flag, IconButton } from '..';
@@ -35,6 +34,7 @@ import { setDateLocale } from '../../localization/utilities';
 import { UIDatabase } from '../../database';
 import packageJson from '../../../package.json';
 import { FormPasswordInput } from '../FormInputs/FormPasswordInput';
+import { SettingsPage } from '../../pages';
 
 const AUTH_STATUSES = {
   UNAUTHENTICATED: 'unauthenticated',
@@ -54,6 +54,8 @@ class LoginModal extends React.Component {
       password: '',
       isLanguageModalOpen: false,
       isSettingAuthModalOpen: false,
+      isSettingModalOpen: false,
+      adminPassword: '',
     };
     this.appVersion = packageJson.version;
     this.passwordInputRef = null;
@@ -114,6 +116,26 @@ class LoginModal extends React.Component {
     );
   }
 
+  onVerify = () => {
+    const { adminPassword } = this.state;
+    this.setState({ authStatus: AUTH_STATUSES.AUTHENTICATING });
+    if (adminPassword === 'kathmandu312') {
+      this.setState({
+        authStatus: AUTH_STATUSES.AUTHENTICATED,
+        isSettingModalOpen: true,
+        isSettingAuthModalOpen: false,
+      });
+      console.log('Verification success ');
+    } else {
+      console.log('Verification failed ');
+    }
+  };
+
+  get canAttemptVerify() {
+    const { authStatus, adminPassword } = this.state;
+    return authStatus === AUTH_STATUSES.UNAUTHENTICATED && adminPassword.length > 0;
+  }
+
   get buttonText() {
     const { authStatus, error } = this.state;
 
@@ -138,6 +160,10 @@ class LoginModal extends React.Component {
     }));
   };
 
+  handleOnChangeAdminPassword = text => {
+    this.setState({ adminPassword: text, authStatus: AUTH_STATUSES.UNAUTHENTICATED });
+  };
+
   onSelectLanguage = ({ item }) => {
     const { settings, changeCurrentLanguage } = this.props;
     changeCurrentLanguage(item.code);
@@ -150,20 +176,20 @@ class LoginModal extends React.Component {
   renderFlag = ({ code }) => <Flag countryCode={code} />;
 
   render() {
-    const { isAuthenticated, settings, toSettings } = this.props;
-    console.log('isAuthenticated ', isAuthenticated);
+    const { isAuthenticated, settings } = this.props;
     const {
       authStatus,
       username,
       password,
       isLanguageModalOpen,
       isSettingAuthModalOpen,
+      isSettingModalOpen,
+      adminPassword,
     } = this.state;
     const storeName = UIDatabase.objects('Name').filtered(
       'id == $0',
       settings.get(SETTINGS_KEYS.THIS_STORE_NAME_ID)
     )[0]?.name;
-    console.log('isSettingAuthModalOpen ', isSettingAuthModalOpen);
 
     return (
       <ModalContainer
@@ -253,9 +279,7 @@ class LoginModal extends React.Component {
             Icon={<CogIcon />}
             label={buttonStrings.settings}
             onPress={this.onHandleSettingAuthModal}
-          >
-            {console.log('toSettings ', toSettings)}
-          </IconButton>
+          />
           <Text style={globalStyles.authWindowButtonText}>v{this.appVersion}</Text>
         </View>
         <ModalContainer
@@ -281,7 +305,9 @@ class LoginModal extends React.Component {
             <AuthFormView>
               <View style={globalStyles.horizontalContainer}>
                 <FormPasswordInput
-                  value={password}
+                  value={adminPassword}
+                  editable={authStatus !== AUTH_STATUSES.AUTHENTICATING}
+                  onChangeText={this.handleOnChangeAdminPassword}
                   placeholder={authStrings.password}
                   returnKeyType="next"
                 />
@@ -291,13 +317,21 @@ class LoginModal extends React.Component {
                   style={[globalStyles.authFormButton, globalStyles.loginButton]}
                   textStyle={globalStyles.authFormButtonText}
                   text="Verify"
-                  onPress={this.onLogin}
+                  onPress={this.onVerify}
                   disabledColor={WARM_GREY}
-                  isDisabled={!this.canAttemptLogin}
+                  isDisabled={!this.canAttemptVerify}
                 />
               </View>
             </AuthFormView>
           </View>
+        </ModalContainer>
+        <ModalContainer
+          style={globalStyles.modal}
+          isVisible={isSettingModalOpen}
+          onClose={() => this.setState({ isSettingModalOpen: false })}
+          title="Settings"
+        >
+          <SettingsPage />
         </ModalContainer>
       </ModalContainer>
     );
@@ -310,12 +344,10 @@ LoginModal.propTypes = {
   isAuthenticated: PropTypes.bool.isRequired,
   onAuthentication: PropTypes.func.isRequired,
   settings: PropTypes.object.isRequired,
-  toSettings: PropTypes.func.isRequired,
 };
 
 const mapDispatchToProps = dispatch => ({
   changeCurrentLanguage: code => dispatch(UserActions.setLanguage(code)),
-  toSettings: () => dispatch(gotoSettings()),
 });
 
 export default connect(null, mapDispatchToProps)(LoginModal);
