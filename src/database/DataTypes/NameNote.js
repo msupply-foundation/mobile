@@ -44,7 +44,7 @@ NameNote.schema = {
     name: 'Name',
     note: { type: 'string', optional: true },
     patientEvent: 'PatientEvent',
-    storeID: { type: 'string', optional: true },
+    storeID: { type: 'string', default: '' },
   },
 };
 
