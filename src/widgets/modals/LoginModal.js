@@ -35,6 +35,7 @@ import { UIDatabase } from '../../database';
 import packageJson from '../../../package.json';
 import { FormPasswordInput } from '../FormInputs/FormPasswordInput';
 import { SettingsPage } from '../../pages';
+import { DataTablePageModal } from './DataTablePageModal';
 
 const AUTH_STATUSES = {
   UNAUTHENTICATED: 'unauthenticated',
@@ -116,12 +117,10 @@ class LoginModal extends React.Component {
     );
   }
 
-  onVerify = () => {
-    const { adminPassword } = this.state;
-    this.setState({ authStatus: AUTH_STATUSES.AUTHENTICATING });
-    if (adminPassword === 'kathmandu312') {
+  onVerify = enteredPassword => {
+    console.log('enteredPassword ', enteredPassword);
+    if (enteredPassword === 'kathmandu312') {
       this.setState({
-        authStatus: AUTH_STATUSES.AUTHENTICATED,
         isSettingModalOpen: true,
         isSettingAuthModalOpen: false,
       });
@@ -130,11 +129,6 @@ class LoginModal extends React.Component {
       console.log('Verification failed ');
     }
   };
-
-  get canAttemptVerify() {
-    const { authStatus, adminPassword } = this.state;
-    return authStatus === AUTH_STATUSES.UNAUTHENTICATED && adminPassword.length > 0;
-  }
 
   get buttonText() {
     const { authStatus, error } = this.state;
@@ -158,10 +152,6 @@ class LoginModal extends React.Component {
     this.setState(prevState => ({
       isSettingAuthModalOpen: !prevState.isSettingAuthModalOpen,
     }));
-  };
-
-  handleOnChangeAdminPassword = text => {
-    this.setState({ adminPassword: text, authStatus: AUTH_STATUSES.UNAUTHENTICATED });
   };
 
   onSelectLanguage = ({ item }) => {
@@ -295,36 +285,13 @@ class LoginModal extends React.Component {
             highlightValue={LANGUAGE_NAMES[settings.get(SETTINGS_KEYS.CURRENT_LANGUAGE)]}
           />
         </ModalContainer>
-        <ModalContainer
-          style={[globalStyles.modal, globalStyles.authFormModal]}
-          isVisible={isSettingAuthModalOpen}
+        <DataTablePageModal
+          isOpen={isSettingAuthModalOpen}
+          modalKey={MODAL_KEYS.CONFIRM_USER_PASSWORD}
+          currentValue={adminPassword}
           onClose={this.onHandleSettingAuthModal}
-          title="Authorization"
-        >
-          <View style={[globalStyles.verticalContainer, { flex: 1 }]} backgroundColor={WHITE}>
-            <AuthFormView>
-              <View style={globalStyles.horizontalContainer}>
-                <FormPasswordInput
-                  value={adminPassword}
-                  editable={authStatus !== AUTH_STATUSES.AUTHENTICATING}
-                  onChangeText={this.handleOnChangeAdminPassword}
-                  placeholder={authStrings.password}
-                  returnKeyType="next"
-                />
-              </View>
-              <View style={globalStyles.authFormButtonContainer}>
-                <Button
-                  style={[globalStyles.authFormButton, globalStyles.loginButton]}
-                  textStyle={globalStyles.authFormButtonText}
-                  text="Verify"
-                  onPress={this.onVerify}
-                  disabledColor={WARM_GREY}
-                  isDisabled={!this.canAttemptVerify}
-                />
-              </View>
-            </AuthFormView>
-          </View>
-        </ModalContainer>
+          onSelect={this.onVerify}
+        />
         <ModalContainer
           style={globalStyles.modal}
           isVisible={isSettingModalOpen}
