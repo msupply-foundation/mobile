@@ -58,6 +58,8 @@ const Settings = ({
 }) => {
   const [state, setState] = useState({
     syncURL: UIDatabase.getSetting(SETTINGS_KEYS.SYNC_URL),
+    siteName: UIDatabase.getSetting(SETTINGS_KEYS.SYNC_SITE_NAME),
+    syncSiteID: UIDatabase.getSetting(SETTINGS_KEYS.SYNC_SITE_ID),
     modalKey: '',
     syncPassword: '',
     syncInterval:
@@ -69,7 +71,15 @@ const Settings = ({
 
   const withLoadingIndicator = useLoadingIndicator();
 
-  const { modalKey, syncURL, syncPassword, syncInterval, idleLogoutInterval } = state;
+  const {
+    modalKey,
+    syncURL,
+    syncPassword,
+    syncInterval,
+    idleLogoutInterval,
+    syncSiteID,
+    siteName,
+  } = state;
 
   const closeModal = () => setState({ ...state, modalKey: '' });
   const openModal = newModalKey => setState({ ...state, modalKey: newModalKey });
@@ -196,6 +206,16 @@ const Settings = ({
     () => [
       [
         {
+          title: 'Sync site id:',
+          isEditingDisabled: 'true',
+          info: syncSiteID,
+        },
+        {
+          title: 'Sync site name:',
+          isEditingDisabled: 'true',
+          info: siteName,
+        },
+        {
           title: `${generalStrings.sync_url}:`,
           editableType: 'text',
           info: syncURL,
@@ -209,10 +229,8 @@ const Settings = ({
         },
       ],
     ],
-    [syncURL]
+    [syncSiteID, siteName, syncURL]
   );
-
-  console.log('pageInfoColumns ', pageInfoColumns);
 
   return (
     <DataTablePageView>
