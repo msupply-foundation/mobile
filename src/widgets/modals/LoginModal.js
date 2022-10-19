@@ -8,8 +8,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { Image, Text, TextInput, View } from 'react-native';
+import { Image, Text, TextInput, ToastAndroid, View } from 'react-native';
 import { Button } from 'react-native-ui-components';
+import { hashPassword } from 'sussol-utilities';
 
 import { UserActions } from '../../actions';
 import { SETTINGS_KEYS } from '../../settings';
@@ -118,15 +119,15 @@ class LoginModal extends React.Component {
   }
 
   onVerify = enteredPassword => {
-    console.log('enteredPassword ', enteredPassword);
-    if (enteredPassword === 'kathmandu312') {
+    const passwordMatch =
+      hashPassword(enteredPassword) === process.env.REACT_APP_ADMIN_PASSWORD_HASHED;
+    if (passwordMatch) {
       this.setState({
         isSettingModalOpen: true,
         isSettingAuthModalOpen: false,
       });
-      console.log('Verification success ');
     } else {
-      console.log('Verification failed ');
+      ToastAndroid.show('Admin password is wrong', ToastAndroid.LONG);
     }
   };
 
