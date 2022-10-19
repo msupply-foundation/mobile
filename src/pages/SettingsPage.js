@@ -11,11 +11,13 @@ import { Dimensions, Text, View, ToastAndroid, TouchableOpacity } from 'react-na
 import RNRestart from 'react-native-restart';
 import { Button } from 'react-native-ui-components';
 
+// eslint-disable-next-line import/no-unresolved
+import { REACT_APP_ADMIN_PASSWORD_HASHED } from '@env';
+
 import { importData, UIDatabase } from '../database';
 import { SETTINGS_KEYS } from '../settings';
 import AppSettings from '../settings/MobileAppSettings';
 import { MODAL_KEYS } from '../utilities';
-
 import {
   gotoEditSensorPage,
   gotoFridgeDetailPage,
@@ -118,6 +120,9 @@ const Settings = ({
 
   const save = enteredPassword => {
     const passwordMatch = hashPassword(enteredPassword) === currentUserPasswordHash;
+    console.log('hashPassword(enteredPassword) ', hashPassword(enteredPassword));
+    console.log('REACT_APP_ADMIN_PASSWORD_HASHED ', REACT_APP_ADMIN_PASSWORD_HASHED);
+
     const toastMessage = passwordMatch
       ? generalStrings.new_details_saved
       : generalStrings.new_details_not_saved;
