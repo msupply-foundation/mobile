@@ -157,7 +157,11 @@ const Settings = ({
   };
 
   const reset = enteredPassword => {
-    const passwordMatch = hashPassword(enteredPassword) === currentUserPasswordHash;
+    const enteredPasswordHash = hashPassword(enteredPassword);
+    const passwordMatch = currentUserPasswordHash
+      ? enteredPasswordHash === currentUserPasswordHash
+      : enteredPasswordHash === REACT_APP_ADMIN_PASSWORD_HASHED;
+
     const toastMessage = passwordMatch
       ? generalStrings.new_details_saved
       : generalStrings.new_details_not_saved;
