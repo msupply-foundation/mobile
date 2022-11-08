@@ -119,9 +119,10 @@ const Settings = ({
   };
 
   const save = enteredPassword => {
+    const enteredPasswordHash = hashPassword(enteredPassword);
     const passwordMatch = currentUserPasswordHash
-      ? hashPassword(enteredPassword) === currentUserPasswordHash
-      : hashPassword(enteredPassword) === REACT_APP_ADMIN_PASSWORD_HASHED;
+      ? enteredPasswordHash === currentUserPasswordHash
+      : enteredPasswordHash === REACT_APP_ADMIN_PASSWORD_HASHED;
 
     const toastMessage = passwordMatch
       ? generalStrings.new_details_saved

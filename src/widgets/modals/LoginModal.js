@@ -119,8 +119,8 @@ class LoginModal extends React.Component {
   }
 
   onVerify = enteredPassword => {
-    const passwordMatch =
-      hashPassword(enteredPassword) === process.env.REACT_APP_ADMIN_PASSWORD_HASHED;
+    const adminPasswordHash = process.env.REACT_APP_ADMIN_PASSWORD_HASHED;
+    const passwordMatch = hashPassword(enteredPassword) === adminPasswordHash;
     if (passwordMatch) {
       this.setState({
         isSettingModalOpen: true,
