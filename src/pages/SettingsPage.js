@@ -27,7 +27,7 @@ import {
 
 import { ConfirmIcon } from '../widgets/icons';
 import { DataTablePageView, PageInfo } from '../widgets';
-import { DataTablePageModal } from '../widgets/modals';
+import { DataTablePageModal, ModalContainer } from '../widgets/modals';
 
 import { generalStrings, buttonStrings } from '../localization';
 import { selectCurrentUserPasswordHash } from '../selectors/user';
@@ -40,6 +40,7 @@ import globalStyles, { APP_FONT_FAMILY, DARK_GREY, SUSSOL_ORANGE } from '../glob
 import { FlexView } from '../widgets/FlexView';
 import { MILLISECONDS } from '../utilities/constants';
 import { SyncAuthenticator } from '../authentication/SyncAuthenticator';
+import { RealmExplorer } from './RealmExplorer';
 
 const exportData = async () => {
   const syncSiteName = UIDatabase.getSetting(SETTINGS_KEYS.SYNC_SITE_NAME);
@@ -71,6 +72,7 @@ const Settings = ({
       3,
   });
 
+  const [isRealmExplorerModalOpen, setRealmExplorerModalOpen] = useState(false);
   const withLoadingIndicator = useLoadingIndicator();
 
   const {
@@ -116,6 +118,15 @@ const Settings = ({
 
   const editIdleLogoutInterval = newIdleLogoutInterval => {
     setState(oldState => ({ ...oldState, idleLogoutInterval: newIdleLogoutInterval }));
+  };
+
+  const onLoadRealmExplorer = () => {
+    if (!currentUserPasswordHash) {
+      // If login as Admin, not normal mobile user
+      setRealmExplorerModalOpen(true);
+    } else {
+      toRealmExplorer();
+    }
   };
 
   const save = enteredPassword => {
@@ -292,7 +303,7 @@ const Settings = ({
           </FlexRow>
         </View>
         <View>
-          <MenuButton text={buttonStrings.realm_explorer} onPress={toRealmExplorer} />
+          <MenuButton text={buttonStrings.realm_explorer} onPress={onLoadRealmExplorer} />
           <MenuButton
             text={buttonStrings.export_data}
             onPress={requestExportStorageWritePermission}
@@ -314,6 +325,14 @@ const Settings = ({
         onClose={closeModal}
         onSelect={getModalSelect(modalKey)}
       />
+      <ModalContainer
+        style={globalStyles.modal}
+        isVisible={isRealmExplorerModalOpen}
+        onClose={() => setRealmExplorerModalOpen(false)}
+        title="Realm Explorer"
+      >
+        <RealmExplorer />
+      </ModalContainer>
     </DataTablePageView>
   );
 };
