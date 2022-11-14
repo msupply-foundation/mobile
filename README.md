@@ -14,29 +14,15 @@ See [https://docs.msupply.foundation/en:mobile](https://docs.msupply.foundation/
 
 ## Getting started
 
-### Prerequisites
+### Installing mSupply mobile
 
-#### Android SDK
-
-- Install Android Studio and SDK tools: https://developer.android.com/studio.
-- Install SDKMAN for managing Java versions: https://sdkman.io/.
-
-#### React Native
-
-- Install nvm for managing Node versions: https://github.com/nvm-sh/nvm.
-- Install yarn for managing Node packages: https://yarnpkg.com/lang/en/.
-- Install React Native: https://reactnative.dev/docs/environment-setup. Follow the steps listed under "Building Projects with Native Code" and set Target OS as "Android".
-
-### [Installing mSupply mobile](../../wiki/Installation)
+- Follow the [Prerequisites](../../wiki/Prerequisites) to see the applications, environments or SDKs you would need.
+- Follow the [Installation guide](../../wiki/Installation) to set up your development environment.
+- Familiarise yourself with our [Git workflow](../..//wiki/Git-workflow) and [coding conventions](../..//wiki/Code-conventions).
 
 ## Contributors
 
 We welcome contributions from external developers!
-
-### Prerequisites
-
-- Follow the [Installation guide](https://github.com/openmsupply/mobile/wiki/Installation) to set up your development environment.
-- Familiarise yourself with our [Git workflow](https://github.com/openmsupply/mobile/wiki/Git-workflow) and [coding conventions](https://github.com/openmsupply/mobile/wiki/Code-conventions).
 
 ### How to contribute
 
