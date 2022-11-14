@@ -20,6 +20,10 @@ See [https://docs.msupply.foundation/en:mobile](https://docs.msupply.foundation/
 - Follow the [Installation guide](../../wiki/Installation) to set up your development environment.
 - Familiarise yourself with our [Git workflow](../..//wiki/Git-workflow) and [coding conventions](../..//wiki/Code-conventions).
 
+### Build and release
+
+- Follow the [Building & Releasing](../../wiki/Building-&-Releasing) guide.
+
 ## Contributors
 
 We welcome contributions from external developers!
