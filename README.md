@@ -29,7 +29,7 @@ See [https://docs.msupply.foundation/en:mobile](https://docs.msupply.foundation/
 
 ### Installing
 
-- https://github.com/openmsupply/mobile/wiki/Installation
+- [wiki/Installation]
 
 ## Contributors
 
