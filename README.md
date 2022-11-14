@@ -29,9 +29,7 @@ See [https://docs.msupply.foundation/en:mobile](https://docs.msupply.foundation/
 
 ### Installing
 
-- Clone the repo: `git clone https://github.com/openmsupply/mobile.git`.
-- Setup local node environment as specified in `.nvmrc`: `nvm install && nvm use`.
-- Install/update app dependencies: `yarn install`.
+- https://github.com/openmsupply/mobile/wiki/Installation
 
 ## Contributors
 
