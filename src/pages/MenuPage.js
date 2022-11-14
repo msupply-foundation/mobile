@@ -339,7 +339,6 @@ const mapStateToProps = state => {
     usingCashRegister,
     usingModules,
   } = modules;
-
   const isAdmin = selectCurrentUserIsAdmin(state);
   const hasVaccines = selectHasVaccines(state);
 

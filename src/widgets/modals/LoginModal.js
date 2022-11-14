@@ -8,8 +8,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { Image, Text, TextInput, View } from 'react-native';
+import { Image, Text, TextInput, ToastAndroid, View } from 'react-native';
 import { Button } from 'react-native-ui-components';
+import { hashPassword } from 'sussol-utilities';
 
 import { UserActions } from '../../actions';
 import { SETTINGS_KEYS } from '../../settings';
@@ -18,16 +19,24 @@ import globalStyles, { WHITE, SUSSOL_ORANGE, WARM_GREY } from '../../globalStyle
 import { Flag, IconButton } from '..';
 import { GenericChoiceList } from '../modalChildren/GenericChoiceList';
 import { ModalContainer } from './ModalContainer';
-import { LanguageIcon } from '../icons';
+import { LanguageIcon, CogIcon } from '../icons';
 import { AuthFormView } from '../AuthFormView';
 
-import { LANGUAGE_NAMES, LANGUAGE_CHOICE, authStrings, navStrings } from '../../localization';
+import {
+  LANGUAGE_NAMES,
+  LANGUAGE_CHOICE,
+  authStrings,
+  navStrings,
+  buttonStrings,
+} from '../../localization';
 import { getModalTitle, MODAL_KEYS } from '../../utilities';
 import { setCurrencyLocalisation } from '../../localization/currency';
 import { setDateLocale } from '../../localization/utilities';
 import { UIDatabase } from '../../database';
 import packageJson from '../../../package.json';
 import { FormPasswordInput } from '../FormInputs/FormPasswordInput';
+import { SettingsPage } from '../../pages';
+import { DataTablePageModal } from './DataTablePageModal';
 
 const AUTH_STATUSES = {
   UNAUTHENTICATED: 'unauthenticated',
@@ -46,6 +55,9 @@ class LoginModal extends React.Component {
       username: username || '',
       password: '',
       isLanguageModalOpen: false,
+      isSettingAuthModalOpen: false,
+      isSettingModalOpen: false,
+      adminPassword: '',
     };
     this.appVersion = packageJson.version;
     this.passwordInputRef = null;
@@ -106,6 +118,19 @@ class LoginModal extends React.Component {
     );
   }
 
+  onVerify = enteredPassword => {
+    const adminPasswordHash = process.env.REACT_APP_ADMIN_PASSWORD_HASHED;
+    const passwordMatch = hashPassword(enteredPassword) === adminPasswordHash;
+    if (passwordMatch) {
+      this.setState({
+        isSettingModalOpen: true,
+        isSettingAuthModalOpen: false,
+      });
+    } else {
+      ToastAndroid.show('Admin password is wrong', ToastAndroid.LONG);
+    }
+  };
+
   get buttonText() {
     const { authStatus, error } = this.state;
 
@@ -124,6 +149,12 @@ class LoginModal extends React.Component {
     this.setState({ isLanguageModalOpen: false });
   };
 
+  onHandleSettingAuthModal = () => {
+    this.setState(prevState => ({
+      isSettingAuthModalOpen: !prevState.isSettingAuthModalOpen,
+    }));
+  };
+
   onSelectLanguage = ({ item }) => {
     const { settings, changeCurrentLanguage } = this.props;
     changeCurrentLanguage(item.code);
@@ -137,7 +168,15 @@ class LoginModal extends React.Component {
 
   render() {
     const { isAuthenticated, settings } = this.props;
-    const { authStatus, username, password, isLanguageModalOpen } = this.state;
+    const {
+      authStatus,
+      username,
+      password,
+      isLanguageModalOpen,
+      isSettingAuthModalOpen,
+      isSettingModalOpen,
+      adminPassword,
+    } = this.state;
     const storeName = UIDatabase.objects('Name').filtered(
       'id == $0',
       settings.get(SETTINGS_KEYS.THIS_STORE_NAME_ID)
@@ -227,6 +266,11 @@ class LoginModal extends React.Component {
               this.setState({ isLanguageModalOpen: true });
             }}
           />
+          <IconButton
+            Icon={<CogIcon />}
+            label={buttonStrings.settings}
+            onPress={this.onHandleSettingAuthModal}
+          />
           <Text style={globalStyles.authWindowButtonText}>v{this.appVersion}</Text>
         </View>
         <ModalContainer
@@ -241,6 +285,21 @@ class LoginModal extends React.Component {
             renderLeftComponent={this.renderFlag}
             highlightValue={LANGUAGE_NAMES[settings.get(SETTINGS_KEYS.CURRENT_LANGUAGE)]}
           />
+        </ModalContainer>
+        <DataTablePageModal
+          isOpen={isSettingAuthModalOpen}
+          modalKey={MODAL_KEYS.CONFIRM_USER_PASSWORD}
+          currentValue={adminPassword}
+          onClose={this.onHandleSettingAuthModal}
+          onSelect={this.onVerify}
+        />
+        <ModalContainer
+          style={globalStyles.modal}
+          isVisible={isSettingModalOpen}
+          onClose={() => this.setState({ isSettingModalOpen: false })}
+          title="Settings"
+        >
+          <SettingsPage />
         </ModalContainer>
       </ModalContainer>
     );

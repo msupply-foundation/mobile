@@ -11,11 +11,13 @@ import { Dimensions, Text, View, ToastAndroid, TouchableOpacity } from 'react-na
 import RNRestart from 'react-native-restart';
 import { Button } from 'react-native-ui-components';
 
+// eslint-disable-next-line import/no-unresolved
+import { REACT_APP_ADMIN_PASSWORD_HASHED } from '@env';
+
 import { importData, UIDatabase } from '../database';
 import { SETTINGS_KEYS } from '../settings';
 import AppSettings from '../settings/MobileAppSettings';
 import { MODAL_KEYS } from '../utilities';
-
 import {
   gotoEditSensorPage,
   gotoFridgeDetailPage,
@@ -25,7 +27,7 @@ import {
 
 import { ConfirmIcon } from '../widgets/icons';
 import { DataTablePageView, PageInfo } from '../widgets';
-import { DataTablePageModal } from '../widgets/modals';
+import { DataTablePageModal, ModalContainer } from '../widgets/modals';
 
 import { generalStrings, buttonStrings } from '../localization';
 import { selectCurrentUserPasswordHash } from '../selectors/user';
@@ -38,6 +40,7 @@ import globalStyles, { APP_FONT_FAMILY, DARK_GREY, SUSSOL_ORANGE } from '../glob
 import { FlexView } from '../widgets/FlexView';
 import { MILLISECONDS } from '../utilities/constants';
 import { SyncAuthenticator } from '../authentication/SyncAuthenticator';
+import { RealmExplorer } from './RealmExplorer';
 
 const exportData = async () => {
   const syncSiteName = UIDatabase.getSetting(SETTINGS_KEYS.SYNC_SITE_NAME);
@@ -58,6 +61,8 @@ const Settings = ({
 }) => {
   const [state, setState] = useState({
     syncURL: UIDatabase.getSetting(SETTINGS_KEYS.SYNC_URL),
+    siteName: UIDatabase.getSetting(SETTINGS_KEYS.SYNC_SITE_NAME),
+    syncSiteID: UIDatabase.getSetting(SETTINGS_KEYS.SYNC_SITE_ID),
     modalKey: '',
     syncPassword: '',
     syncInterval:
@@ -67,9 +72,18 @@ const Settings = ({
       3,
   });
 
+  const [isRealmExplorerModalOpen, setRealmExplorerModalOpen] = useState(false);
   const withLoadingIndicator = useLoadingIndicator();
 
-  const { modalKey, syncURL, syncPassword, syncInterval, idleLogoutInterval } = state;
+  const {
+    modalKey,
+    syncURL,
+    syncPassword,
+    syncInterval,
+    idleLogoutInterval,
+    syncSiteID,
+    siteName,
+  } = state;
 
   const closeModal = () => setState({ ...state, modalKey: '' });
   const openModal = newModalKey => setState({ ...state, modalKey: newModalKey });
@@ -106,8 +120,21 @@ const Settings = ({
     setState(oldState => ({ ...oldState, idleLogoutInterval: newIdleLogoutInterval }));
   };
 
+  const onLoadRealmExplorer = () => {
+    if (!currentUserPasswordHash) {
+      // If login as Admin, not normal mobile user
+      setRealmExplorerModalOpen(true);
+    } else {
+      toRealmExplorer();
+    }
+  };
+
   const save = enteredPassword => {
-    const passwordMatch = hashPassword(enteredPassword) === currentUserPasswordHash;
+    const enteredPasswordHash = hashPassword(enteredPassword);
+    const passwordMatch = currentUserPasswordHash
+      ? enteredPasswordHash === currentUserPasswordHash
+      : enteredPasswordHash === REACT_APP_ADMIN_PASSWORD_HASHED;
+
     const toastMessage = passwordMatch
       ? generalStrings.new_details_saved
       : generalStrings.new_details_not_saved;
@@ -141,7 +168,11 @@ const Settings = ({
   };
 
   const reset = enteredPassword => {
-    const passwordMatch = hashPassword(enteredPassword) === currentUserPasswordHash;
+    const enteredPasswordHash = hashPassword(enteredPassword);
+    const passwordMatch = currentUserPasswordHash
+      ? enteredPasswordHash === currentUserPasswordHash
+      : enteredPasswordHash === REACT_APP_ADMIN_PASSWORD_HASHED;
+
     const toastMessage = passwordMatch
       ? generalStrings.new_details_saved
       : generalStrings.new_details_not_saved;
@@ -196,6 +227,16 @@ const Settings = ({
     () => [
       [
         {
+          title: 'Sync site id:',
+          isEditingDisabled: 'true',
+          info: syncSiteID,
+        },
+        {
+          title: 'Sync site name:',
+          isEditingDisabled: 'true',
+          info: siteName,
+        },
+        {
           title: `${generalStrings.sync_url}:`,
           editableType: 'text',
           info: syncURL,
@@ -209,7 +250,7 @@ const Settings = ({
         },
       ],
     ],
-    [syncURL]
+    [syncSiteID, siteName, syncURL]
   );
 
   return (
@@ -262,7 +303,7 @@ const Settings = ({
           </FlexRow>
         </View>
         <View>
-          <MenuButton text={buttonStrings.realm_explorer} onPress={toRealmExplorer} />
+          <MenuButton text={buttonStrings.realm_explorer} onPress={onLoadRealmExplorer} />
           <MenuButton
             text={buttonStrings.export_data}
             onPress={requestExportStorageWritePermission}
@@ -284,6 +325,14 @@ const Settings = ({
         onClose={closeModal}
         onSelect={getModalSelect(modalKey)}
       />
+      <ModalContainer
+        style={globalStyles.modal}
+        isVisible={isRealmExplorerModalOpen}
+        onClose={() => setRealmExplorerModalOpen(false)}
+        title="Realm Explorer"
+      >
+        <RealmExplorer />
+      </ModalContainer>
     </DataTablePageView>
   );
 };
