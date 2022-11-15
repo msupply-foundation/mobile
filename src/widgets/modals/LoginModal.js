@@ -255,7 +255,7 @@ class LoginModal extends React.Component {
         <View style={globalStyles.bottomContainer}>
           <View style={globalStyles.horizontalContainer}>
             <View style={styles.marginRight}>
-              <IconButton Icon={<CogIcon />} onPress={this.onHandleSettingAuthModal} />
+              <IconButton Icon={<CogIcon size={25} />} onPress={this.onHandleSettingAuthModal} />
             </View>
             <IconButton
               Icon={<LanguageIcon />}
