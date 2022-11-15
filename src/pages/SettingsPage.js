@@ -87,8 +87,20 @@ const Settings = ({
 
   const closeModal = () => setState({ ...state, modalKey: '' });
   const openModal = newModalKey => setState({ ...state, modalKey: newModalKey });
-  const onSave = () => openModal(MODAL_KEYS.CONFIRM_USER_PASSWORD);
-  const onReset = () => openModal(MODAL_KEYS.CONFIRM_FACTORY_RESET);
+  const onSave = () => {
+    const confirmPasswordLabel = !currentUserPasswordHash
+      ? MODAL_KEYS.CONFIRM_MASTER_PASSWORD
+      : MODAL_KEYS.CONFIRM_USER_PASSWORD;
+
+    openModal(confirmPasswordLabel);
+  };
+  const onReset = () => {
+    const confirmFactoryResetLabel = !currentUserPasswordHash
+      ? MODAL_KEYS.CONFIRM_FACTORY_RESET_MASTER
+      : MODAL_KEYS.CONFIRM_FACTORY_RESET;
+
+    openModal(confirmFactoryResetLabel);
+  };
 
   const editSyncURL = newSyncURL => {
     if (!ValidUrl.isWebUri(newSyncURL)) ToastAndroid.show('Not a valid URL', ToastAndroid.LONG);
@@ -193,8 +205,10 @@ const Settings = ({
       case MODAL_KEYS.SYNC_PASSWORD_EDIT:
         return editSyncPassword;
       case MODAL_KEYS.CONFIRM_USER_PASSWORD:
+      case MODAL_KEYS.CONFIRM_MASTER_PASSWORD:
         return save;
       case MODAL_KEYS.CONFIRM_FACTORY_RESET:
+      case MODAL_KEYS.CONFIRM_FACTORY_RESET_MASTER:
         return reset;
       default:
         return null;
