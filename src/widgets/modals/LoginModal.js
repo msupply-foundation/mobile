@@ -22,13 +22,7 @@ import { ModalContainer } from './ModalContainer';
 import { LanguageIcon, CogIcon } from '../icons';
 import { AuthFormView } from '../AuthFormView';
 
-import {
-  LANGUAGE_NAMES,
-  LANGUAGE_CHOICE,
-  authStrings,
-  navStrings,
-  buttonStrings,
-} from '../../localization';
+import { LANGUAGE_NAMES, LANGUAGE_CHOICE, authStrings, navStrings } from '../../localization';
 import { getModalTitle, MODAL_KEYS } from '../../utilities';
 import { setCurrencyLocalisation } from '../../localization/currency';
 import { setDateLocale } from '../../localization/utilities';
@@ -259,18 +253,18 @@ class LoginModal extends React.Component {
           </AuthFormView>
         </View>
         <View style={globalStyles.bottomContainer}>
-          <IconButton
-            Icon={<LanguageIcon />}
-            label={navStrings.language}
-            onPress={() => {
-              this.setState({ isLanguageModalOpen: true });
-            }}
-          />
-          <IconButton
-            Icon={<CogIcon />}
-            label={buttonStrings.settings}
-            onPress={this.onHandleSettingAuthModal}
-          />
+          <View style={globalStyles.horizontalContainer}>
+            <View style={styles.marginRight}>
+              <IconButton Icon={<CogIcon size={25} />} onPress={this.onHandleSettingAuthModal} />
+            </View>
+            <IconButton
+              Icon={<LanguageIcon />}
+              label={navStrings.language}
+              onPress={() => {
+                this.setState({ isLanguageModalOpen: true });
+              }}
+            />
+          </View>
           <Text style={globalStyles.authWindowButtonText}>v{this.appVersion}</Text>
         </View>
         <ModalContainer
@@ -317,5 +311,9 @@ LoginModal.propTypes = {
 const mapDispatchToProps = dispatch => ({
   changeCurrentLanguage: code => dispatch(UserActions.setLanguage(code)),
 });
+
+const styles = {
+  marginRight: { marginRight: 10 },
+};
 
 export default connect(null, mapDispatchToProps)(LoginModal);
