@@ -77,6 +77,8 @@ const DataTablePageModalComponent = ({ isOpen, onClose, modalKey, onSelect, curr
         const isPasswordEdit = !!(
           modalKey === MODAL_KEYS.CONFIRM_USER_PASSWORD ||
           modalKey === MODAL_KEYS.CONFIRM_MASTER_PASSWORD ||
+          modalKey === MODAL_KEYS.CONFIRM_FACTORY_RESET ||
+          modalKey === MODAL_KEYS.CONFIRM_FACTORY_RESET_MASTER ||
           modalKey === MODAL_KEYS.SYNC_PASSWORD_EDIT
         );
         return (
