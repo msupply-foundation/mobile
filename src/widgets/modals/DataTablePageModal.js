@@ -64,7 +64,9 @@ const DataTablePageModalComponent = ({ isOpen, onClose, modalKey, onSelect, curr
           />
         );
       case MODAL_KEYS.CONFIRM_USER_PASSWORD:
+      case MODAL_KEYS.CONFIRM_MASTER_PASSWORD:
       case MODAL_KEYS.CONFIRM_FACTORY_RESET:
+      case MODAL_KEYS.CONFIRM_FACTORY_RESET_MASTER:
       case MODAL_KEYS.SYNC_URL_EDIT:
       case MODAL_KEYS.SYNC_PASSWORD_EDIT:
       case MODAL_KEYS.STOCKTAKE_NAME_EDIT:
@@ -74,6 +76,9 @@ const DataTablePageModalComponent = ({ isOpen, onClose, modalKey, onSelect, curr
       case MODAL_KEYS.REQUISITION_COMMENT_EDIT: {
         const isPasswordEdit = !!(
           modalKey === MODAL_KEYS.CONFIRM_USER_PASSWORD ||
+          modalKey === MODAL_KEYS.CONFIRM_MASTER_PASSWORD ||
+          modalKey === MODAL_KEYS.CONFIRM_FACTORY_RESET ||
+          modalKey === MODAL_KEYS.CONFIRM_FACTORY_RESET_MASTER ||
           modalKey === MODAL_KEYS.SYNC_PASSWORD_EDIT
         );
         return (

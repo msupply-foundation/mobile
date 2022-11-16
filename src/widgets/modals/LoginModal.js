@@ -282,7 +282,7 @@ class LoginModal extends React.Component {
         </ModalContainer>
         <DataTablePageModal
           isOpen={isSettingAuthModalOpen}
-          modalKey={MODAL_KEYS.CONFIRM_USER_PASSWORD}
+          modalKey={MODAL_KEYS.CONFIRM_MASTER_PASSWORD}
           currentValue={adminPassword}
           onClose={this.onHandleSettingAuthModal}
           onSelect={this.onVerify}
