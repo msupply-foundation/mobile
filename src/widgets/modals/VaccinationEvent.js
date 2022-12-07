@@ -470,7 +470,7 @@ const mapDispatchToProps = dispatch => {
         ...vaccinationEvent.extra,
         prescription: {
           ...vaccinationEvent.extra.prescription,
-          customData: JSON.stringify(updatedSupplementalData),
+          customData: updatedSupplementalData,
         },
       },
     };
