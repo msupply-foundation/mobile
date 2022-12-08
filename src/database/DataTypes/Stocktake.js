@@ -199,6 +199,15 @@ export class Stocktake extends Realm.Object {
   }
 
   /**
+   * Get if stocktake has any item without reason set
+   *
+   * @return {boolean}
+   */
+  get hasReasonNotSet() {
+    return this.items.some(item => item.hasReasonSet === true);
+  }
+
+  /**
    * Resets a list of stocktake items.
    *
    * @param  {Realm}                  database
@@ -254,6 +263,11 @@ export class Stocktake extends Realm.Object {
     if (!this.hasSomeCountedItems) {
       finaliseStatus.success = false;
       finaliseStatus.message = modalStrings.stocktake_no_counted_items;
+    }
+
+    if (this.hasReasonNotSet) {
+      finaliseStatus.success = false;
+      finaliseStatus.message = modalStrings.reason_must_set_before_finalizing_stocktake;
     }
 
     return finaliseStatus;
