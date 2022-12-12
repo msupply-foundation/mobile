@@ -8,6 +8,7 @@ import { complement } from 'set-manipulator';
 
 import { addBatchToParent, createRecord, getTotal } from '../utilities';
 import { generalStrings, modalStrings } from '../../localization';
+import { UIDatabase } from '..';
 
 /**
  * A stocktake.
@@ -204,7 +205,21 @@ export class Stocktake extends Realm.Object {
    * @return {boolean}
    */
   get hasReasonNotSet() {
-    return this.items.some(item => item.hasReasonSet === true);
+    return this.items.some(item => !item.hasReasonSet === false);
+  }
+
+  /**
+   * Check wether Reason i.e. Option is activated in mSupply desktop
+   * Return True if all positive and negative reasons are activated
+   *
+   * @return {boolean}
+   */
+  // eslint-disable-next-line class-methods-use-this
+  get isReasonActive() {
+    return (
+      UIDatabase.objects('NegativeAdjustmentReason').length > 0 &&
+      UIDatabase.objects('PositiveAdjustmentReason').length > 0
+    );
   }
 
   /**
@@ -259,13 +274,12 @@ export class Stocktake extends Realm.Object {
 
   get canFinalise() {
     const finaliseStatus = { success: true, message: modalStrings.finalise_stocktake };
-
     if (!this.hasSomeCountedItems) {
       finaliseStatus.success = false;
       finaliseStatus.message = modalStrings.stocktake_no_counted_items;
     }
 
-    if (this.hasReasonNotSet) {
+    if (this.hasReasonNotSet && this.isReasonActive && finaliseStatus.success) {
       finaliseStatus.success = false;
       finaliseStatus.message = modalStrings.reason_must_set_before_finalizing_stocktake;
     }
