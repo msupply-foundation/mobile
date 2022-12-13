@@ -195,6 +195,7 @@ class MSupplyMobileAppContainer extends React.Component {
         // records need to be checked.
         this.postSyncProcessor.processAnyUnprocessedRecords();
       } else {
+        dispatch(UserActions.clearNumberSequences());
         this.postSyncProcessor.processRecordQueue();
       }
       dispatch(syncCompleteTransaction());

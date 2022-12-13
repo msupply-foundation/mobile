@@ -32,10 +32,20 @@ const active = () => (dispatch, getState) => {
   return dispatch(setTime());
 };
 
+const clearNumberSequences = () => {
+  UIDatabase.write(() => {
+    const existingNumberSequences = UIDatabase.objects('NumberSequence');
+    UIDatabase.delete('NumberSequence', existingNumberSequences);
+    const existingNumberToReuse = UIDatabase.objects('NumberToReuse');
+    UIDatabase.delete('NumberToReuse', existingNumberToReuse);
+  });
+};
+
 export const UserActions = {
   login,
   logout,
   setTime,
   setLanguage,
   active,
+  clearNumberSequences,
 };
