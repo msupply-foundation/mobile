@@ -18,8 +18,6 @@ const recordTypesSynced = [
   'Message',
   'Name',
   'NameNote',
-  'NumberSequence',
-  'NumberToReuse',
   'Prescriber',
   'Requisition',
   'RequisitionItem',
