@@ -157,7 +157,7 @@ export class StocktakeItem extends Realm.Object {
    * @return  {boolean}
    */
   get hasReasonSet() {
-    return this.batches.some(batch => !batch.hasValidReason === true);
+    return this.batches.some(batch => batch.hasValidReason === false);
   }
 
   /**

@@ -205,7 +205,7 @@ export class Stocktake extends Realm.Object {
    * @return {boolean}
    */
   get hasReasonNotSet() {
-    return this.items.some(item => !item.hasReasonSet === false);
+    return this.items.some(item => item.hasReasonSet === true);
   }
 
   /**
