@@ -25,6 +25,7 @@ import {
   selectSelectedVaccines,
   selectVaccines,
   selectSelectedVaccinator,
+  selectCurrentPatientVaccineHistory,
 } from '../../selectors/Entities/vaccinePrescription';
 import { getColumns } from '../../pages/dataTableUtilities';
 import { useLoadingIndicator } from '../../hooks/useLoadingIndicator';
@@ -83,12 +84,16 @@ const VaccineSelectComponent = ({
   selectedVaccine,
   vaccines,
   wasPatientVaccinatedWithinOneDay,
+  selectedPatientVaccineHistory,
 }) => {
   const { pageTopViewContainer } = globalStyles;
   const [confirmDoubleDoseModalOpen, toggleConfirmDoubleDoseModal] = useToggle();
   const [confirmAndRepeatDoubleDoseModalOpen, toggleConfirmAndRepeatDoubleDoseModal] = useToggle();
   const vaccineColumns = React.useMemo(() => getColumns(TABS.ITEM), []);
   const batchColumns = React.useMemo(() => getColumns(TABS.VACCINE_BATCH), []);
+  console.log('selectedVaccine ', selectedVaccine);
+  console.log('selectedPatientVaccineHistory ', selectedPatientVaccineHistory);
+
   const disabledVaccineRows = React.useMemo(
     () =>
       vaccines
@@ -265,6 +270,7 @@ const mapStateToProps = state => {
   const [selectedVaccine] = selectedVaccines;
   const vaccinator = selectSelectedVaccinator(state);
   const wasPatientVaccinatedWithinOneDay = selectWasPatientVaccinatedWithinOneDay(state);
+  const selectedPatientVaccineHistory = selectCurrentPatientVaccineHistory(state);
 
   return {
     vaccinator,
@@ -275,6 +281,7 @@ const mapStateToProps = state => {
     selectedVaccine,
     vaccines,
     wasPatientVaccinatedWithinOneDay,
+    selectedPatientVaccineHistory,
   };
 };
 
@@ -283,6 +290,7 @@ VaccineSelectComponent.defaultProps = {
   selectedRows: {},
   selectedBatches: [],
   selectedVaccine: undefined,
+  selectedPatientVaccineHistory: [],
 };
 
 VaccineSelectComponent.propTypes = {
@@ -300,6 +308,7 @@ VaccineSelectComponent.propTypes = {
   selectedVaccine: PropTypes.object,
   vaccines: PropTypes.oneOfType([PropTypes.array, PropTypes.object]).isRequired,
   wasPatientVaccinatedWithinOneDay: PropTypes.bool.isRequired,
+  selectedPatientVaccineHistory: PropTypes.array,
 };
 
 export const VaccineSelect = connect(mapStateToProps, mapDispatchToProps)(VaccineSelectComponent);

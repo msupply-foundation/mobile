@@ -130,3 +130,19 @@ export const selectLastSupplementalData = () => {
 
   return null;
 };
+
+export const selectCurrentPatientVaccineHistory = state => {
+  const selectedPatient = selectSpecificEntityState(state, 'name');
+  const { editing } = selectedPatient;
+
+  const [vaccinationPatientEvent] = UIDatabase.objects('PatientEvent').filtered(
+    "code == 'vaccination'"
+  );
+  const { id: vaccinationPatientEventID } = vaccinationPatientEvent ?? {};
+
+  const patientVaccinationHistory = editing?.nameNotes
+    ?.filter(({ patientEventID }) => patientEventID === vaccinationPatientEventID)
+    .map(({ data: vaccinationHistory }) => vaccinationHistory);
+
+  return patientVaccinationHistory;
+};
