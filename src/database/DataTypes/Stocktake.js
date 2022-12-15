@@ -279,9 +279,11 @@ export class Stocktake extends Realm.Object {
       finaliseStatus.message = modalStrings.stocktake_no_counted_items;
     }
 
-    if (this.hasReasonNotSet && this.isReasonActive && finaliseStatus.success) {
-      finaliseStatus.success = false;
-      finaliseStatus.message = modalStrings.reason_must_set_before_finalizing_stocktake;
+    if (this.isReasonActive && finaliseStatus.success) {
+      if (this.hasReasonNotSet) {
+        finaliseStatus.success = false;
+        finaliseStatus.message = modalStrings.reason_must_set_before_finalizing_stocktake;
+      }
     }
 
     return finaliseStatus;
