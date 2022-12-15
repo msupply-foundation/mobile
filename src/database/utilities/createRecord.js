@@ -11,6 +11,7 @@ import { versionToInteger, formatDateAndTime } from '../../utilities';
 import { NUMBER_OF_DAYS_IN_A_MONTH, NUMBER_SEQUENCE_KEYS, PATIENT_CODE_LENGTH } from './constants';
 import { generalStrings } from '../../localization';
 import { SETTINGS_KEYS } from '../../settings';
+import { getMaxSerialNumber } from './numberSequence';
 
 /**
  * Creates a database Address object with the given address details.
@@ -639,11 +640,15 @@ const createCustomerInvoice = (database, customer, user, mode = 'store', customD
  * @param   {string}          sequenceKey
  * @return  {NumberSequence}
  */
-const createNumberSequence = (database, sequenceKey) =>
-  database.create('NumberSequence', {
+const createNumberSequence = (database, sequenceKey) => {
+  const maxSerialNumber = getMaxSerialNumber(database, sequenceKey);
+
+  return database.create('NumberSequence', {
     id: generateUUID(),
     sequenceKey,
+    highestNumberUsed: maxSerialNumber,
   });
+};
 
 /**
  * Create a number attached to a sequence.
