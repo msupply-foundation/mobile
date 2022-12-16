@@ -1,6 +1,15 @@
 import { NUMBER_SEQUENCE_KEYS } from './constants';
 import { sortDataBy } from '../../utilities';
 
+const clearNumberSequences = database => {
+  database.write(() => {
+    const existingNumberSequences = database.objects('NumberSequence');
+    database.delete('NumberSequence', existingNumberSequences);
+    const existingNumberToReuse = database.objects('NumberToReuse');
+    database.delete('NumberToReuse', existingNumberToReuse);
+  });
+};
+
 const getMaxSerialNumber = (database, sequenceKey) => {
   switch (sequenceKey) {
     case NUMBER_SEQUENCE_KEYS.SUPPLIER_INVOICE_NUMBER: {
@@ -53,4 +62,4 @@ const getMaxSerialNumber = (database, sequenceKey) => {
   }
 };
 
-export { getMaxSerialNumber };
+export { getMaxSerialNumber, clearNumberSequences };
