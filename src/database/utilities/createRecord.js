@@ -8,6 +8,7 @@ import { generateUUID } from 'react-native-database';
 
 import { UIDatabase } from '..';
 import { versionToInteger, formatDateAndTime } from '../../utilities';
+import { parseNumber } from '.';
 import { NUMBER_OF_DAYS_IN_A_MONTH, NUMBER_SEQUENCE_KEYS, PATIENT_CODE_LENGTH } from './constants';
 import { generalStrings } from '../../localization';
 import { SETTINGS_KEYS } from '../../settings';
@@ -646,7 +647,7 @@ const createNumberSequence = (database, sequenceKey) => {
   return database.create('NumberSequence', {
     id: generateUUID(),
     sequenceKey,
-    highestNumberUsed: maxSerialNumber,
+    highestNumberUsed: parseNumber(maxSerialNumber),
   });
 };
 
