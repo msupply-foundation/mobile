@@ -9,6 +9,7 @@ import PropTypes from 'prop-types';
 import { useNavigation } from '@react-navigation/native';
 import { Dimensions, Text, StyleSheet, TextInput, View } from 'react-native';
 import { batch, connect } from 'react-redux';
+
 import { TABS } from '../constants';
 import { FlexRow } from '../FlexRow';
 import { FlexView } from '../FlexView';
@@ -26,6 +27,7 @@ import {
   selectVaccines,
   selectSelectedVaccinator,
   selectCurrentPatientVaccineHistory,
+  selectWasPatientVaccinatedWithinOneWeek,
 } from '../../selectors/Entities/vaccinePrescription';
 import { getColumns } from '../../pages/dataTableUtilities';
 import { useLoadingIndicator } from '../../hooks/useLoadingIndicator';
@@ -85,6 +87,7 @@ const VaccineSelectComponent = ({
   vaccines,
   wasPatientVaccinatedWithinOneDay,
   selectedPatientVaccineHistory,
+  wasPatientVaccinatedWithinOneWeek,
 }) => {
   const { pageTopViewContainer } = globalStyles;
   const [confirmDoubleDoseModalOpen, toggleConfirmDoubleDoseModal] = useToggle();
@@ -93,6 +96,7 @@ const VaccineSelectComponent = ({
   const batchColumns = React.useMemo(() => getColumns(TABS.VACCINE_BATCH), []);
   console.log('selectedVaccine ', selectedVaccine);
   console.log('selectedPatientVaccineHistory ', selectedPatientVaccineHistory);
+  console.log('history ', wasPatientVaccinatedWithinOneWeek);
 
   const disabledVaccineRows = React.useMemo(
     () =>
@@ -271,6 +275,7 @@ const mapStateToProps = state => {
   const vaccinator = selectSelectedVaccinator(state);
   const wasPatientVaccinatedWithinOneDay = selectWasPatientVaccinatedWithinOneDay(state);
   const selectedPatientVaccineHistory = selectCurrentPatientVaccineHistory(state);
+  const wasPatientVaccinatedWithinOneWeek = selectWasPatientVaccinatedWithinOneWeek(state);
 
   return {
     vaccinator,
@@ -282,6 +287,7 @@ const mapStateToProps = state => {
     vaccines,
     wasPatientVaccinatedWithinOneDay,
     selectedPatientVaccineHistory,
+    wasPatientVaccinatedWithinOneWeek,
   };
 };
 
@@ -291,6 +297,7 @@ VaccineSelectComponent.defaultProps = {
   selectedBatches: [],
   selectedVaccine: undefined,
   selectedPatientVaccineHistory: [],
+  wasPatientVaccinatedWithinOneWeek: [],
 };
 
 VaccineSelectComponent.propTypes = {
@@ -309,6 +316,7 @@ VaccineSelectComponent.propTypes = {
   vaccines: PropTypes.oneOfType([PropTypes.array, PropTypes.object]).isRequired,
   wasPatientVaccinatedWithinOneDay: PropTypes.bool.isRequired,
   selectedPatientVaccineHistory: PropTypes.array,
+  wasPatientVaccinatedWithinOneWeek: PropTypes.array,
 };
 
 export const VaccineSelect = connect(mapStateToProps, mapDispatchToProps)(VaccineSelectComponent);

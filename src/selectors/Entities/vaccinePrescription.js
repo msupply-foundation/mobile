@@ -1,4 +1,5 @@
 import { createSelector } from 'reselect';
+import moment from 'moment';
 
 import { selectSpecificEntityState } from './index';
 import { getFormInputConfig } from '../../utilities/formInputConfigs';
@@ -145,4 +146,13 @@ export const selectCurrentPatientVaccineHistory = state => {
     .map(({ data: vaccinationHistory }) => vaccinationHistory);
 
   return patientVaccinationHistory;
+};
+
+export const selectWasPatientVaccinatedWithinOneWeek = state => {
+  const oneWeekAgo = moment().subtract(7, 'days').format('L');
+  const vaccinationHistory = selectCurrentPatientVaccineHistory(state);
+  const weeklyVaccinationHistory = vaccinationHistory?.filter(
+    ({ vaccineDate }) => vaccineDate >= oneWeekAgo
+  );
+  return weeklyVaccinationHistory;
 };
