@@ -33,7 +33,7 @@ import { version as appVersion } from '../package.json';
 
 import { syncCompleteTransaction, setSyncError, openSyncModal } from './actions/SyncActions';
 import { FinaliseActions } from './actions/FinaliseActions';
-import { UserActions } from './actions';
+import { clearNumberSequences } from './database/utilities';
 import { SupplierCreditActions } from './actions/SupplierCreditActions';
 
 import { Spinner } from './widgets';
@@ -195,7 +195,7 @@ class MSupplyMobileAppContainer extends React.Component {
         // records need to be checked.
         this.postSyncProcessor.processAnyUnprocessedRecords();
       } else {
-        dispatch(UserActions.clearNumberSequences());
+        clearNumberSequences(UIDatabase);
         this.postSyncProcessor.processRecordQueue();
       }
       dispatch(syncCompleteTransaction());
