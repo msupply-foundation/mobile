@@ -56,6 +56,7 @@ import { SensorDownloadActions } from './actions/Bluetooth/SensorDownloadActions
 import BreachManager from './bluetooth/BreachManager';
 import { selectIsPassivelyDownloadingTemps } from './selectors/Bluetooth/sensorDownload';
 import LoggerService from './utilities/logging';
+import { UserActions } from './actions';
 
 const BLUETOOTH_SYNC_INTERVAL = 60 * 1000; // 1 minute in milliseconds.
 const AUTHENTICATION_INTERVAL = 10 * 60 * 1000; // 10 minutes in milliseconds.
