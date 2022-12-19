@@ -13,8 +13,14 @@ const clearNumberSequences = database => {
 const getMaxSerialNumber = (database, sequenceKey) => {
   switch (sequenceKey) {
     case NUMBER_SEQUENCE_KEYS.SUPPLIER_INVOICE_NUMBER: {
-      const transactions = database.objects('SupplierTransaction');
-      const sortedData = sortDataBy(transactions.slice(), 'serialNumber', false);
+      const transactions = database.objects('Transaction');
+      const filteredData = transactions.filtered(
+        '((type == $0 OR type == $1) AND otherParty.type != $2)',
+        'supplier_invoice',
+        'supplier_credit',
+        'inventory_adjustment'
+      );
+      const sortedData = sortDataBy(filteredData.slice(), 'serialNumber', false);
       return sortedData.length <= 0 ? 0 : sortedData[0].serialNumber;
     }
     case NUMBER_SEQUENCE_KEYS.STOCKTAKE_SERIAL_NUMBER: {
