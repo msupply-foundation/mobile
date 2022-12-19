@@ -407,10 +407,10 @@ const createOffsetCustomerInvoice = (database, payment) => {
 
 const createReceipt = (database, user, name, amount, paymentType, description) => {
   const currentDate = new Date();
-  const { CUSTOMER_INVOICE_NUMBER } = NUMBER_SEQUENCE_KEYS;
+  const { RECEIPT_NUMBER } = NUMBER_SEQUENCE_KEYS;
   const receipt = database.create('Transaction', {
     id: generateUUID(),
-    serialNumber: getNextNumber(database, CUSTOMER_INVOICE_NUMBER),
+    serialNumber: getNextNumber(database, RECEIPT_NUMBER),
     entryDate: currentDate,
     confirmDate: currentDate,
     type: 'receipt',
@@ -442,10 +442,10 @@ const createReceiptLine = (database, receipt, linkedTransaction, amount, note) =
 
 const createPayment = (database, user, name, amount, paymentType, reason, description) => {
   const currentDate = new Date();
-  const { CUSTOMER_INVOICE_NUMBER } = NUMBER_SEQUENCE_KEYS;
+  const { PAYMENT_NUMBER } = NUMBER_SEQUENCE_KEYS;
   const payment = database.create('Transaction', {
     id: generateUUID(),
-    serialNumber: getNextNumber(database, CUSTOMER_INVOICE_NUMBER),
+    serialNumber: getNextNumber(database, PAYMENT_NUMBER),
     entryDate: currentDate,
     confirmDate: currentDate,
     type: 'payment',
