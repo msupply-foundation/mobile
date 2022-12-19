@@ -35,9 +35,8 @@ const getMaxSerialNumber = (database, sequenceKey) => {
       return sortedData.length <= 0 ? 0 : sortedData[0].requesterReference;
     }
     case NUMBER_SEQUENCE_KEYS.REQUISITION_SERIAL_NUMBER: {
-      const requisition = database.objects('Requisition');
-      const filteredData = requisition.filtered('type == $0', 'request');
-      const sortedData = sortDataBy(filteredData.slice(), 'serialNumber', false);
+      const requisitions = database.objects('Requisition');
+      const sortedData = sortDataBy(requisitions.slice(), 'serialNumber', false);
       return sortedData.length <= 0 ? 0 : sortedData[0].serialNumber;
     }
     case NUMBER_SEQUENCE_KEYS.INVENTORY_ADJUSTMENT_SERIAL_NUMBER: {
