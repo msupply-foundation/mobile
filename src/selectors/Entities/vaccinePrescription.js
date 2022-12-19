@@ -156,3 +156,15 @@ export const selectWasPatientVaccinatedWithinOneWeek = state => {
   );
   return weeklyVaccinationHistory;
 };
+
+export const selectDepartmentFromWeeklyVaccinationHistory = state => {
+  const selectDepartmentFromWeeklyVaccination = [];
+  const vaccineList = UIDatabase.objects('Vaccine');
+  selectWasPatientVaccinatedWithinOneWeek(state).forEach(vaccine => {
+    const matchedVaccine = vaccineList?.filter(({ code }) => code === vaccine.itemCode);
+    if (matchedVaccine) {
+      selectDepartmentFromWeeklyVaccination.push(matchedVaccine[0].department);
+    }
+  });
+  return selectDepartmentFromWeeklyVaccination;
+};

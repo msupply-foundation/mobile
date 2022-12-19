@@ -27,7 +27,7 @@ import {
   selectVaccines,
   selectSelectedVaccinator,
   selectCurrentPatientVaccineHistory,
-  selectWasPatientVaccinatedWithinOneWeek,
+  selectDepartmentFromWeeklyVaccinationHistory,
 } from '../../selectors/Entities/vaccinePrescription';
 import { getColumns } from '../../pages/dataTableUtilities';
 import { useLoadingIndicator } from '../../hooks/useLoadingIndicator';
@@ -87,7 +87,7 @@ const VaccineSelectComponent = ({
   vaccines,
   wasPatientVaccinatedWithinOneDay,
   selectedPatientVaccineHistory,
-  wasPatientVaccinatedWithinOneWeek,
+  departmentFromWeeklyVaccination,
 }) => {
   const { pageTopViewContainer } = globalStyles;
   const [confirmDoubleDoseModalOpen, toggleConfirmDoubleDoseModal] = useToggle();
@@ -96,7 +96,26 @@ const VaccineSelectComponent = ({
   const batchColumns = React.useMemo(() => getColumns(TABS.VACCINE_BATCH), []);
   console.log('selectedVaccine ', selectedVaccine);
   console.log('selectedPatientVaccineHistory ', selectedPatientVaccineHistory);
-  console.log('history ', wasPatientVaccinatedWithinOneWeek);
+  console.log('history ', departmentFromWeeklyVaccination);
+  const departmentID = selectedVaccine?.department?.id;
+  console.log('department ', departmentID);
+
+  // Get departmentID from the selectedVaccine,
+  // then loop through vaccine history taken within one week.
+  // If at least one history record has same department as selected vaccine,
+  // then return true that would be helpful to generate an alert
+
+  const vaccinatedWithSameItemDepartment = selectedDepartmentID => {
+    if (selectedDepartmentID) {
+      return departmentFromWeeklyVaccination.some(({ id }) => id === selectedDepartmentID);
+    }
+    return false; // If department doesn't exist.
+  };
+  const wasPatientVaccinatedWithinOneWeek = React.useMemo(
+    () => vaccinatedWithSameItemDepartment(departmentID),
+    [departmentID]
+  );
+  console.log('wasPatientVaccinatedWithinOneWeek ', wasPatientVaccinatedWithinOneWeek);
 
   const disabledVaccineRows = React.useMemo(
     () =>
@@ -275,7 +294,7 @@ const mapStateToProps = state => {
   const vaccinator = selectSelectedVaccinator(state);
   const wasPatientVaccinatedWithinOneDay = selectWasPatientVaccinatedWithinOneDay(state);
   const selectedPatientVaccineHistory = selectCurrentPatientVaccineHistory(state);
-  const wasPatientVaccinatedWithinOneWeek = selectWasPatientVaccinatedWithinOneWeek(state);
+  const departmentFromWeeklyVaccination = selectDepartmentFromWeeklyVaccinationHistory(state);
 
   return {
     vaccinator,
@@ -287,7 +306,7 @@ const mapStateToProps = state => {
     vaccines,
     wasPatientVaccinatedWithinOneDay,
     selectedPatientVaccineHistory,
-    wasPatientVaccinatedWithinOneWeek,
+    departmentFromWeeklyVaccination,
   };
 };
 
@@ -297,7 +316,7 @@ VaccineSelectComponent.defaultProps = {
   selectedBatches: [],
   selectedVaccine: undefined,
   selectedPatientVaccineHistory: [],
-  wasPatientVaccinatedWithinOneWeek: [],
+  departmentFromWeeklyVaccination: [],
 };
 
 VaccineSelectComponent.propTypes = {
@@ -316,7 +335,7 @@ VaccineSelectComponent.propTypes = {
   vaccines: PropTypes.oneOfType([PropTypes.array, PropTypes.object]).isRequired,
   wasPatientVaccinatedWithinOneDay: PropTypes.bool.isRequired,
   selectedPatientVaccineHistory: PropTypes.array,
-  wasPatientVaccinatedWithinOneWeek: PropTypes.array,
+  departmentFromWeeklyVaccination: PropTypes.array,
 };
 
 export const VaccineSelect = connect(mapStateToProps, mapDispatchToProps)(VaccineSelectComponent);
