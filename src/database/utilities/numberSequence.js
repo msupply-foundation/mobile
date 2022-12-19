@@ -53,7 +53,7 @@ const getMaxSerialNumber = (database, sequenceKey) => {
     case NUMBER_SEQUENCE_KEYS.CUSTOMER_INVOICE_NUMBER: {
       const transactions = database.objects('Transaction');
       const filteredData = transactions.filtered(
-        'type == $0 OR type == $1 OR type == $2 OR type == $3',
+        'type == $0 OR type == $1',
         'customer_invoice',
         'customer_credit'
       );
