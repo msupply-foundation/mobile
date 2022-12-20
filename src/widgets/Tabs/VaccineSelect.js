@@ -26,7 +26,6 @@ import {
   selectSelectedVaccines,
   selectVaccines,
   selectSelectedVaccinator,
-  selectCurrentPatientVaccineHistory,
   selectDepartmentFromWeeklyVaccinationHistory,
 } from '../../selectors/Entities/vaccinePrescription';
 import { getColumns } from '../../pages/dataTableUtilities';
@@ -88,7 +87,6 @@ const VaccineSelectComponent = ({
   selectedVaccine,
   vaccines,
   wasPatientVaccinatedWithinOneDay,
-  selectedPatientVaccineHistory,
   departmentFromWeeklyVaccination,
 }) => {
   const { pageTopViewContainer } = globalStyles;
@@ -99,16 +97,12 @@ const VaccineSelectComponent = ({
   const [wasPatientVaccinatedAlready, setPatientVaccinatedStatus] = useState(false);
   const [doubleDoseAlertTitle, setDoubleDoseAlertTitle] = useState('');
 
-  console.log('selectedVaccine ', selectedVaccine);
-  console.log('selectedPatientVaccineHistory ', selectedPatientVaccineHistory);
-  console.log('history ', departmentFromWeeklyVaccination);
-  const departmentID = selectedVaccine?.department?.id;
-  console.log('department ', departmentID);
-
   // Get departmentID from the selectedVaccine,
   // then loop through vaccine history taken within one week.
   // If at least one history record has same department as selected vaccine,
   // then return true that would be helpful to generate an alert
+
+  const departmentID = selectedVaccine?.department?.id;
 
   const vaccinatedWithSameItemDepartment = selectedDepartmentID => {
     if (selectedDepartmentID) {
@@ -116,18 +110,18 @@ const VaccineSelectComponent = ({
     }
     return false; // If department doesn't exist.
   };
+
   const wasPatientVaccinatedWithinOneWeek = React.useMemo(
     () => vaccinatedWithSameItemDepartment(departmentID),
     [departmentID]
   );
-  console.log('wasPatientVaccinatedWithinOneWeek ', wasPatientVaccinatedWithinOneWeek);
 
   const canDispenseSameTypeOfVaccine = UIDatabase.getPreference(
     PREFERENCE_KEYS.DISPENSE_VACCINE_OF_SAME_ITEM_DEPARTMENT
   );
 
-  // If DISPENSE_VACCINE_OF_SAME_ITEM_DEPARTMENT is enabled in store preference,
-  // then look at weekly status otherwise 24hrs
+  // If DISPENSE_VACCINE_OF_SAME_ITEM_DEPARTMENT is enabled in store preference and patient has been
+  // vaccinated within a week, then look at weekly vaccination history otherwise 24hrs history
   useEffect(() => {
     if (canDispenseSameTypeOfVaccine && wasPatientVaccinatedWithinOneWeek) {
       setPatientVaccinatedStatus(canDispenseSameTypeOfVaccine);
@@ -141,7 +135,7 @@ const VaccineSelectComponent = ({
     wasPatientVaccinatedWithinOneDay,
     wasPatientVaccinatedWithinOneWeek,
   ]);
-  console.log('canDispenseSameTypeOfVaccine ', canDispenseSameTypeOfVaccine);
+
   const disabledVaccineRows = React.useMemo(
     () =>
       vaccines
@@ -316,7 +310,6 @@ const mapStateToProps = state => {
   const [selectedVaccine] = selectedVaccines;
   const vaccinator = selectSelectedVaccinator(state);
   const wasPatientVaccinatedWithinOneDay = selectWasPatientVaccinatedWithinOneDay(state);
-  const selectedPatientVaccineHistory = selectCurrentPatientVaccineHistory(state);
   const departmentFromWeeklyVaccination = selectDepartmentFromWeeklyVaccinationHistory(state);
 
   return {
@@ -328,7 +321,6 @@ const mapStateToProps = state => {
     selectedVaccine,
     vaccines,
     wasPatientVaccinatedWithinOneDay,
-    selectedPatientVaccineHistory,
     departmentFromWeeklyVaccination,
   };
 };
@@ -338,7 +330,6 @@ VaccineSelectComponent.defaultProps = {
   selectedRows: {},
   selectedBatches: [],
   selectedVaccine: undefined,
-  selectedPatientVaccineHistory: [],
   departmentFromWeeklyVaccination: [],
 };
 
@@ -357,7 +348,6 @@ VaccineSelectComponent.propTypes = {
   selectedVaccine: PropTypes.object,
   vaccines: PropTypes.oneOfType([PropTypes.array, PropTypes.object]).isRequired,
   wasPatientVaccinatedWithinOneDay: PropTypes.bool.isRequired,
-  selectedPatientVaccineHistory: PropTypes.array,
   departmentFromWeeklyVaccination: PropTypes.array,
 };
 
