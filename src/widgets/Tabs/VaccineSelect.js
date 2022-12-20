@@ -4,7 +4,7 @@
  * Sustainable Solutions (NZ) Ltd. 2021
  */
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { useNavigation } from '@react-navigation/native';
 import { Dimensions, Text, StyleSheet, TextInput, View } from 'react-native';
@@ -96,6 +96,9 @@ const VaccineSelectComponent = ({
   const [confirmAndRepeatDoubleDoseModalOpen, toggleConfirmAndRepeatDoubleDoseModal] = useToggle();
   const vaccineColumns = React.useMemo(() => getColumns(TABS.ITEM), []);
   const batchColumns = React.useMemo(() => getColumns(TABS.VACCINE_BATCH), []);
+  const [wasPatientVaccinatedAlready, setPatientVaccinatedStatus] = useState(false);
+  const [doubleDoseAlertTitle, setDoubleDoseAlertTitle] = useState('');
+
   console.log('selectedVaccine ', selectedVaccine);
   console.log('selectedPatientVaccineHistory ', selectedPatientVaccineHistory);
   console.log('history ', departmentFromWeeklyVaccination);
@@ -122,6 +125,22 @@ const VaccineSelectComponent = ({
   const canDispenseSameTypeOfVaccine = UIDatabase.getPreference(
     PREFERENCE_KEYS.DISPENSE_VACCINE_OF_SAME_ITEM_DEPARTMENT
   );
+
+  // If DISPENSE_VACCINE_OF_SAME_ITEM_DEPARTMENT is enabled in store preference,
+  // then look at weekly status otherwise 24hrs
+  useEffect(() => {
+    if (canDispenseSameTypeOfVaccine && wasPatientVaccinatedWithinOneWeek) {
+      setPatientVaccinatedStatus(canDispenseSameTypeOfVaccine);
+      setDoubleDoseAlertTitle(modalStrings.confirm_weekly_double_dose);
+    } else {
+      setPatientVaccinatedStatus(wasPatientVaccinatedWithinOneDay);
+      setDoubleDoseAlertTitle(modalStrings.confirm_double_dose);
+    }
+  }, [
+    canDispenseSameTypeOfVaccine,
+    wasPatientVaccinatedWithinOneDay,
+    wasPatientVaccinatedWithinOneWeek,
+  ]);
   console.log('canDispenseSameTypeOfVaccine ', canDispenseSameTypeOfVaccine);
   const disabledVaccineRows = React.useMemo(
     () =>
@@ -235,9 +254,7 @@ const VaccineSelectComponent = ({
           text={buttonStrings.confirm}
           style={{ marginLeft: 'auto' }}
           isDisabled={!selectedBatches && !hasRefused}
-          onPress={
-            wasPatientVaccinatedWithinOneDay ? toggleConfirmDoubleDoseModal : confirmPrescription
-          }
+          onPress={wasPatientVaccinatedAlready ? toggleConfirmDoubleDoseModal : confirmPrescription}
         />
         <PageButton
           debounceTimer={1000}
@@ -245,7 +262,7 @@ const VaccineSelectComponent = ({
           style={{ marginLeft: 5 }}
           isDisabled={!selectedBatches && !hasRefused}
           onPress={
-            wasPatientVaccinatedWithinOneDay
+            wasPatientVaccinatedAlready
               ? toggleConfirmAndRepeatDoubleDoseModal
               : confirmAndRepeatPrescription
           }
@@ -253,7 +270,7 @@ const VaccineSelectComponent = ({
       </FlexRow>
       <PaperModalContainer isVisible={isModalOpen} onClose={onModalClose}>
         <PaperConfirmModal
-          questionText={modalStrings.confirm_double_dose}
+          questionText={doubleDoseAlertTitle}
           confirmText={modalStrings.confirm}
           cancelText={modalStrings.cancel}
           onConfirm={onModalConfirm}
