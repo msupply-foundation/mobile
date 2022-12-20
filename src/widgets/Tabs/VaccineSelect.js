@@ -49,6 +49,8 @@ import { PaperModalContainer } from '../PaperModal/PaperModalContainer';
 import { PaperConfirmModal } from '../PaperModal/PaperConfirmModal';
 import { useToggle } from '../../hooks/useToggle';
 import { PageButton } from '../PageButton';
+import { UIDatabase } from '../../database/index';
+import { PREFERENCE_KEYS } from '../../database/utilities/preferenceConstants';
 
 const ListEmptyComponent = () => (
   <FlexView flex={1} justifyContent="center" alignItems="center">
@@ -117,6 +119,10 @@ const VaccineSelectComponent = ({
   );
   console.log('wasPatientVaccinatedWithinOneWeek ', wasPatientVaccinatedWithinOneWeek);
 
+  const canDispenseSameTypeOfVaccine = UIDatabase.getPreference(
+    PREFERENCE_KEYS.DISPENSE_VACCINE_OF_SAME_ITEM_DEPARTMENT
+  );
+  console.log('canDispenseSameTypeOfVaccine ', canDispenseSameTypeOfVaccine);
   const disabledVaccineRows = React.useMemo(
     () =>
       vaccines
