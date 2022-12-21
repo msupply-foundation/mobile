@@ -117,10 +117,10 @@ const VaccineSelectComponent = ({
   );
 
   const canDispenseSameTypeOfVaccine = UIDatabase.getPreference(
-    PREFERENCE_KEYS.DISPENSE_VACCINE_OF_SAME_ITEM_DEPARTMENT
+    PREFERENCE_KEYS.ALERT_IF_DISPENSING_SAME_VACCINE
   );
 
-  // If DISPENSE_VACCINE_OF_SAME_ITEM_DEPARTMENT is enabled in store preference and patient has been
+  // If ALERT_IF_DISPENSING_SAME_VACCINE is enabled in store preference and patient has been
   // vaccinated within a week, then look at weekly vaccination history otherwise 24hrs history
   useEffect(() => {
     if (canDispenseSameTypeOfVaccine && wasPatientVaccinatedWithinOneWeek) {
