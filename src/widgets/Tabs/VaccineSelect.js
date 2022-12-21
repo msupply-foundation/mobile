@@ -102,7 +102,7 @@ const VaccineSelectComponent = ({
   // If at least one history record has same department as selected vaccine,
   // then return true that would be helpful to generate an alert
 
-  const departmentID = selectedVaccine?.department?.id;
+  const departmentID = selectedVaccine?.department?.id ?? '';
 
   const vaccinatedWithSameItemDepartment = selectedDepartmentID => {
     if (selectedDepartmentID) {

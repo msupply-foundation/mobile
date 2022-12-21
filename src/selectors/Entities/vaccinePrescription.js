@@ -162,9 +162,10 @@ export const selectDepartmentFromWeeklyVaccinationHistory = state => {
   const vaccineList = UIDatabase.objects('Vaccine');
   const weeklyVaccinationHistory = selectWasPatientVaccinatedWithinOneWeek(state) ?? [];
   weeklyVaccinationHistory.forEach(vaccine => {
-    const matchedVaccine = vaccineList.filter(({ code }) => code === vaccine.itemCode);
-    if (matchedVaccine.length > 0) {
-      selectDepartmentFromWeeklyVaccination.push(matchedVaccine[0].department);
+    const matchedVaccine =
+      vaccineList.filter(({ code }) => code === vaccine.itemCode)[0]?.department ?? '';
+    if (matchedVaccine) {
+      selectDepartmentFromWeeklyVaccination.push(matchedVaccine);
     }
   });
   return selectDepartmentFromWeeklyVaccination;
