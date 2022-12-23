@@ -151,6 +151,16 @@ export class StocktakeItem extends Realm.Object {
   }
 
   /**
+   * First check whether the batch should have valid a reason,
+   * Return true if at least one batch misses the valid reason
+   *
+   * @return  {boolean}
+   */
+  get hasReasonSet() {
+    return this.batches.some(batch => batch.hasValidReason === false);
+  }
+
+  /**
    * Reset this stocktake item, deleting all batches and recreating them for each corresponding item
    * batch in inventory.
    *

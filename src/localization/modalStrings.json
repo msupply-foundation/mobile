@@ -40,6 +40,7 @@
     "record_stock_to_issue_before_finalising": "You need to record how much stock to issue before finalising",
     "remove_these_items": "Are you sure you want to remove these items?",
     "remove": "Remove",
+    "reason_must_set_before_finalizing_stocktake": "The reason must be set for each item before finalizing stocktake.",
     "search_for_an_item_to_add": "Search for an item to add",
     "search_for_the_customer": "Search for the customer",
     "search_for_the_supplier": "Search for the supplier",
