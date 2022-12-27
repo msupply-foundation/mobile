@@ -155,6 +155,7 @@ class MSupplyMobileAppContainer extends React.Component {
 
   onInitialised = () => {
     this.setState({ isInitialised: true });
+    clearNumberSequences(UIDatabase);
     this.postSyncProcessor.processAnyUnprocessedRecords();
   };
 
@@ -196,7 +197,6 @@ class MSupplyMobileAppContainer extends React.Component {
         // records need to be checked.
         this.postSyncProcessor.processAnyUnprocessedRecords();
       } else {
-        clearNumberSequences(UIDatabase);
         this.postSyncProcessor.processRecordQueue();
       }
       dispatch(syncCompleteTransaction());
