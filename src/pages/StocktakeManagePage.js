@@ -169,6 +169,7 @@ const mapStateToProps = (state, ownProps) => {
 export const StocktakeManagePage = connect(mapStateToProps, mapDispatchToProps)(StocktakeManage);
 
 StocktakeManage.propTypes = {
+  pageObject: PropTypes.object,
   dispatch: PropTypes.func.isRequired,
   data: PropTypes.array.isRequired,
   dataState: PropTypes.object.isRequired,
@@ -181,7 +182,6 @@ StocktakeManage.propTypes = {
   showAll: PropTypes.bool.isRequired,
   allSelected: PropTypes.bool.isRequired,
   name: PropTypes.string.isRequired,
-  pageObject: PropTypes.object.isRequired,
   onCheck: PropTypes.func.isRequired,
   onUncheck: PropTypes.func.isRequired,
   onSortColumn: PropTypes.func.isRequired,
@@ -190,4 +190,8 @@ StocktakeManage.propTypes = {
   toggleSelectAll: PropTypes.func.isRequired,
   toggleStockOut: PropTypes.func.isRequired,
   route: PropTypes.string.isRequired,
+};
+
+StocktakeManage.defaultProps = {
+  pageObject: {},
 };

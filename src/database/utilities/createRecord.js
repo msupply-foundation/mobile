@@ -647,7 +647,7 @@ const createNumberSequence = (database, sequenceKey) => {
   return database.create('NumberSequence', {
     id: generateUUID(),
     sequenceKey,
-    highestNumberUsed: parseNumber(maxSerialNumber),
+    highestNumberUsed: parseNumber(maxSerialNumber) ?? 0,
   });
 };
 
