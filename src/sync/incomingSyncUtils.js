@@ -762,6 +762,7 @@ export const createOrUpdateRecord = (database, settings, recordType, record) => 
         incomingStock: parseNumber(record.Cust_stock_received),
         outgoingStock: parseNumber(record.Cust_stock_issued),
         daysOutOfStock: parseNumber(record.DOSforAMCadjustment),
+        option: database.getOrCreate('Options', record.optionID),
       };
       const requisitionItem = database.update(recordType, internalRecord);
       // requisitionItem will be an orphan record if it's not unique?
