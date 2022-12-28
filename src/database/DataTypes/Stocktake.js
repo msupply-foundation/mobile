@@ -201,11 +201,28 @@ export class Stocktake extends Realm.Object {
 
   /**
    * Get if stocktake has any item without reason set
+   * First, get only counted items then check all of its batches
+   * then get only counted batch with some difference
+   * then check reason of those batches
+   *
+   * Return True if at least one of the valid batch doesn't have reason set.
    *
    * @return {boolean}
    */
   get hasReasonNotSet() {
-    return this.items.some(item => item.hasReasonSet === true);
+    const countedBatches = [];
+    const countedItems = this.items.filter(item => item.hasBeenCounted);
+    countedItems.forEach(item => {
+      item.batches.forEach(batch => {
+        if (batch.hasBeenCounted && batch.difference !== 0) {
+          countedBatches.push(batch);
+        }
+      });
+    });
+    if (countedBatches.length > 0) {
+      return countedBatches.some(batch => batch.hasValidReason === false);
+    }
+    return false;
   }
 
   /**
@@ -278,7 +295,6 @@ export class Stocktake extends Realm.Object {
       finaliseStatus.success = false;
       finaliseStatus.message = modalStrings.stocktake_no_counted_items;
     }
-
     if (this.isReasonActive && finaliseStatus.success) {
       if (this.hasReasonNotSet) {
         finaliseStatus.success = false;
