@@ -20,7 +20,7 @@ export const SETTINGS_KEYS = {
   THIS_STORE_CODE: 'ThisStoreCode',
   SYNC_INTERVAL: 'SyncInterval',
   IDLE_LOGOUT_INTERVAL: 'IdleLogoutInterval',
-  ME_PREDICTION_URL: 'MEPredictionURL',
+  ME_PREDICTION_API_URL: 'MEPredictionAPIURL',
   ME_PREDICTION_API_KEY: 'MEPredictionAPIKey',
 };
 
