@@ -14,8 +14,11 @@ import { SETTINGS_KEYS } from '../../settings';
 const API_URL = UIDatabase.getSetting(SETTINGS_KEYS.ME_PREDICTION_API_URL);
 const API_KEY = UIDatabase.getSetting(SETTINGS_KEYS.ME_PREDICTION_API_KEY);
 
-export const useMEPrediction = item => {
+const TIMEOUT_MS = 10 * 1000;
+
+export const useMEPrediction = ({ item, retryCount = 3, timeout = TIMEOUT_MS }) => {
   const [loading, setLoading] = useState(false);
+  const [retries, setRetries] = useState(0);
   const [data, setData] = useState({});
 
   const storeId = item?.supplying_store_id;
@@ -23,34 +26,58 @@ export const useMEPrediction = item => {
   const url = `${API_URL}/forecast/suggested-quantities/${storeId}?${params}`;
 
   useEffect(() => {
-    setLoading(true);
+    if (!url) return;
+
+    const triggerRetry = () => setRetries(prevRetries => prevRetries + 1);
 
     const fetchSuggestions = async () => {
-      // TODO: Retry logic here
+      const controller = new AbortController();
+      const requestTimeout = setTimeout(() => controller.abort(), timeout);
+
+      setLoading(true);
       try {
         const response = await fetch(url, {
           method: 'GET',
           headers: {
             authorization: API_KEY,
           },
+          signal: controller.signal,
         });
 
-        const json = await response.json();
-        setData(json);
+        /**
+         *
+         * Retry when status code is not OK or errored out
+         *
+         * */
+        if (!response.ok) {
+          triggerRetry();
+        } else {
+          const json = await response.json();
+          setData(json);
+        }
       } catch (error) {
+        triggerRetry();
         setData({
           error: true,
-          message: 'Could not fetch data',
+          message: 'Could not complete request',
         });
+      } finally {
+        clearTimeout(requestTimeout);
+        setLoading(false);
       }
-
-      setLoading(false);
     };
 
-    fetchSuggestions();
-  }, [url]);
+    if (retries < retryCount) {
+      fetchSuggestions();
+    } else {
+      setData({
+        error: true,
+        message: 'Could not fetch data',
+      });
+    }
+  }, [url, retries, retryCount]);
 
-  return { data, loading };
+  return { data, loading, retries };
 };
 
 // export const updateRequisitionItemList = (requisitionItem, suggestionObject) => {};
