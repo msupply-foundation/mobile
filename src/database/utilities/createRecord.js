@@ -679,7 +679,7 @@ const createIndicatorValue = (database, row, column, period) => {
   const { defaultValue: value } = column;
   const indicatorValue = database.create('IndicatorValue', {
     id: generateUUID(),
-    storeId: UIDatabase.getSetting(SETTINGS_KEYS.THIS_STORE_NAME_ID),
+    storeId: database.getSetting(SETTINGS_KEYS.THIS_STORE_NAME_ID),
     row,
     column,
     period,
