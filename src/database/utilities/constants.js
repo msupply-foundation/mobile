@@ -23,6 +23,8 @@ export const NUMBER_SEQUENCE_KEYS = {
   REQUISITION_REQUESTER_REFERENCE: 'requisition_requester_reference',
   STOCKTAKE_SERIAL_NUMBER: 'stocktake_serial_number',
   SUPPLIER_INVOICE_NUMBER: 'supplier_invoice_serial_number',
+  PAYMENT_NUMBER: 'payment_serial_number',
+  RECEIPT_NUMBER: 'receipt_serial_number',
 };
 
 export const NAME_TYPE_KEYS = {

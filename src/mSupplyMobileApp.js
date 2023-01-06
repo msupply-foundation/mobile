@@ -33,7 +33,7 @@ import { version as appVersion } from '../package.json';
 
 import { syncCompleteTransaction, setSyncError, openSyncModal } from './actions/SyncActions';
 import { FinaliseActions } from './actions/FinaliseActions';
-import { UserActions } from './actions';
+import { clearNumberSequences } from './database/utilities';
 import { SupplierCreditActions } from './actions/SupplierCreditActions';
 
 import { Spinner } from './widgets';
@@ -56,6 +56,7 @@ import { SensorDownloadActions } from './actions/Bluetooth/SensorDownloadActions
 import BreachManager from './bluetooth/BreachManager';
 import { selectIsPassivelyDownloadingTemps } from './selectors/Bluetooth/sensorDownload';
 import LoggerService from './utilities/logging';
+import { UserActions } from './actions';
 
 const BLUETOOTH_SYNC_INTERVAL = 60 * 1000; // 1 minute in milliseconds.
 const AUTHENTICATION_INTERVAL = 10 * 60 * 1000; // 10 minutes in milliseconds.
@@ -154,6 +155,7 @@ class MSupplyMobileAppContainer extends React.Component {
 
   onInitialised = () => {
     this.setState({ isInitialised: true });
+    clearNumberSequences(UIDatabase);
     this.postSyncProcessor.processAnyUnprocessedRecords();
   };
 

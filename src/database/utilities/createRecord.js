@@ -6,11 +6,13 @@
 import moment from 'moment';
 import { generateUUID } from 'react-native-database';
 
-import { UIDatabase } from '..';
+import UIDatabase from '../UIDatabase';
 import { versionToInteger, formatDateAndTime } from '../../utilities';
+import { parseNumber } from './parsers';
 import { NUMBER_OF_DAYS_IN_A_MONTH, NUMBER_SEQUENCE_KEYS, PATIENT_CODE_LENGTH } from './constants';
 import { generalStrings } from '../../localization';
 import { SETTINGS_KEYS } from '../../settings';
+import { getMaxSerialNumber } from './numberSequence';
 
 /**
  * Creates a database Address object with the given address details.
@@ -405,10 +407,10 @@ const createOffsetCustomerInvoice = (database, payment) => {
 
 const createReceipt = (database, user, name, amount, paymentType, description) => {
   const currentDate = new Date();
-  const { CUSTOMER_INVOICE_NUMBER } = NUMBER_SEQUENCE_KEYS;
+  const { RECEIPT_NUMBER } = NUMBER_SEQUENCE_KEYS;
   const receipt = database.create('Transaction', {
     id: generateUUID(),
-    serialNumber: getNextNumber(database, CUSTOMER_INVOICE_NUMBER),
+    serialNumber: getNextNumber(database, RECEIPT_NUMBER),
     entryDate: currentDate,
     confirmDate: currentDate,
     type: 'receipt',
@@ -440,10 +442,10 @@ const createReceiptLine = (database, receipt, linkedTransaction, amount, note) =
 
 const createPayment = (database, user, name, amount, paymentType, reason, description) => {
   const currentDate = new Date();
-  const { CUSTOMER_INVOICE_NUMBER } = NUMBER_SEQUENCE_KEYS;
+  const { PAYMENT_NUMBER } = NUMBER_SEQUENCE_KEYS;
   const payment = database.create('Transaction', {
     id: generateUUID(),
-    serialNumber: getNextNumber(database, CUSTOMER_INVOICE_NUMBER),
+    serialNumber: getNextNumber(database, PAYMENT_NUMBER),
     entryDate: currentDate,
     confirmDate: currentDate,
     type: 'payment',
@@ -639,11 +641,15 @@ const createCustomerInvoice = (database, customer, user, mode = 'store', customD
  * @param   {string}          sequenceKey
  * @return  {NumberSequence}
  */
-const createNumberSequence = (database, sequenceKey) =>
-  database.create('NumberSequence', {
+const createNumberSequence = (database, sequenceKey) => {
+  const maxSerialNumber = getMaxSerialNumber(database, sequenceKey);
+
+  return database.create('NumberSequence', {
     id: generateUUID(),
     sequenceKey,
+    highestNumberUsed: parseNumber(maxSerialNumber) ?? 0,
   });
+};
 
 /**
  * Create a number attached to a sequence.
