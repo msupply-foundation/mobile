@@ -32,10 +32,11 @@ export const PatientEditModalComponent = ({
   hasVaccineEventsForm,
   isCreatePatient,
 }) => {
-  let canSave = canSaveForm;
+  let canSave = canSaveForm && !isDisabled;
   const hasVaccineEvents = hasVaccineEventsForm;
-  if (canSave) {
-    canSave = !isDisabled && surveySchema && surveyForm && nameNoteIsValid;
+
+  if (canSave && hasVaccineEvents) {
+    canSave = surveySchema && surveyForm && nameNoteIsValid;
   }
 
   const canDelete = !isDisabled;
