@@ -63,5 +63,5 @@ FormSlider.propTypes = {
   step: PropTypes.number.isRequired,
   value: PropTypes.number.isRequired,
   onValueChange: PropTypes.func.isRequired,
-  isDisabled: PropTypes.isDisabled,
+  isDisabled: PropTypes.bool,
 };
