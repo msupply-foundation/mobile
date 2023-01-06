@@ -150,6 +150,7 @@ const generateSyncData = (settings, recordType, record) => {
         DOSforAMCadjustment: String(record.daysOutOfStock),
         stockLosses: String(record.negativeAdjustments),
         stockAdditions: String(record.positiveAdjustments),
+        optionID: record.option?.id ?? '',
       };
     }
     case 'Stocktake': {
