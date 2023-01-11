@@ -1,4 +1,5 @@
 import { createSelector } from 'reselect';
+import moment from 'moment';
 
 import { selectSpecificEntityState } from './index';
 import { getFormInputConfig } from '../../utilities/formInputConfigs';
@@ -129,4 +130,43 @@ export const selectLastSupplementalData = () => {
   }
 
   return null;
+};
+
+export const selectCurrentPatientVaccineHistory = state => {
+  const selectedPatient = selectSpecificEntityState(state, 'name');
+  const { editing } = selectedPatient;
+
+  const [vaccinationPatientEvent] = UIDatabase.objects('PatientEvent').filtered(
+    "code == 'vaccination'"
+  );
+  const { id: vaccinationPatientEventID } = vaccinationPatientEvent ?? {};
+
+  const patientVaccinationHistory = editing?.nameNotes
+    ?.filter(({ patientEventID }) => patientEventID === vaccinationPatientEventID)
+    .map(({ data: vaccinationHistory }) => vaccinationHistory);
+
+  return patientVaccinationHistory;
+};
+
+export const selectWasPatientVaccinatedWithinOneWeek = state => {
+  const oneWeekAgo = moment().subtract(7, 'days').format('L');
+  const vaccinationHistory = selectCurrentPatientVaccineHistory(state);
+  const weeklyVaccinationHistory = vaccinationHistory?.filter(
+    ({ vaccineDate }) => vaccineDate >= oneWeekAgo
+  );
+  return weeklyVaccinationHistory;
+};
+
+export const selectDepartmentFromWeeklyVaccinationHistory = state => {
+  const selectDepartmentFromWeeklyVaccination = [];
+  const vaccineList = UIDatabase.objects('Vaccine');
+  const weeklyVaccinationHistory = selectWasPatientVaccinatedWithinOneWeek(state) ?? [];
+  weeklyVaccinationHistory.forEach(vaccine => {
+    const matchedVaccine =
+      vaccineList.filter(({ code }) => code === vaccine.itemCode)[0]?.department ?? '';
+    if (matchedVaccine) {
+      selectDepartmentFromWeeklyVaccination.push(matchedVaccine);
+    }
+  });
+  return selectDepartmentFromWeeklyVaccination;
 };

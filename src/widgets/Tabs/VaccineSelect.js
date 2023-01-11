@@ -4,11 +4,12 @@
  * Sustainable Solutions (NZ) Ltd. 2021
  */
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { useNavigation } from '@react-navigation/native';
 import { Dimensions, Text, StyleSheet, TextInput, View } from 'react-native';
 import { batch, connect } from 'react-redux';
+
 import { TABS } from '../constants';
 import { FlexRow } from '../FlexRow';
 import { FlexView } from '../FlexView';
@@ -25,6 +26,7 @@ import {
   selectSelectedVaccines,
   selectVaccines,
   selectSelectedVaccinator,
+  selectDepartmentFromWeeklyVaccinationHistory,
 } from '../../selectors/Entities/vaccinePrescription';
 import { getColumns } from '../../pages/dataTableUtilities';
 import { useLoadingIndicator } from '../../hooks/useLoadingIndicator';
@@ -46,6 +48,8 @@ import { PaperModalContainer } from '../PaperModal/PaperModalContainer';
 import { PaperConfirmModal } from '../PaperModal/PaperConfirmModal';
 import { useToggle } from '../../hooks/useToggle';
 import { PageButton } from '../PageButton';
+import { UIDatabase } from '../../database/index';
+import { PREFERENCE_KEYS } from '../../database/utilities/preferenceConstants';
 
 const ListEmptyComponent = () => (
   <FlexView flex={1} justifyContent="center" alignItems="center">
@@ -83,12 +87,55 @@ const VaccineSelectComponent = ({
   selectedVaccine,
   vaccines,
   wasPatientVaccinatedWithinOneDay,
+  departmentFromWeeklyVaccination,
 }) => {
   const { pageTopViewContainer } = globalStyles;
   const [confirmDoubleDoseModalOpen, toggleConfirmDoubleDoseModal] = useToggle();
   const [confirmAndRepeatDoubleDoseModalOpen, toggleConfirmAndRepeatDoubleDoseModal] = useToggle();
   const vaccineColumns = React.useMemo(() => getColumns(TABS.ITEM), []);
   const batchColumns = React.useMemo(() => getColumns(TABS.VACCINE_BATCH), []);
+  const [wasPatientVaccinatedAlready, setPatientVaccinatedStatus] = useState(false);
+  const [doubleDoseAlertTitle, setDoubleDoseAlertTitle] = useState('');
+
+  // Get departmentID from the selectedVaccine,
+  // then loop through vaccine history taken within one week.
+  // If at least one history record has same department as selected vaccine,
+  // then return true that would be helpful to generate an alert
+
+  const departmentID = selectedVaccine?.department?.id ?? '';
+
+  const vaccinatedWithSameItemDepartment = selectedDepartmentID => {
+    if (selectedDepartmentID) {
+      return departmentFromWeeklyVaccination.some(({ id }) => id === selectedDepartmentID);
+    }
+    return false; // If department doesn't exist.
+  };
+
+  const wasPatientVaccinatedWithinOneWeek = React.useMemo(
+    () => vaccinatedWithSameItemDepartment(departmentID),
+    [departmentID]
+  );
+
+  const canDispenseSameTypeOfVaccine = UIDatabase.getPreference(
+    PREFERENCE_KEYS.ALERT_IF_DISPENSING_SAME_VACCINE
+  );
+
+  // If ALERT_IF_DISPENSING_SAME_VACCINE is enabled in store preference and patient has been
+  // vaccinated within a week, then look at weekly vaccination history otherwise 24hrs history
+  useEffect(() => {
+    if (canDispenseSameTypeOfVaccine && wasPatientVaccinatedWithinOneWeek) {
+      setPatientVaccinatedStatus(canDispenseSameTypeOfVaccine);
+      setDoubleDoseAlertTitle(modalStrings.confirm_weekly_double_dose);
+    } else {
+      setPatientVaccinatedStatus(wasPatientVaccinatedWithinOneDay);
+      setDoubleDoseAlertTitle(modalStrings.confirm_double_dose);
+    }
+  }, [
+    canDispenseSameTypeOfVaccine,
+    wasPatientVaccinatedWithinOneDay,
+    wasPatientVaccinatedWithinOneWeek,
+  ]);
+
   const disabledVaccineRows = React.useMemo(
     () =>
       vaccines
@@ -201,9 +248,7 @@ const VaccineSelectComponent = ({
           text={buttonStrings.confirm}
           style={{ marginLeft: 'auto' }}
           isDisabled={!selectedBatches && !hasRefused}
-          onPress={
-            wasPatientVaccinatedWithinOneDay ? toggleConfirmDoubleDoseModal : confirmPrescription
-          }
+          onPress={wasPatientVaccinatedAlready ? toggleConfirmDoubleDoseModal : confirmPrescription}
         />
         <PageButton
           debounceTimer={1000}
@@ -211,7 +256,7 @@ const VaccineSelectComponent = ({
           style={{ marginLeft: 5 }}
           isDisabled={!selectedBatches && !hasRefused}
           onPress={
-            wasPatientVaccinatedWithinOneDay
+            wasPatientVaccinatedAlready
               ? toggleConfirmAndRepeatDoubleDoseModal
               : confirmAndRepeatPrescription
           }
@@ -219,7 +264,7 @@ const VaccineSelectComponent = ({
       </FlexRow>
       <PaperModalContainer isVisible={isModalOpen} onClose={onModalClose}>
         <PaperConfirmModal
-          questionText={modalStrings.confirm_double_dose}
+          questionText={doubleDoseAlertTitle}
           confirmText={modalStrings.confirm}
           cancelText={modalStrings.cancel}
           onConfirm={onModalConfirm}
@@ -265,6 +310,7 @@ const mapStateToProps = state => {
   const [selectedVaccine] = selectedVaccines;
   const vaccinator = selectSelectedVaccinator(state);
   const wasPatientVaccinatedWithinOneDay = selectWasPatientVaccinatedWithinOneDay(state);
+  const departmentFromWeeklyVaccination = selectDepartmentFromWeeklyVaccinationHistory(state);
 
   return {
     vaccinator,
@@ -275,6 +321,7 @@ const mapStateToProps = state => {
     selectedVaccine,
     vaccines,
     wasPatientVaccinatedWithinOneDay,
+    departmentFromWeeklyVaccination,
   };
 };
 
@@ -283,6 +330,7 @@ VaccineSelectComponent.defaultProps = {
   selectedRows: {},
   selectedBatches: [],
   selectedVaccine: undefined,
+  departmentFromWeeklyVaccination: [],
 };
 
 VaccineSelectComponent.propTypes = {
@@ -300,6 +348,7 @@ VaccineSelectComponent.propTypes = {
   selectedVaccine: PropTypes.object,
   vaccines: PropTypes.oneOfType([PropTypes.array, PropTypes.object]).isRequired,
   wasPatientVaccinatedWithinOneDay: PropTypes.bool.isRequired,
+  departmentFromWeeklyVaccination: PropTypes.array,
 };
 
 export const VaccineSelect = connect(mapStateToProps, mapDispatchToProps)(VaccineSelectComponent);

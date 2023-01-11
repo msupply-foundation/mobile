@@ -7,6 +7,7 @@
     "cancel": "Cancel",
     "confirm": "Confirm",
     "confirm_double_dose": "This patient already has a vaccination recorded within the last 24 hours, do you want to proceed?",
+    "confirm_weekly_double_dose": "This patient has already received one dose within the last 7 days, are you sure you want to dispense another dose?",
     "create": "Create",
     "delete_these_fridges": "Are you sure you want to delete these fridges?",
     "create_cash_transaction": "Create new cash transaction",
