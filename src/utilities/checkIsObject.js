@@ -11,3 +11,8 @@ export const checkIsObject = object =>
 
 export const checkIsObjectEmpty = object =>
   checkIsObject(object) && Object.keys(object).length === 0;
+
+// We need this method because immutable objects such as state would return
+// Object.values(object).length === 0
+export const checkIsObjectValuesEmpty = object =>
+  Object.values(object).length === 0 && checkIsObject(object);
