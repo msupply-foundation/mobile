@@ -42,6 +42,8 @@ import { SETTINGS_KEYS } from '../settings';
 import { useLoadingIndicator } from '../hooks/useLoadingIndicator';
 import { RowDetailActions } from '../actions/RowDetailActions';
 
+import { getMEPrediction } from '../utilities/prediction/macroEyes';
+
 /**
  * Renders a mSupply mobile page with a supplier requisition loaded for editing
  *
@@ -221,7 +223,30 @@ const SupplierRequisition = ({
     <PageButton
       style={program ? globalStyles.wideButton : globalStyles.topButton}
       text={buttonStrings.use_suggested_quantities}
-      onPress={onSetRequestedToSuggested}
+      onPress={e => {
+        onSetRequestedToSuggested(e);
+
+        /**
+         *
+         * TODO: Update request object with required params. Can receive multiple item objects
+         * to be batched into one API call
+         *
+         */
+        const item = {
+          supplying_store_id: 'test',
+          program: 'test',
+          order_type: 'test',
+          period: '2022-01-01',
+          requisition_id: '001',
+          item_code: '001',
+          daily_usage: 100,
+          stock_on_hand: 40,
+        };
+
+        getMEPrediction(item)
+          .then(response => console.log('DATA: ', response))
+          .catch(error => console.log('ERROR: ', error.message));
+      }}
       isDisabled={isFinalised}
     />
   );
