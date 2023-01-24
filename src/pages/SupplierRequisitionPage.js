@@ -42,7 +42,7 @@ import { SETTINGS_KEYS } from '../settings';
 import { useLoadingIndicator } from '../hooks/useLoadingIndicator';
 import { RowDetailActions } from '../actions/RowDetailActions';
 
-import { getMEPrediction } from '../utilities/prediction/macroEyes';
+import { getMEPrediction, updatePredictedQuantity } from '../utilities/prediction/macroEyes';
 
 /**
  * Renders a mSupply mobile page with a supplier requisition loaded for editing
@@ -219,33 +219,63 @@ const SupplierRequisition = ({
     />
   );
 
+  console.log('DATA: ', data?.length);
+
   const UseSuggestedQuantitiesButton = () => (
     <PageButton
       style={program ? globalStyles.wideButton : globalStyles.topButton}
       text={buttonStrings.use_suggested_quantities}
       onPress={e => {
-        onSetRequestedToSuggested(e);
+        const ITEM_CODE = 'AF36050';
+
+        const filteredItem = data?.filter(d => d?.item?.code === ITEM_CODE)[0] || {};
+        // console.log('FILTERED_DATA: ', filteredItem);
 
         /**
          *
-         * TODO: Update request object with required params. Can receive multiple item objects
-         * to be batched into one API call
+         * TODO: Multiple item objects to be batched into one API call
          *
          */
-        const item = {
-          supplying_store_id: 'test',
-          program: 'test',
-          order_type: 'test',
-          period: '2022-01-01',
-          requisition_id: '001',
-          item_code: '001',
-          daily_usage: 100,
-          stock_on_hand: 40,
+        const { item, requisition, stockOnHand, dailyUsage } = filteredItem;
+
+        const itemObj = {
+          supplying_store_id: requisition?.otherStoreName?.id,
+          program: requisition?.program?.id,
+          order_type: requisition?.orderType,
+          period: requisition?.period?.id,
+          requisition_id: requisition?.id,
+          item_code: item?.code,
+          daily_usage: dailyUsage,
+          stock_on_hand: stockOnHand,
         };
 
-        getMEPrediction(item)
-          .then(response => console.log('DATA: ', response))
-          .catch(error => console.log('ERROR: ', error.message));
+        console.log('ME_REQUEST: ', itemObj);
+
+        getMEPrediction(itemObj)
+          .then(response => {
+            console.log('ME_RESPONSE: ', response);
+
+            const getItem = itemCode => {
+              const filter = UIDatabase.objects('RequisitionItem').filtered(
+                'item.code == $0',
+                itemCode
+              );
+
+              return filter?.[0] || {};
+            };
+
+            const itemFromCode = getItem(itemObj.item_code);
+            // console.log('REQUISITION_ITEM: ', item);
+
+            updatePredictedQuantity(itemFromCode, response);
+          })
+          .catch(() => {
+            // TODO: Should log error if API fails
+          })
+          .finally(() => {
+            // Trigger the original suggested values event
+            onSetRequestedToSuggested(e);
+          });
       }}
       isDisabled={isFinalised}
     />

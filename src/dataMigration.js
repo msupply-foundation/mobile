@@ -280,33 +280,6 @@ const dataMigrations = [
       }
     },
   },
-
-  // Adds new settings keys: ME_PREDICTION_API_URL & ME_PREDICTION_API_KEY
-  // Adds `predictedQuantity` field into RequisitionItem
-  {
-    version: '8.6.1',
-    migrate: database => {
-      database.write(() => {
-        database.update('Setting', {
-          key: SETTINGS_KEYS.ME_PREDICTION_API_URL,
-          value: '',
-        });
-      });
-
-      database.write(() => {
-        database.update('Setting', {
-          key: SETTINGS_KEYS.ME_PREDICTION_API_KEY,
-          value: '',
-        });
-      });
-
-      const requisitionItems = database.objects('RequisitionItem');
-
-      requisitionItems.forEach(item => {
-        database.update('RequisitionItem', { ...item, predictedQuantity: 0 });
-      });
-    },
-  },
 ];
 
 export default dataMigrations;

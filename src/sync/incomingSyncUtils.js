@@ -819,10 +819,31 @@ export const createOrUpdateRecord = (database, settings, recordType, record) => 
       break;
     }
     case 'Store': {
-      const { tags, code } = record;
+      const { tags, code, custom_data } = record;
       if (settings.get(THIS_STORE_ID) === record.ID) {
         database.update('Setting', { key: THIS_STORE_TAGS, value: tags });
         database.update('Setting', { key: THIS_STORE_CODE, value: code });
+
+        if (custom_data) {
+          const parsedCustomData = JSON.parse(custom_data);
+          if (parsedCustomData) {
+            const { ME_PREDICTION_API_KEY, ME_PREDICTION_API_URL } = SETTINGS_KEYS;
+
+            if (parsedCustomData[ME_PREDICTION_API_KEY]) {
+              database.update('Setting', {
+                key: ME_PREDICTION_API_KEY,
+                value: parsedCustomData[ME_PREDICTION_API_KEY].data,
+              });
+            }
+
+            if (parsedCustomData[ME_PREDICTION_API_URL]) {
+              database.update('Setting', {
+                key: ME_PREDICTION_API_URL,
+                value: parsedCustomData[ME_PREDICTION_API_URL].data,
+              });
+            }
+          }
+        }
       }
       break;
     }

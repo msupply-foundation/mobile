@@ -12,12 +12,12 @@ import { UIDatabase } from '../../database';
 import { SETTINGS_KEYS } from '../../settings';
 
 const API_URL =
-  // UIDatabase.getSetting(SETTINGS_KEYS.ME_PREDICTION_API_URL) || 'http://192.168.0.102:8000';
   UIDatabase.getSetting(SETTINGS_KEYS.ME_PREDICTION_API_URL) ||
   'http://civapitest.dev.macro-eyes.com';
 
 const API_KEY = UIDatabase.getSetting(SETTINGS_KEYS.ME_PREDICTION_API_KEY);
 
+const RETRY_COUNT = 3;
 const TIMEOUT_MS = 10 * 1000;
 
 /**
@@ -95,8 +95,22 @@ export const useMEPrediction = ({ item, retryCount = 3, timeout = TIMEOUT_MS }) 
  * Non-hook implementation for fetching suggestions
  *
  */
-export const getMEPrediction = (item, retryCount = 3, timeout = TIMEOUT_MS) => {
-  const { supplying_store_id } = item;
+export const getMEPrediction = item => {
+  if (!API_URL || !API_KEY) {
+    return {
+      error: true,
+      message: 'Provide valid API credentials',
+    };
+  }
+
+  const { supplying_store_id, item_code } = item;
+
+  if (!supplying_store_id || !item_code) {
+    return {
+      error: true,
+      message: 'Provide valid item object',
+    };
+  }
 
   /**
    *
@@ -104,76 +118,56 @@ export const getMEPrediction = (item, retryCount = 3, timeout = TIMEOUT_MS) => {
    *
    */
   const params = new URLSearchParams(item).toString();
-  const url = `${API_URL}/forecast/suggested-quantities/${supplying_store_id}?${params}`;
+  const url = `${API_URL}/forecast/suggested-quantities${supplying_store_id}?${params}`;
 
-  if (!url) {
-    return {
-      error: true,
-      message: 'Provide valid URL',
-    };
-  }
+  const retry = (fn, retries = RETRY_COUNT, interval = TIMEOUT_MS) =>
+    new Promise((resolve, reject) => {
+      fn()
+        .then(resolve)
+        .catch(error => {
+          setTimeout(() => {
+            if (retries > 0) {
+              retry(fn, retries - 1, interval).then(resolve, reject);
+            } else {
+              reject(error);
+            }
+          }, interval);
+        });
+    });
 
   const fetchSuggestions = async () => {
     const controller = new AbortController();
-    const requestTimeout = setTimeout(() => controller.abort(), timeout);
 
-    try {
-      const response = await fetch(url, {
-        method: 'GET',
-        headers: {
-          authorization: API_KEY,
-        },
-        signal: controller.signal,
-      });
-
-      let data = {};
-
-      /**
-       *
-       * Retry when status code is not OK or errored out
-       *
-       * */
-      if (!response.ok) {
-        data = {
-          error: true,
-          message: 'Request completed with error',
-        };
-      } else {
-        data = await response.json();
-      }
-      return data;
-    } catch (error) {
-      return {
+    return fetch(url, {
+      method: 'GET',
+      headers: {
+        authorization: API_KEY,
+      },
+      signal: controller.signal,
+    })
+      .then(response => response.json())
+      .catch(error => ({
         error: true,
-        message: 'Error processing request',
-      };
-    } finally {
-      clearTimeout(requestTimeout);
-    }
+        message: 'Error fetching suggestions',
+        stack: error.message,
+      }));
   };
 
-  let response = {};
-
-  for (let i = 0; i < retryCount; i++) {
-    response = fetchSuggestions();
-
-    if (response.error && i === retryCount - 1) {
-      // console.log(`RETRY ${i + 1}`, response);
-      response = {
-        error: true,
-        message: 'Could not fetch data',
-      };
-    }
-  }
-
-  return response;
+  return retry(fetchSuggestions);
 };
 
 /**
  *
- * Update database on changing suggested values
+ * Update the RequisitionItem object with prediction values
  *
  */
-export const updateRequisitionItem = item => {
-  console.log(item);
+export const updatePredictedQuantity = (item, updateObj) => {
+  if (item?.id) {
+    UIDatabase.write(() => {
+      UIDatabase.update('RequisitionItem', {
+        id: item?.id,
+        predictedQuantity: updateObj?.suggested_quantity,
+      });
+    });
+  }
 };
