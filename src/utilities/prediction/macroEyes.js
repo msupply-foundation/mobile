@@ -97,19 +97,19 @@ export const useMEPrediction = ({ item, retryCount = 3, timeout = TIMEOUT_MS }) 
  */
 export const getMEPrediction = item => {
   if (!API_URL || !API_KEY) {
-    return {
+    return Promise.resolve({
       error: true,
       message: 'Provide valid API credentials',
-    };
+    });
   }
 
   const { supplying_store_id, item_code } = item;
 
-  if (!supplying_store_id || !item_code) {
-    return {
+  if (supplying_store_id === undefined || item_code === undefined) {
+    return Promise.resolve({
       error: true,
       message: 'Provide valid item object',
-    };
+    });
   }
 
   /**
@@ -118,7 +118,7 @@ export const getMEPrediction = item => {
    *
    */
   const params = new URLSearchParams(item).toString();
-  const url = `${API_URL}/forecast/suggested-quantities${supplying_store_id}?${params}`;
+  const url = `${API_URL}/forecast/suggested-quantities/${supplying_store_id}?${params}`;
 
   const retry = (fn, retries = RETRY_COUNT, interval = TIMEOUT_MS) =>
     new Promise((resolve, reject) => {
