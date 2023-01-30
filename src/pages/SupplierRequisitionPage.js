@@ -220,7 +220,7 @@ const SupplierRequisition = ({
   );
 
   const fetchSuggestedQuantities = (callbackFn, event) => {
-    console.log('================================================');
+    // console.log('================================================');
     // console.log('DATA: ', data[0]);
 
     /**
@@ -248,7 +248,7 @@ const SupplierRequisition = ({
           };
         }) || [];
 
-    console.log('REQUESTED_ITEMS: ', requestedItems);
+    // console.log('REQUESTED_ITEMS: ', requestedItems);
 
     /**
      *
@@ -256,7 +256,7 @@ const SupplierRequisition = ({
      *
      */
     if (requestedItems.length > 0) {
-      console.log('STORE: ', requestedItems[0]?.requisition.storeId);
+      // console.log('STORE: ', requestedItems[0]?.requisition.storeId);
 
       const items = [];
 
@@ -284,13 +284,13 @@ const SupplierRequisition = ({
         items,
       };
 
-      console.log('REQUEST_OBJECT: ', requestObject);
+      // console.log('REQUEST_OBJECT: ', requestObject);
 
       getMEPrediction(requestObject)
         .then(response => {
           console.log('ME_RESPONSE: ', response);
 
-          if (response?.items?.length > 0) {
+          if (response?.length > 0) {
             /**
              *
              * For each item returned, get the item_code and suggested_quantity:
@@ -301,7 +301,7 @@ const SupplierRequisition = ({
              * }
              *
              */
-            response?.items?.forEach(item => {
+            response?.forEach(item => {
               const { item_code, suggested_quantity } = item;
               updatePredictedQuantity(item_code, suggested_quantity);
             });

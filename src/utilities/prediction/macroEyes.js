@@ -11,9 +11,10 @@ import { useEffect, useState } from 'react';
 import { UIDatabase } from '../../database';
 import { SETTINGS_KEYS } from '../../settings';
 
-const API_URL =
-  UIDatabase.getSetting(SETTINGS_KEYS.ME_PREDICTION_API_URL) ||
-  'http://civapitest.dev.macro-eyes.com';
+const API_URL = 'http://192.168.0.100:8000';
+// const API_URL =
+//   UIDatabase.getSetting(SETTINGS_KEYS.ME_PREDICTION_API_URL) ||
+//   'http://civapitest.dev.macro-eyes.com';
 
 const API_KEY = UIDatabase.getSetting(SETTINGS_KEYS.ME_PREDICTION_API_KEY);
 
@@ -95,7 +96,7 @@ export const useMEPrediction = ({ item, retryCount = 3, timeout = TIMEOUT_MS }) 
  * Non-hook implementation for fetching suggestions
  *
  */
-export const getMEPrediction = item => {
+export const getMEPrediction = requestObj => {
   if (!API_URL || !API_KEY) {
     return Promise.resolve({
       error: true,
@@ -103,16 +104,16 @@ export const getMEPrediction = item => {
     });
   }
 
-  const { supplying_store_id, item_code } = item;
+  const { supplying_store_id, items } = requestObj;
 
-  if (supplying_store_id === undefined || item_code === undefined) {
+  if (supplying_store_id === undefined || items.length === 0) {
     return Promise.resolve({
       error: true,
       message: 'Provide valid item object',
     });
   }
 
-  const url = `${API_URL}/forecast/suggested-quantities/${supplying_store_id}`;
+  const url = `${API_URL}/forecast/suggested-quantities`;
 
   const retry = (fn, retries = RETRY_COUNT, interval = TIMEOUT_MS) =>
     new Promise((resolve, reject) => {
@@ -133,10 +134,13 @@ export const getMEPrediction = item => {
     const controller = new AbortController();
 
     return fetch(url, {
-      method: 'GET',
+      method: 'POST',
       headers: {
-        authorization: API_KEY,
+        Authorization: `Bearer ${API_KEY}`,
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
       },
+      body: JSON.stringify(requestObj),
       signal: controller.signal,
     })
       .then(response => response.json())
@@ -155,7 +159,7 @@ export const getMEPrediction = item => {
  * Update the RequisitionItem object with prediction values
  *
  */
-export const updatePredictedQuantity = (itemCode, updateObj) => {
+export const updatePredictedQuantity = (itemCode, quantity) => {
   const getItem = code => {
     const filter = UIDatabase.objects('RequisitionItem').filtered('item.code == $0', code);
     return filter?.[0] || {};
@@ -167,7 +171,7 @@ export const updatePredictedQuantity = (itemCode, updateObj) => {
     UIDatabase.write(() => {
       UIDatabase.update('RequisitionItem', {
         id: item?.id,
-        predictedQuantity: updateObj?.suggested_quantity,
+        predictedQuantity: quantity,
       });
     });
   }
