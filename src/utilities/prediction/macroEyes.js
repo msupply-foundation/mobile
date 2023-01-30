@@ -160,12 +160,8 @@ export const getMEPrediction = requestObj => {
  *
  */
 export const updatePredictedQuantity = (itemCode, quantity) => {
-  const getItem = code => {
-    const filter = UIDatabase.objects('RequisitionItem').filtered('item.code == $0', code);
-    return filter?.[0] || {};
-  };
-
-  const item = getItem(itemCode);
+  const item =
+    UIDatabase.objects('RequisitionItem').filtered('item.code == $0', itemCode)?.[0] || {};
 
   if (item?.id) {
     UIDatabase.write(() => {

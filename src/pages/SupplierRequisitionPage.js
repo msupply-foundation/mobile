@@ -220,9 +220,6 @@ const SupplierRequisition = ({
   );
 
   const fetchSuggestedQuantities = (callbackFn, event) => {
-    // console.log('================================================');
-    // console.log('DATA: ', data[0]);
-
     /**
      *
      * Fetch items with `requiredQuantity` > 0 (Shows intent of adding to requisition)
@@ -248,16 +245,12 @@ const SupplierRequisition = ({
           };
         }) || [];
 
-    // console.log('REQUESTED_ITEMS: ', requestedItems);
-
     /**
      *
      * Batched items into one API call
      *
      */
     if (requestedItems.length > 0) {
-      // console.log('STORE: ', requestedItems[0]?.requisition.storeId);
-
       const items = [];
 
       requestedItems.forEach(obj => {
@@ -283,8 +276,6 @@ const SupplierRequisition = ({
         // Items requesting prediction
         items,
       };
-
-      // console.log('REQUEST_OBJECT: ', requestObject);
 
       getMEPrediction(requestObject)
         .then(response => {
