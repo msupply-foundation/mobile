@@ -2,7 +2,6 @@
 /* eslint-disable react/forbid-prop-types */
 import React from 'react';
 import { View, ScrollView, StyleSheet } from 'react-native';
-import { useIsFocused } from '@react-navigation/native';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 
@@ -77,15 +76,11 @@ const FormControlComponent = ({
   shouldAutoFocus,
 }) => {
   const [refs, setRefs] = React.useState([]);
-  const isFocused = useIsFocused();
 
   React.useEffect(() => {
-    // Only update state if component comes in focus
-    if (isFocused) {
-      onInitialiseForm();
-      setRefs({ length: inputConfig.length });
-    }
-  }, [isFocused]);
+    onInitialiseForm();
+    setRefs({ length: inputConfig.length });
+  }, []);
 
   const debouncedUpdateForm = useDebounce(onUpdateForm, 500);
 
@@ -410,7 +405,7 @@ const localStyles = StyleSheet.create({
   },
   flexOne: { flex: 1 },
   flexTen: { flex: 10 },
-  flexRow: { flex: 1, flexDirection: 'row' },
+  flexRow: { flex: 1, flexDirection: 'row', paddingVertical: 30 },
   buttonsRow: { marginTop: 10, flexDirection: 'row-reverse' },
   whiteBackground: { backgroundColor: WHITE },
 });
