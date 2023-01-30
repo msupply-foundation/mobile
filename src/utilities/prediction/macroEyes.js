@@ -11,10 +11,8 @@ import { useEffect, useState } from 'react';
 import { UIDatabase } from '../../database';
 import { SETTINGS_KEYS } from '../../settings';
 
-const API_URL = 'http://192.168.0.100:8000';
-// const API_URL =
-//   UIDatabase.getSetting(SETTINGS_KEYS.ME_PREDICTION_API_URL) ||
-//   'http://civapitest.dev.macro-eyes.com';
+const API_URL =
+  UIDatabase.getSetting(SETTINGS_KEYS.ME_PREDICTION_API_URL) || 'http://civapi.dev.macro-eyes.com';
 
 const API_KEY = UIDatabase.getSetting(SETTINGS_KEYS.ME_PREDICTION_API_KEY);
 
