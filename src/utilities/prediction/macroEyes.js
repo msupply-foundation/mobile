@@ -112,13 +112,7 @@ export const getMEPrediction = item => {
     });
   }
 
-  /**
-   *
-   * Build url parameters from the item object
-   *
-   */
-  const params = new URLSearchParams(item).toString();
-  const url = `${API_URL}/forecast/suggested-quantities/${supplying_store_id}?${params}`;
+  const url = `${API_URL}/forecast/suggested-quantities/${supplying_store_id}`;
 
   const retry = (fn, retries = RETRY_COUNT, interval = TIMEOUT_MS) =>
     new Promise((resolve, reject) => {
@@ -161,7 +155,14 @@ export const getMEPrediction = item => {
  * Update the RequisitionItem object with prediction values
  *
  */
-export const updatePredictedQuantity = (item, updateObj) => {
+export const updatePredictedQuantity = (itemCode, updateObj) => {
+  const getItem = code => {
+    const filter = UIDatabase.objects('RequisitionItem').filtered('item.code == $0', code);
+    return filter?.[0] || {};
+  };
+
+  const item = getItem(itemCode);
+
   if (item?.id) {
     UIDatabase.write(() => {
       UIDatabase.update('RequisitionItem', {

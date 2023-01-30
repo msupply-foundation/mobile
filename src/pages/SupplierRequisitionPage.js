@@ -220,51 +220,101 @@ const SupplierRequisition = ({
   );
 
   const fetchSuggestedQuantities = (callbackFn, event) => {
-    const ITEM_CODE = 'AF36050'; // Using this as a sample item in requisition table
-
-    // TODO: This should be a list of selected items
-    const filteredItem = data?.filter(d => d?.item?.code === ITEM_CODE)[0] || {};
+    console.log('================================================');
+    // console.log('DATA: ', data[0]);
 
     /**
      *
-     * TODO: Multiple item objects to be batched into one API call
+     * Fetch items with `requiredQuantity` > 0 (Shows intent of adding to requisition)
      *
      */
-    const { item, requisition, stockOnHand, dailyUsage } = filteredItem;
+    const requestedItems =
+      data
+        ?.filter(d => d.requiredQuantity > 0)
+        ?.map(d => {
+          const { dailyUsage, item, requiredQuantity, stockOnHand, requisition } = d;
+          return {
+            requisition: {
+              id: requisition?.id,
+              storeId: requisition?.otherStoreName?.id,
+              programId: requisition?.program?.id,
+              orderType: requisition?.orderType,
+              period: requisition?.period?.id,
+            },
+            stockOnHand,
+            dailyUsage,
+            itemCode: item?.code || '-',
+            requiredQuantity,
+          };
+        }) || [];
 
-    const itemObj = {
-      supplying_store_id: requisition?.otherStoreName?.id,
-      program: requisition?.program?.id,
-      order_type: requisition?.orderType,
-      period: requisition?.period?.id,
-      requisition_id: requisition?.id,
-      item_code: item?.code,
-      daily_usage: dailyUsage,
-      stock_on_hand: stockOnHand,
-    };
+    console.log('REQUESTED_ITEMS: ', requestedItems);
 
-    getMEPrediction(itemObj)
-      .then(response => {
-        console.log('ME_RESPONSE: ', response);
+    /**
+     *
+     * Batched items into one API call
+     *
+     */
+    if (requestedItems.length > 0) {
+      console.log('STORE: ', requestedItems[0]?.requisition.storeId);
 
-        const getItem = itemCode => {
-          const filter = UIDatabase.objects('RequisitionItem').filtered(
-            'item.code == $0',
-            itemCode
-          );
+      const items = [];
 
-          return filter?.[0] || {};
-        };
+      requestedItems.forEach(obj => {
+        const { itemCode, stockOnHand, dailyUsage } = obj;
 
-        const itemFromCode = getItem(itemObj.item_code);
-
-        updatePredictedQuantity(itemFromCode, response);
-      })
-      .catch(() => {})
-      .finally(() => {
-        // Trigger the original suggested values event
-        callbackFn(event);
+        items.push({
+          item_code: itemCode,
+          daily_usage: dailyUsage,
+          stock_on_hand: stockOnHand,
+        });
       });
+
+      const { requisition } = requestedItems[0];
+
+      const requestObject = {
+        // Requisition metadata
+        supplying_store_id: requisition?.storeId,
+        program: requisition?.programId,
+        order_type: requisition?.orderType,
+        period: requisition?.period,
+        requisition_id: requisition?.id,
+
+        // Items requesting prediction
+        items,
+      };
+
+      console.log('REQUEST_OBJECT: ', requestObject);
+
+      getMEPrediction(requestObject)
+        .then(response => {
+          console.log('ME_RESPONSE: ', response);
+
+          if (response?.items?.length > 0) {
+            /**
+             *
+             * For each item returned, get the item_code and suggested_quantity:
+             *
+             * {
+             *  item_code: "",
+             *  suggested_quantity: ""
+             * }
+             *
+             */
+            response?.items?.forEach(item => {
+              const { item_code, suggested_quantity } = item;
+              updatePredictedQuantity(item_code, suggested_quantity);
+            });
+          }
+        })
+        .catch(() => {})
+        .finally(() => {
+          // Trigger the original suggested values event
+          callbackFn(event);
+        });
+    } else {
+      callbackFn(event);
+    }
   };
 
   const UseSuggestedQuantitiesButton = () => (

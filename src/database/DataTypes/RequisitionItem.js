@@ -91,7 +91,7 @@ export class RequisitionItem extends Realm.Object {
     return (
       /**
        *
-       * TODO: Predicted quantity is received from the ME API
+       * Predicted quantity is received from the ME API
        *
        */
       this.predictedQuantity ||
