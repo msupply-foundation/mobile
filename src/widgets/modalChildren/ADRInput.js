@@ -5,7 +5,7 @@ import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import moment from 'moment';
 import { JSONForm } from '../JSONForm/JSONForm';
-import { UIDatabase } from '../../database/index';
+import { UIDatabase } from '../../database';
 import { FlexRow } from '../FlexRow';
 import { FlexView } from '../FlexView';
 import { PageButton } from '../PageButton';
@@ -23,6 +23,7 @@ const getSchemaItems = jsonSchema => {
   const { items } = causes;
   return items;
 };
+
 const mapHistory = history =>
   history.map((h, index) => {
     const { vaccinator, itemName, confirmDate } = h;
@@ -48,7 +49,7 @@ LoadingIndicator.propTypes = {
   loading: PropTypes.bool.isRequired,
 };
 
-export const ADRInputComponent = ({ onCancel, onSave, patient, vaccineHistory }) => {
+const ADRInputComponent = ({ onCancel, onSave, patient, vaccineHistory }) => {
   const [{ formData, isValid }, setForm] = useState({ formData: null, isValid: false });
   const patientId = patient?.id;
   const [ADRSchema, setADRSchema] = useState(UIDatabase.objects('ADRForm')[0]);

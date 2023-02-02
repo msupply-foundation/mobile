@@ -1,18 +1,14 @@
 /* eslint-disable no-unused-expressions */
 /* eslint-disable react/forbid-prop-types */
 import React from 'react';
-import { View, ScrollView, StyleSheet } from 'react-native';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-
+import { View, ScrollView, StyleSheet } from 'react-native';
+import { useIsFocused } from '@react-navigation/native';
 import { PageButton } from './PageButton';
 
 import { FORM_INPUT_TYPES } from '../utilities/formInputConfigs';
-import { FormTextInput } from './FormInputs/FormTextInput';
-import { FormDateInput } from './FormInputs/FormDateInput';
-import { FormToggle } from './FormInputs/FormToggle';
-import { FormDropdown } from './FormInputs/FormDropdown';
-import { FormSlider } from './FormInputs/FormSlider';
+import { FormTextInput, FormDateInput, FormToggle, FormDropdown, FormSlider } from './FormInputs';
 
 import globalStyles, { SUSSOL_ORANGE, WHITE } from '../globalStyles';
 import { modalStrings, generalStrings } from '../localization';
@@ -76,11 +72,15 @@ const FormControlComponent = ({
   shouldAutoFocus,
 }) => {
   const [refs, setRefs] = React.useState([]);
+  const isFocused = useIsFocused();
 
   React.useEffect(() => {
-    onInitialiseForm();
-    setRefs({ length: inputConfig.length });
-  }, []);
+    // Only update state if component comes in focus
+    if (isFocused) {
+      onInitialiseForm();
+      setRefs({ length: inputConfig.length });
+    }
+  }, [isFocused]);
 
   const debouncedUpdateForm = useDebounce(onUpdateForm, 500);
 

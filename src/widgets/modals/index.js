@@ -10,3 +10,5 @@ export { DemoUserModal } from './DemoUserModal';
 export { FinaliseModal } from './FinaliseModal';
 export { default as LoginModal } from './LoginModal';
 export { ModalContainer } from './ModalContainer';
+export { InsurancePolicyModel } from './InsurancePolicyModel';
+export { PrescriberModel } from './PrescriberModel';
