@@ -57,7 +57,6 @@ export const StocktakeBatchModalComponent = ({
   usingVaccines,
   usingHideSnapshotColumn,
   dispatch: reduxDispatch,
-  usingOpenVialWastageReasons,
 }) => {
   const initialState = useMemo(() => {
     const pageObject = stocktakeItem;
@@ -100,21 +99,21 @@ export const StocktakeBatchModalComponent = ({
   const { difference = 0 } = modalValue || {};
 
   const reasonsSelection = (() => {
-    if (usingOpenVialWastageReasons && isVaccine) {
+    if (difference > 0) {
+      return UIDatabase.objects('PositiveAdjustmentReason');
+    }
+
+    if (usingReasons && !isVaccine) {
+      return UIDatabase.objects('NegativeAdjustmentReason');
+    }
+
+    if (isVaccine) {
       return UIDatabase.objects('Options').filtered(
         '(type == $0 || type == $1) && isActive == true',
         'negativeInventoryAdjustment',
         'openVialWastage'
       );
     }
-
-    if (usingReasons && difference !== 0) {
-      if (difference > 0) {
-        return UIDatabase.objects('PositiveAdjustmentReason');
-      }
-      return UIDatabase.objects('NegativeAdjustmentReason');
-    }
-
     return [];
   })();
 
@@ -306,12 +305,10 @@ StocktakeBatchModalComponent.propTypes = {
   usingVaccines: PropTypes.bool.isRequired,
   usingHideSnapshotColumn: PropTypes.bool.isRequired,
   dispatch: PropTypes.func.isRequired,
-  usingOpenVialWastageReasons: PropTypes.bool.isRequired,
 };
 
 const mapStateToProps = (state, ownProps) => {
   const usingPayments = selectUsingPayments(state);
-  const usingOpenVialWastageReasons = UIDatabase.objects('OpenVialWastageReason').length > 0;
   const usingReasons =
     UIDatabase.objects('NegativeAdjustmentReason').length > 0 &&
     UIDatabase.objects('PositiveAdjustmentReason').length > 0;
@@ -322,7 +319,6 @@ const mapStateToProps = (state, ownProps) => {
     usingReasons,
     usingVaccines,
     usingHideSnapshotColumn,
-    usingOpenVialWastageReasons,
   };
 };
 
