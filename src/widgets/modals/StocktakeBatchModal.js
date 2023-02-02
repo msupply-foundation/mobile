@@ -61,8 +61,7 @@ export const StocktakeBatchModalComponent = ({
 }) => {
   const initialState = useMemo(() => {
     const pageObject = stocktakeItem;
-
-    if (usingVaccines && usingReasons && usingOpenVialWastageReasons) {
+    if (usingVaccines && usingReasons) {
       return { page: MODALS.STOCKTAKE_BATCH_EDIT_WITH_VACCINES_AND_REASONS, pageObject };
     }
 
@@ -101,20 +100,19 @@ export const StocktakeBatchModalComponent = ({
   const { difference = 0 } = modalValue || {};
 
   const reasonsSelection = (() => {
-    if (difference > 0) {
-      return UIDatabase.objects('PositiveAdjustmentReason');
-    }
-
-    if (usingReasons && !isVaccine) {
-      return UIDatabase.objects('NegativeAdjustmentReason');
-    }
-
     if (usingOpenVialWastageReasons && isVaccine) {
       return UIDatabase.objects('Options').filtered(
         '(type == $0 || type == $1) && isActive == true',
         'negativeInventoryAdjustment',
         'openVialWastage'
       );
+    }
+
+    if (usingReasons && difference !== 0) {
+      if (difference > 0) {
+        return UIDatabase.objects('PositiveAdjustmentReason');
+      }
+      return UIDatabase.objects('NegativeAdjustmentReason');
     }
 
     return [];
