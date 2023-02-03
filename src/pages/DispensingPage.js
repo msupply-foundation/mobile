@@ -12,7 +12,7 @@ import { ToggleBar, DataTablePageView, SearchBar, PageButton } from '../widgets'
 import { DataTable, DataTableRow, DataTableHeaderRow } from '../widgets/DataTable';
 import { SearchForm } from '../widgets/modals/SearchForm';
 import { PatientHistoryModal } from '../widgets/modals/PatientHistory';
-import { FormControl } from '../widgets/FormControl';
+
 import { ModalContainer } from '../widgets/modals/ModalContainer';
 
 import { recordKeyExtractor, getItemLayout } from './dataTableUtilities';
@@ -20,11 +20,9 @@ import { createPrescription } from '../navigation/actions';
 import { useNavigationFocus, useSyncListener, useDebounce } from '../hooks';
 
 import { UIDatabase, generateUUID } from '../database';
-import { getFormInputConfig } from '../utilities/formInputConfigs';
 
 import { PatientActions } from '../actions/PatientActions';
 import { PrescriberActions } from '../actions/PrescriberActions';
-import { InsuranceActions } from '../actions/InsuranceActions';
 import { DispensaryActions } from '../actions/DispensaryActions';
 
 import {
@@ -32,22 +30,16 @@ import {
   selectSortedData,
   selectLookupModalOpen,
 } from '../selectors/dispensary';
-import { selectPrescriberModalOpen, selectCanEditPrescriber } from '../selectors/prescriber';
-import { selectInsuranceModalOpen, selectCanEditInsurancePolicy } from '../selectors/insurance';
-import {
-  selectPatientModalOpen,
-  selectCanEditPatient,
-  selectSortedPatientHistory,
-} from '../selectors/patient';
+import { selectSortedPatientHistory } from '../selectors/patient';
 
 import globalStyles from '../globalStyles';
 import { dispensingStrings, modalStrings } from '../localization';
-import { PatientEditModal } from '../widgets/modalChildren/PatientEditModal';
-import { selectSurveySchemas } from '../selectors/formSchema';
 import { NameNoteActions } from '../actions/Entities/NameNoteActions';
 import { createDefaultName } from '../actions/Entities/NameActions';
 import { SUSSOL_ORANGE } from '../globalStyles/colors';
 import { ADRInput } from '../widgets/modalChildren/ADRInput';
+import { PrescriberModel } from '../widgets/modals';
+import { PatientEditModal } from '../widgets/modalChildren';
 
 const Dispensing = ({
   data,
@@ -74,10 +66,8 @@ const Dispensing = ({
   isLookupModalOpen,
 
   // Patient variables
-  patientEditModalOpen,
   currentPatient,
   patientHistoryModalOpen,
-  canEditPatient,
   patientHistory,
 
   // Patient callback
@@ -86,26 +76,9 @@ const Dispensing = ({
   cancelPatientEdit,
   viewPatientHistory,
 
-  // Prescriber variables
-  currentPrescriber,
-  prescriberModalOpen,
-  canEditPrescriber,
-
   // Prescriber callbacks
   editPrescriber,
   createPrescriber,
-  cancelPrescriberEdit,
-  savePrescriber,
-
-  // Insurance variables
-  insuranceModalOpen,
-  selectedInsurancePolicy,
-  canEditInsurancePolicy,
-  isCreatingInsurancePolicy,
-
-  // Insurance callbacks
-  cancelInsuranceEdit,
-  saveInsurancePolicy,
 
   // ADR
   isADRModalOpen,
@@ -226,48 +199,8 @@ const Dispensing = ({
           getItemLayout={getItemLayout}
         />
       </DataTablePageView>
-      <ModalContainer
-        title={`${dispensingStrings.patient_detail}`}
-        noCancel
-        isVisible={patientEditModalOpen}
-      >
-        <PatientEditModal
-          patient={currentPatient}
-          isDisabled={!canEditPatient}
-          onCancel={cancelPatientEdit}
-          inputConfig={getFormInputConfig('patient', currentPatient)}
-          surveySchema={selectSurveySchemas()[0]}
-        />
-      </ModalContainer>
-      <ModalContainer
-        title={`${dispensingStrings.prescriber} ${dispensingStrings.details}`}
-        noCancel
-        isVisible={prescriberModalOpen}
-      >
-        <FormControl
-          isDisabled={!canEditPrescriber}
-          onSave={savePrescriber}
-          onCancel={cancelPrescriberEdit}
-          inputConfig={getFormInputConfig('prescriber', currentPrescriber)}
-        />
-      </ModalContainer>
-      <ModalContainer
-        title={`${dispensingStrings.insurance_policy}`}
-        noCancel
-        isVisible={insuranceModalOpen}
-      >
-        <FormControl
-          isDisabled={!canEditInsurancePolicy}
-          confirmOnSave={!canEditPatient}
-          confirmText={dispensingStrings.confirm_new_policy}
-          onSave={saveInsurancePolicy}
-          onCancel={cancelInsuranceEdit}
-          inputConfig={getFormInputConfig(
-            'insurancePolicy',
-            isCreatingInsurancePolicy ? null : selectedInsurancePolicy
-          )}
-        />
-      </ModalContainer>
+      <PrescriberModel />
+      <PatientEditModal />
       <ModalContainer
         // eslint-disable-next-line max-len
         title={`${dispensingStrings.patient} ${dispensingStrings.history} - ${currentPatient?.name}`}
@@ -338,23 +271,17 @@ const localStyles = {
 };
 
 const mapStateToProps = state => {
-  const { patient, prescriber, insurance, dispensary } = state;
+  const { patient, dispensary } = state;
   const { sortKey, isAscending, searchTerm, columns } = dispensary;
 
   const isLookupModalOpen = selectLookupModalOpen(state);
 
-  const { currentPatient } = patient;
-  const { currentPrescriber } = prescriber;
-  const { isCreatingInsurancePolicy, selectedInsurancePolicy } = insurance;
+  const {
+    currentPatient,
+    viewingHistory: patientHistoryModalOpen,
+    creatingADR: isADRModalOpen,
+  } = patient;
 
-  const prescriberModalOpen = selectPrescriberModalOpen(state);
-  const canEditPrescriber = selectCanEditPrescriber(state);
-  const canEditPatient = selectCanEditPatient(state);
-  const canEditInsurancePolicy = selectCanEditInsurancePolicy(state);
-  const [patientEditModalOpen, patientHistoryModalOpen, isADRModalOpen] = selectPatientModalOpen(
-    state
-  );
-  const insuranceModalOpen = selectInsuranceModalOpen(state);
   const data = selectSortedData(state);
   const patientHistory =
     patient.currentPatient && patient.currentPatient.transactions
@@ -375,19 +302,8 @@ const mapStateToProps = state => {
     // Dispensary lookup API
     isLookupModalOpen,
     // Patient
-    patientEditModalOpen,
     currentPatient,
     patientHistoryModalOpen,
-    canEditPatient,
-    // Prescriber
-    currentPrescriber,
-    prescriberModalOpen,
-    canEditPrescriber,
-    // Insurance
-    insuranceModalOpen,
-    selectedInsurancePolicy,
-    canEditInsurancePolicy,
-    isCreatingInsurancePolicy,
     patientHistory,
   };
 };
@@ -425,21 +341,12 @@ const mapDispatchToProps = dispatch => ({
   editPrescriber: prescriber =>
     dispatch(PrescriberActions.editPrescriber(UIDatabase.get('Prescriber', prescriber))),
   createPrescriber: () => dispatch(PrescriberActions.createPrescriber()),
-  cancelPrescriberEdit: () => dispatch(PrescriberActions.closeModal()),
-  savePrescriber: prescriberDetails =>
-    dispatch(PrescriberActions.updatePrescriber(prescriberDetails)),
-
-  cancelInsuranceEdit: () => dispatch(InsuranceActions.cancel()),
-  saveInsurancePolicy: policyDetails => dispatch(InsuranceActions.update(policyDetails)),
 });
 
 export const DispensingPage = connect(mapStateToProps, mapDispatchToProps)(Dispensing);
 
 Dispensing.defaultProps = {
   currentPatient: null,
-  currentPrescriber: null,
-  selectedInsurancePolicy: null,
-  canEditPrescriber: false,
 };
 
 Dispensing.propTypes = {
@@ -458,27 +365,14 @@ Dispensing.propTypes = {
   isLookupModalOpen: PropTypes.bool.isRequired,
   gotoPrescription: PropTypes.func.isRequired,
   editPatient: PropTypes.func.isRequired,
-  patientEditModalOpen: PropTypes.bool.isRequired,
   createPatient: PropTypes.func.isRequired,
   cancelPatientEdit: PropTypes.func.isRequired,
   currentPatient: PropTypes.object,
-  canEditPatient: PropTypes.bool.isRequired,
-  currentPrescriber: PropTypes.object,
-  canEditPrescriber: PropTypes.bool,
   editPrescriber: PropTypes.func.isRequired,
   createPrescriber: PropTypes.func.isRequired,
-  cancelPrescriberEdit: PropTypes.func.isRequired,
-  savePrescriber: PropTypes.func.isRequired,
-  prescriberModalOpen: PropTypes.bool.isRequired,
   usingPatientsDataSet: PropTypes.bool.isRequired,
   usingPrescribersDataSet: PropTypes.bool.isRequired,
   patientHistoryModalOpen: PropTypes.bool.isRequired,
-  selectedInsurancePolicy: PropTypes.object,
-  insuranceModalOpen: PropTypes.bool.isRequired,
-  canEditInsurancePolicy: PropTypes.bool.isRequired,
-  cancelInsuranceEdit: PropTypes.func.isRequired,
-  isCreatingInsurancePolicy: PropTypes.bool.isRequired,
-  saveInsurancePolicy: PropTypes.func.isRequired,
   viewPatientHistory: PropTypes.func.isRequired,
   isADRModalOpen: PropTypes.bool.isRequired,
   createADR: PropTypes.func.isRequired,

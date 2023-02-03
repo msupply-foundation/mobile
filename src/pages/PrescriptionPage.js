@@ -17,6 +17,8 @@ import { useRecordListener } from '../hooks';
 import { WizardActions } from '../actions/WizardActions';
 
 import { dispensingStrings } from '../localization';
+import { InsurancePolicyModel, PrescriberModel } from '../widgets/modals';
+import { PatientEditModal } from '../widgets/modalChildren';
 
 const tabs = [
   {
@@ -30,7 +32,15 @@ const tabs = [
 
 export const Prescription = ({ transaction, completePrescription }) => {
   useRecordListener(completePrescription, transaction, 'Transaction');
-  return <Wizard tabs={tabs} />;
+
+  return (
+    <>
+      <Wizard tabs={tabs} />
+      <InsurancePolicyModel />
+      <PrescriberModel />
+      <PatientEditModal />
+    </>
+  );
 };
 
 const mapDispatchToProps = dispatch => {

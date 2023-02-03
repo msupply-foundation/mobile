@@ -1,19 +1,14 @@
 /* eslint-disable no-unused-expressions */
 /* eslint-disable react/forbid-prop-types */
 import React from 'react';
-import { View, ScrollView, StyleSheet } from 'react-native';
-import { useIsFocused } from '@react-navigation/native';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-
+import { View, ScrollView, StyleSheet } from 'react-native';
+import { useIsFocused } from '@react-navigation/native';
 import { PageButton } from './PageButton';
 
 import { FORM_INPUT_TYPES } from '../utilities/formInputConfigs';
-import { FormTextInput } from './FormInputs/FormTextInput';
-import { FormDateInput } from './FormInputs/FormDateInput';
-import { FormToggle } from './FormInputs/FormToggle';
-import { FormDropdown } from './FormInputs/FormDropdown';
-import { FormSlider } from './FormInputs/FormSlider';
+import { FormTextInput, FormDateInput, FormToggle, FormDropdown, FormSlider } from './FormInputs';
 
 import globalStyles, { SUSSOL_ORANGE, WHITE } from '../globalStyles';
 import { modalStrings, generalStrings } from '../localization';
@@ -410,7 +405,7 @@ const localStyles = StyleSheet.create({
   },
   flexOne: { flex: 1 },
   flexTen: { flex: 10 },
-  flexRow: { flex: 1, flexDirection: 'row' },
+  flexRow: { flex: 1, flexDirection: 'row', paddingVertical: 30 },
   buttonsRow: { marginTop: 10, flexDirection: 'row-reverse' },
   whiteBackground: { backgroundColor: WHITE },
 });
