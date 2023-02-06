@@ -3,6 +3,7 @@ import React from 'react';
 import { View, StyleSheet } from 'react-native';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
+import { useIsFocused } from '@react-navigation/core';
 import { FormControl } from '..';
 import { PageButton } from '../PageButton';
 import { FlexRow } from '../FlexRow';
@@ -47,6 +48,8 @@ const PatientEditModalComponent = ({
   isCreatePatient,
   patientEditModalOpen,
 }) => {
+  const isFocused = useIsFocused();
+
   let canSave = canSaveForm && canEditPatient;
 
   const hasVaccineEvents = hasVaccineEventsForm;
@@ -65,7 +68,7 @@ const PatientEditModalComponent = ({
     <ModalContainer
       title={`${dispensingStrings.patient_detail}`}
       noCancel
-      isVisible={patientEditModalOpen}
+      isVisible={isFocused && patientEditModalOpen}
     >
       <FlexRow style={{ flexDirection: 'column' }} flex={1}>
         <FlexRow flex={1}>
