@@ -8,6 +8,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 
+import { useIsFocused } from '@react-navigation/core';
 import { selectPrescriberModalOpen, selectCanEditPrescriber } from '../../selectors/prescriber';
 import { ModalContainer } from './ModalContainer';
 import { FormControl } from '..';
@@ -22,20 +23,24 @@ const PrescriberModelComponent = ({
   currentPrescriber,
   prescriberModalOpen,
   canEditPrescriber,
-}) => (
-  <ModalContainer
-    title={`${dispensingStrings.prescriber} ${dispensingStrings.details}`}
-    noCancel
-    isVisible={prescriberModalOpen}
-  >
-    <FormControl
-      isDisabled={!canEditPrescriber}
-      onSave={savePrescriber}
-      onCancel={cancelPrescriberEdit}
-      inputConfig={getFormInputConfig('prescriber', currentPrescriber)}
-    />
-  </ModalContainer>
-);
+}) => {
+  const isFocused = useIsFocused();
+
+  return (
+    <ModalContainer
+      title={`${dispensingStrings.prescriber} ${dispensingStrings.details}`}
+      noCancel
+      isVisible={isFocused && prescriberModalOpen}
+    >
+      <FormControl
+        isDisabled={!canEditPrescriber}
+        onSave={savePrescriber}
+        onCancel={cancelPrescriberEdit}
+        inputConfig={getFormInputConfig('prescriber', currentPrescriber)}
+      />
+    </ModalContainer>
+  );
+};
 
 const mapDispatchToProps = dispatch => ({
   cancelPrescriberEdit: () => dispatch(PrescriberActions.closeModal()),

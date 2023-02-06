@@ -8,6 +8,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 
+import { useIsFocused } from '@react-navigation/core';
 import { selectInsuranceModalOpen, selectCanEditInsurancePolicy } from '../../selectors/insurance';
 import { selectCanEditPatient } from '../../selectors/patient';
 import { ModalContainer } from './ModalContainer';
@@ -26,25 +27,29 @@ const InsurancePolicyModelComponent = ({
   // Insurance callbacks
   cancelInsuranceEdit,
   saveInsurancePolicy,
-}) => (
-  <ModalContainer
-    title={`${dispensingStrings.insurance_policy}`}
-    noCancel
-    isVisible={insuranceModalOpen}
-  >
-    <FormControl
-      isDisabled={!canEditInsurancePolicy}
-      confirmOnSave={!canEditPatient}
-      confirmText={dispensingStrings.confirm_new_policy}
-      onSave={saveInsurancePolicy}
-      onCancel={cancelInsuranceEdit}
-      inputConfig={getFormInputConfig(
-        'insurancePolicy',
-        isCreatingInsurancePolicy ? null : selectedInsurancePolicy
-      )}
-    />
-  </ModalContainer>
-);
+}) => {
+  const isFocused = useIsFocused();
+
+  return (
+    <ModalContainer
+      title={`${dispensingStrings.insurance_policy}`}
+      noCancel
+      isVisible={isFocused && insuranceModalOpen}
+    >
+      <FormControl
+        isDisabled={!canEditInsurancePolicy}
+        confirmOnSave={!canEditPatient}
+        confirmText={dispensingStrings.confirm_new_policy}
+        onSave={saveInsurancePolicy}
+        onCancel={cancelInsuranceEdit}
+        inputConfig={getFormInputConfig(
+          'insurancePolicy',
+          isCreatingInsurancePolicy ? null : selectedInsurancePolicy
+        )}
+      />
+    </ModalContainer>
+  );
+};
 
 const mapDispatchToProps = dispatch => ({
   cancelInsuranceEdit: () => dispatch(InsuranceActions.cancel()),
