@@ -11,6 +11,7 @@ import { UIDatabase } from '..';
 import { programDailyUsage } from '../../utilities/dailyUsage';
 import { generalStrings, modalStrings } from '../../localization';
 import { SETTINGS_KEYS } from '../../settings';
+import { PREFERENCE_KEYS } from '../utilities/preferenceConstants';
 
 /**
  * A requisition.
@@ -475,9 +476,15 @@ export class Requisition extends Realm.Object {
    * @param  {Realm}  database
    */
   finalise(database) {
-    this.pruneRedundantItems(database);
-    this.status = 'finalised';
+    const requisitionWithZeroQuantity = UIDatabase.getPreference(
+      PREFERENCE_KEYS.KEEP_REQUISITION_WITH_ZERO_REQUESTED_QUANTITY
+    );
 
+    if (!this.isRequest && !requisitionWithZeroQuantity) {
+      this.pruneRedundantItems(database);
+    }
+
+    this.status = 'finalised';
     database.save('Requisition', this);
 
     if (this.linkedTransaction) this.linkedTransaction.finalise(database);
