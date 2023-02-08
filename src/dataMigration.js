@@ -9,7 +9,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { compareVersions } from './utilities';
 import { SETTINGS_KEYS, SETTINGS_DEFAULTS } from './settings';
 import packageJson from '../package.json';
-import { createRecord } from './database/utilities';
+import { createRecord, clearNumberSequences } from './database/utilities';
 
 const APP_VERSION_KEY = 'AppVersion';
 
@@ -278,6 +278,12 @@ const dataMigrations = [
           });
         });
       }
+    },
+  },
+  {
+    version: '8.6.2',
+    migrate: database => {
+      clearNumberSequences(database);
     },
   },
 ];

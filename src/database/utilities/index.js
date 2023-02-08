@@ -21,3 +21,5 @@ export {
   NUMBER_SEQUENCE_KEYS,
   NUMBER_OF_DAYS_IN_A_MONTH,
 } from './constants';
+
+export { clearNumberSequences, getMaxSerialNumber } from './numberSequence';

@@ -21,6 +21,7 @@ import globalStyles from '../globalStyles';
 
 import { ROUTES } from '../navigation/constants';
 import { useLoadingIndicator } from '../hooks/useLoadingIndicator';
+import { checkIsObjectValuesEmpty } from '../utilities';
 
 export const StocktakeManage = ({
   dispatch,
@@ -49,8 +50,10 @@ export const StocktakeManage = ({
   // On navigating to this screen, if a stocktake is passed through, update the selection with
   // the items already in the stocktake.
   useEffect(() => {
-    if (pageObject) dispatch(PageActions.selectItems(pageObject.itemsInStocktake, route));
-  }, []);
+    if (pageObject?.itemsInStocktake) {
+      dispatch(PageActions.selectItems(pageObject.itemsInStocktake, route));
+    }
+  }, [pageObject]);
 
   const getCallback = (colKey, propName) => {
     switch (colKey) {
@@ -65,7 +68,9 @@ export const StocktakeManage = ({
   const onConfirmStocktake = () => {
     runWithLoadingIndicator(() => {
       const itemIds = Array.from(dataState.keys()).filter(id => dataState.get(id).isSelected && id);
-      if (pageObject) return dispatch(updateStocktake(pageObject, itemIds, name));
+      if (!checkIsObjectValuesEmpty(pageObject)) {
+        return dispatch(updateStocktake(pageObject, itemIds, name));
+      }
       return dispatch(createStocktake({ stocktakeName: name, itemIds }));
     });
   };
@@ -140,7 +145,9 @@ export const StocktakeManage = ({
 
       <BottomTextEditor
         isOpen
-        buttonText={pageObject ? modalStrings.confirm : modalStrings.create}
+        buttonText={
+          !checkIsObjectValuesEmpty(pageObject) ? modalStrings.confirm : modalStrings.create
+        }
         value={name}
         placeholder={modalStrings.give_your_stocktake_a_name}
         onConfirm={onConfirmStocktake}
@@ -169,6 +176,7 @@ const mapStateToProps = (state, ownProps) => {
 export const StocktakeManagePage = connect(mapStateToProps, mapDispatchToProps)(StocktakeManage);
 
 StocktakeManage.propTypes = {
+  pageObject: PropTypes.object,
   dispatch: PropTypes.func.isRequired,
   data: PropTypes.array.isRequired,
   dataState: PropTypes.object.isRequired,
@@ -181,7 +189,6 @@ StocktakeManage.propTypes = {
   showAll: PropTypes.bool.isRequired,
   allSelected: PropTypes.bool.isRequired,
   name: PropTypes.string.isRequired,
-  pageObject: PropTypes.object.isRequired,
   onCheck: PropTypes.func.isRequired,
   onUncheck: PropTypes.func.isRequired,
   onSortColumn: PropTypes.func.isRequired,
@@ -190,4 +197,8 @@ StocktakeManage.propTypes = {
   toggleSelectAll: PropTypes.func.isRequired,
   toggleStockOut: PropTypes.func.isRequired,
   route: PropTypes.string.isRequired,
+};
+
+StocktakeManage.defaultProps = {
+  pageObject: {},
 };

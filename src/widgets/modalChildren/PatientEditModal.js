@@ -3,26 +3,41 @@ import React from 'react';
 import { View, StyleSheet } from 'react-native';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
-import { FormControl } from '../FormControl';
+import { useIsFocused } from '@react-navigation/core';
+import { FormControl } from '..';
 import { PageButton } from '../PageButton';
 import { FlexRow } from '../FlexRow';
 import { JSONForm } from '../JSONForm/JSONForm';
 import { NameNoteActions } from '../../actions/Entities/NameNoteActions';
 import { selectNameNoteIsValid, selectCreatingNameNote } from '../../selectors/Entities/nameNote';
-import { selectSortedPatientHistory, selectIsCreatePatient } from '../../selectors/patient';
+import {
+  selectSortedPatientHistory,
+  selectIsCreatePatient,
+  selectPatientModalOpen,
+  selectCanEditPatient,
+} from '../../selectors/patient';
 import { selectCompletedForm, selectCanSaveForm } from '../../selectors/form';
 import { PatientActions } from '../../actions/PatientActions';
 import globalStyles, { SUSSOL_ORANGE } from '../../globalStyles';
-import { generalStrings, modalStrings, buttonStrings, navStrings } from '../../localization/index';
+import {
+  generalStrings,
+  modalStrings,
+  buttonStrings,
+  navStrings,
+  dispensingStrings,
+} from '../../localization';
 import { PaperModalContainer } from '../PaperModal/PaperModalContainer';
 import { PaperConfirmModal } from '../PaperModal/PaperConfirmModal';
 import { useToggle } from '../../hooks/index';
+import { ModalContainer } from '../modals';
+import { getFormInputConfig } from '../../utilities/formInputConfigs';
+import { selectSurveySchemas } from '../../selectors/formSchema';
 
-export const PatientEditModalComponent = ({
-  isDisabled,
+const PatientEditModalComponent = ({
+  canEditPatient,
   onSaveForm,
   onDeleteForm,
-  onCancel,
+  cancelPatientEdit,
   inputConfig,
   surveySchema,
   surveyForm,
@@ -31,89 +46,100 @@ export const PatientEditModalComponent = ({
   canSaveForm,
   hasVaccineEventsForm,
   isCreatePatient,
+  patientEditModalOpen,
 }) => {
-  let canSave = canSaveForm;
+  const isFocused = useIsFocused();
+
+  let canSave = canSaveForm && canEditPatient;
+
   const hasVaccineEvents = hasVaccineEventsForm;
-  if (canSave) {
-    canSave = !isDisabled && surveySchema && surveyForm && nameNoteIsValid;
+
+  if (canSave && !!surveySchema) {
+    canSave = surveySchema && surveyForm && nameNoteIsValid;
   }
 
-  const canDelete = !isDisabled;
+  const canDelete = canEditPatient;
   const showDelete = !isCreatePatient;
 
   const [removeModalOpen, toggleRemoveModal] = useToggle();
   const [cannotDeleteModalOpen, toggleCannotDeleteModal] = useToggle();
 
   return (
-    <FlexRow style={{ flexDirection: 'column' }} flex={1}>
-      <FlexRow flex={1}>
-        <FormControl
-          canSave={surveySchema ? nameNoteIsValid : true}
-          isDisabled={isDisabled}
-          onSave={onSaveForm}
-          onCancel={onCancel}
-          inputConfig={inputConfig}
-          showCancelButton={false}
-          showSaveButton={false}
-        />
-        {!!surveySchema && !!surveyForm && (
-          <View style={styles.formContainer}>
-            <JSONForm
-              surveySchema={surveySchema}
-              formData={surveyForm}
-              onChange={({ formData }, validator) => {
-                onUpdateForm(formData, validator);
-              }}
-            >
-              <></>
-            </JSONForm>
-          </View>
-        )}
-      </FlexRow>
-      <FlexRow flex={0} style={{ justifyContent: 'center' }}>
-        <View style={styles.buttonsRow}>
-          <PageButton
-            onPress={onSaveForm}
-            style={styles.saveButton}
-            isDisabled={!canSave}
-            textStyle={styles.saveButtonTextStyle}
-            text={generalStrings.save}
+    <ModalContainer
+      title={`${dispensingStrings.patient_detail}`}
+      noCancel
+      isVisible={isFocused && patientEditModalOpen}
+    >
+      <FlexRow style={{ flexDirection: 'column' }} flex={1}>
+        <FlexRow flex={1}>
+          <FormControl
+            canSave={surveySchema ? nameNoteIsValid : true}
+            isDisabled={!canEditPatient}
+            onSave={onSaveForm}
+            onCancel={cancelPatientEdit}
+            inputConfig={inputConfig}
+            showCancelButton={false}
+            showSaveButton={false}
           />
-          {showDelete && (
-            <PageButton
-              onPress={hasVaccineEvents ? toggleCannotDeleteModal : toggleRemoveModal}
-              style={styles.cancelButton}
-              textStyle={styles.saveButtonTextStyle}
-              isDisabled={!canDelete}
-              text={generalStrings.delete}
-            />
+          {!!surveySchema && !!surveyForm && (
+            <View style={styles.formContainer}>
+              <JSONForm
+                surveySchema={surveySchema}
+                formData={surveyForm}
+                onChange={({ formData }, validator) => {
+                  onUpdateForm(formData, validator);
+                }}
+              >
+                <></>
+              </JSONForm>
+            </View>
           )}
-          <PageButton
-            onPress={onCancel}
-            style={styles.cancelButton}
-            textStyle={styles.cancelButtonTextStyle}
-            text={modalStrings.cancel}
+        </FlexRow>
+        <FlexRow flex={0} style={{ justifyContent: 'center' }}>
+          <View style={styles.buttonsRow}>
+            <PageButton
+              onPress={onSaveForm}
+              style={styles.saveButton}
+              isDisabled={!canSave}
+              textStyle={styles.saveButtonTextStyle}
+              text={generalStrings.save}
+            />
+            {showDelete && (
+              <PageButton
+                onPress={hasVaccineEvents ? toggleCannotDeleteModal : toggleRemoveModal}
+                style={styles.cancelButton}
+                textStyle={styles.saveButtonTextStyle}
+                isDisabled={!canDelete}
+                text={generalStrings.delete}
+              />
+            )}
+            <PageButton
+              onPress={cancelPatientEdit}
+              style={styles.cancelButton}
+              textStyle={styles.cancelButtonTextStyle}
+              text={modalStrings.cancel}
+            />
+          </View>
+        </FlexRow>
+        <PaperModalContainer isVisible={cannotDeleteModalOpen} onClose={toggleCannotDeleteModal}>
+          <PaperConfirmModal
+            questionText={modalStrings.patient_cant_delete_with_vaccine_events}
+            confirmText={navStrings.go_back}
+            onConfirm={toggleCannotDeleteModal}
           />
-        </View>
+        </PaperModalContainer>
+        <PaperModalContainer isVisible={removeModalOpen} onClose={toggleRemoveModal}>
+          <PaperConfirmModal
+            questionText={modalStrings.are_you_sure_delete_patient}
+            confirmText={generalStrings.remove}
+            cancelText={buttonStrings.cancel}
+            onConfirm={onDeleteForm}
+            isDisabled={!canDelete}
+            onCancel={toggleRemoveModal}
+          />
+        </PaperModalContainer>
       </FlexRow>
-      <PaperModalContainer isVisible={cannotDeleteModalOpen} onClose={toggleCannotDeleteModal}>
-        <PaperConfirmModal
-          questionText={modalStrings.patient_cant_delete_with_vaccine_events}
-          confirmText={navStrings.go_back}
-          onConfirm={toggleCannotDeleteModal}
-        />
-      </PaperModalContainer>
-      <PaperModalContainer isVisible={removeModalOpen} onClose={toggleRemoveModal}>
-        <PaperConfirmModal
-          questionText={modalStrings.are_you_sure_delete_patient}
-          confirmText={generalStrings.remove}
-          cancelText={buttonStrings.cancel}
-          onConfirm={onDeleteForm}
-          isDisabled={!canDelete}
-          onCancel={toggleRemoveModal}
-        />
-      </PaperModalContainer>
-    </FlexRow>
+    </ModalContainer>
   );
 };
 
@@ -147,7 +173,7 @@ const styles = StyleSheet.create({
 });
 
 PatientEditModalComponent.defaultProps = {
-  isDisabled: false,
+  canEditPatient: false,
   surveyForm: null,
   surveySchema: null,
   nameNoteIsValid: true,
@@ -155,10 +181,10 @@ PatientEditModalComponent.defaultProps = {
 };
 
 PatientEditModalComponent.propTypes = {
-  isDisabled: PropTypes.bool,
+  canEditPatient: PropTypes.bool,
   onSaveForm: PropTypes.func.isRequired,
   onDeleteForm: PropTypes.func.isRequired,
-  onCancel: PropTypes.func.isRequired,
+  cancelPatientEdit: PropTypes.func.isRequired,
   inputConfig: PropTypes.array.isRequired,
   surveyForm: PropTypes.object,
   nameNoteIsValid: PropTypes.bool,
@@ -167,12 +193,14 @@ PatientEditModalComponent.propTypes = {
   canSaveForm: PropTypes.bool.isRequired,
   hasVaccineEventsForm: PropTypes.bool.isRequired,
   isCreatePatient: PropTypes.bool,
+  patientEditModalOpen: PropTypes.bool.isRequired,
 };
 
 const mergeProps = (stateProps, dispatchProps, ownProps) => {
   const { completedForm } = stateProps;
   const { onSave, onDelete, onSaveSurvey, ...otherDispatchProps } = dispatchProps;
-  const { surveySchema } = ownProps;
+  // const { surveySchema } = ownProps;
+  const surveySchema = selectSurveySchemas()[0];
 
   const onSaveForm = () => {
     onSave(completedForm);
@@ -187,27 +215,41 @@ const mergeProps = (stateProps, dispatchProps, ownProps) => {
     ...ownProps,
     ...otherDispatchProps,
     ...stateProps,
+    surveySchema,
     onSaveForm,
     onDeleteForm,
   };
 };
 
 const stateToProps = state => {
+  const { patient } = state;
+
+  const { currentPatient } = patient;
+  const inputConfig = getFormInputConfig('patient', currentPatient);
+
+  const canEditPatient = selectCanEditPatient(state);
   const nameNoteIsValid = selectNameNoteIsValid(state);
   const nameNote = selectCreatingNameNote(state);
   const completedForm = selectCompletedForm(state);
   const canSaveForm = selectCanSaveForm(state);
-  const patientHistory = selectSortedPatientHistory(state);
+  const patientHistory =
+    patient.currentPatient && patient.currentPatient.transactions
+      ? selectSortedPatientHistory({ patient })
+      : [];
   const isCreatePatient = selectIsCreatePatient(state);
   const hasVaccineEventsForm = patientHistory.length > 0;
+  const [patientEditModalOpen] = selectPatientModalOpen(state);
 
   return {
     canSaveForm,
+    canEditPatient,
     hasVaccineEventsForm,
     completedForm,
     nameNoteIsValid,
     isCreatePatient,
     surveyForm: nameNote?.data ?? null,
+    patientEditModalOpen,
+    inputConfig,
   };
 };
 
@@ -216,6 +258,7 @@ const dispatchToProps = dispatch => ({
   onUpdateForm: (form, validator) => dispatch(NameNoteActions.updateForm(form, validator)),
   onSave: patientDetails => dispatch(PatientActions.patientUpdate(patientDetails)),
   onDelete: () => dispatch(PatientActions.patientDelete()),
+  cancelPatientEdit: () => dispatch(PatientActions.closeModal()),
 });
 
 export const PatientEditModal = connect(

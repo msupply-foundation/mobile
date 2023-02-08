@@ -57,12 +57,10 @@ export const StocktakeBatchModalComponent = ({
   usingVaccines,
   usingHideSnapshotColumn,
   dispatch: reduxDispatch,
-  usingOpenVialWastageReasons,
 }) => {
   const initialState = useMemo(() => {
     const pageObject = stocktakeItem;
-
-    if (usingVaccines && usingReasons && usingOpenVialWastageReasons) {
+    if (usingVaccines && usingReasons) {
       return { page: MODALS.STOCKTAKE_BATCH_EDIT_WITH_VACCINES_AND_REASONS, pageObject };
     }
 
@@ -109,14 +107,13 @@ export const StocktakeBatchModalComponent = ({
       return UIDatabase.objects('NegativeAdjustmentReason');
     }
 
-    if (usingOpenVialWastageReasons && isVaccine) {
+    if (isVaccine) {
       return UIDatabase.objects('Options').filtered(
         '(type == $0 || type == $1) && isActive == true',
         'negativeInventoryAdjustment',
         'openVialWastage'
       );
     }
-
     return [];
   })();
 
@@ -141,7 +138,10 @@ export const StocktakeBatchModalComponent = ({
   const onEditDate = (date, rowKey, columnKey) =>
     dispatch(PageActions.editStocktakeBatchExpiryDate(date, rowKey, columnKey));
   const onEditSellPrice = (newValue, rowKey) =>
-    dispatch(PageActions.editSellPrice(newValue, rowKey));
+    batch(() => {
+      dispatch(PageActions.editSellPrice(newValue, rowKey));
+      reduxDispatch(PageActions.refreshRow(stocktakeItem.id, ROUTES.STOCKTAKE_EDITOR));
+    });
   const onEditBatchDoses = (newValue, rowKey) => {
     dispatch(PageActions.editBatchDoses(newValue, rowKey));
     reduxDispatch(PageActions.refreshRow(stocktakeItem.id, ROUTES.STOCKTAKE_EDITOR));
@@ -308,12 +308,10 @@ StocktakeBatchModalComponent.propTypes = {
   usingVaccines: PropTypes.bool.isRequired,
   usingHideSnapshotColumn: PropTypes.bool.isRequired,
   dispatch: PropTypes.func.isRequired,
-  usingOpenVialWastageReasons: PropTypes.bool.isRequired,
 };
 
 const mapStateToProps = (state, ownProps) => {
   const usingPayments = selectUsingPayments(state);
-  const usingOpenVialWastageReasons = UIDatabase.objects('OpenVialWastageReason').length > 0;
   const usingReasons =
     UIDatabase.objects('NegativeAdjustmentReason').length > 0 &&
     UIDatabase.objects('PositiveAdjustmentReason').length > 0;
@@ -324,7 +322,6 @@ const mapStateToProps = (state, ownProps) => {
     usingReasons,
     usingVaccines,
     usingHideSnapshotColumn,
-    usingOpenVialWastageReasons,
   };
 };
 

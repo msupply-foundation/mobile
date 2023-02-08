@@ -124,7 +124,7 @@ export class UserAuthenticator {
     if (!this.activeUsername || !this.activePassword) onAuthentication(false);
     try {
       const user = await this.authenticate(this.activeUsername, this.activePassword);
-      onAuthentication(user);
+      onAuthentication(user ?? null);
     } catch (error) {
       onAuthentication(null);
     }

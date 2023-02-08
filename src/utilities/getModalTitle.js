@@ -13,6 +13,8 @@ import {
 
 export const MODAL_KEYS = {
   CONFIRM_FACTORY_RESET: 'confirmFactoryReset',
+  CONFIRM_FACTORY_RESET_MASTER: 'confirmFactoryResetMaster',
+  CONFIRM_MASTER_PASSWORD: 'confirmMasterPassword',
   CONFIRM_USER_PASSWORD: 'confirmUserPassword',
   CREATE_CASH_TRANSACTION: 'createCashTransaction',
   SYNC_URL_EDIT: 'syncUrlEdit',
@@ -99,5 +101,9 @@ export const getModalTitle = modalKey => {
       return modalStrings.select_a_location;
     case MODAL_KEYS.SELECT_VVM_STATUS:
       return modalStrings.select_vvm_status;
+    case MODAL_KEYS.CONFIRM_FACTORY_RESET_MASTER:
+      return modalStrings.confirm_factory_reset_master;
+    case MODAL_KEYS.CONFIRM_MASTER_PASSWORD:
+      return modalStrings.confirm_master_password;
   }
 };

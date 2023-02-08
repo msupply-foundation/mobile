@@ -6,7 +6,6 @@ import {
   RECORD_TYPES,
   REQUISITION_STATUSES,
   REQUISITION_TYPES,
-  SEQUENCE_KEYS,
   STATUSES,
   SYNC_TYPES,
   TRANSACTION_TYPES,
@@ -642,39 +641,6 @@ export const createOrUpdateRecord = (database, settings, recordType, record) => 
       }
       break;
     }
-    case 'NumberSequence': {
-      const thisStoreId = settings.get(THIS_STORE_ID);
-      const sequenceKey = SEQUENCE_KEYS.translate(record.name, EXTERNAL_TO_INTERNAL, thisStoreId);
-      // Don't accept updates to number sequences.
-      if (
-        database.objects('NumberSequence').filtered('sequenceKey == $0', sequenceKey).length > 0
-      ) {
-        break;
-      }
-      if (!sequenceKey) break; // If translator returns a null key, sequence is not for this store.
-      internalRecord = {
-        id: record.ID,
-        sequenceKey,
-        highestNumberUsed: parseNumber(record.value),
-      };
-      database.update(recordType, internalRecord);
-      break;
-    }
-    case 'NumberToReuse': {
-      const thisStoreId = settings.get(THIS_STORE_ID);
-      const sequenceKey = SEQUENCE_KEYS.translate(record.name, EXTERNAL_TO_INTERNAL, thisStoreId);
-      if (!sequenceKey) break; // If translator returns a null key, sequence is not for this store.
-      const numberSequence = database.getOrCreate('NumberSequence', sequenceKey, 'sequenceKey');
-      internalRecord = {
-        id: record.ID,
-        numberSequence,
-        number: parseNumber(record.number_to_use),
-      };
-      const numberToReuse = database.update(recordType, internalRecord);
-      // Attach the number to reuse to the number sequence.
-      numberSequence.addNumberToReuse(numberToReuse);
-      break;
-    }
     case 'Preference': {
       const { item, data: recordData } = record;
       if (item === 'store_preferences') {
@@ -762,6 +728,7 @@ export const createOrUpdateRecord = (database, settings, recordType, record) => 
         incomingStock: parseNumber(record.Cust_stock_received),
         outgoingStock: parseNumber(record.Cust_stock_issued),
         daysOutOfStock: parseNumber(record.DOSforAMCadjustment),
+        option: database.getOrCreate('Options', record.optionID),
       };
       const requisitionItem = database.update(recordType, internalRecord);
       // requisitionItem will be an orphan record if it's not unique?

@@ -12,7 +12,6 @@ import {
   RECORD_TYPES,
   REQUISITION_STATUSES,
   REQUISITION_TYPES,
-  SEQUENCE_KEYS,
   STATUSES,
   SYNC_TYPES,
   TRANSACTION_TYPES,
@@ -111,22 +110,6 @@ const generateSyncData = (settings, recordType, record) => {
 
       return nameRecord;
     }
-    case 'NumberSequence': {
-      const thisStoreId = settings.get(THIS_STORE_ID);
-      return {
-        ID: record.id,
-        name: SEQUENCE_KEYS.translate(record.sequenceKey, INTERNAL_TO_EXTERNAL, thisStoreId),
-        value: String(record.highestNumberUsed),
-      };
-    }
-    case 'NumberToReuse': {
-      const thisStoreId = settings.get(THIS_STORE_ID);
-      return {
-        ID: record.id,
-        name: SEQUENCE_KEYS.translate(record.sequenceKey, INTERNAL_TO_EXTERNAL, thisStoreId),
-        number_to_use: String(record.number),
-      };
-    }
     case 'Requisition': {
       return {
         ID: record.id,
@@ -167,6 +150,7 @@ const generateSyncData = (settings, recordType, record) => {
         DOSforAMCadjustment: String(record.daysOutOfStock),
         stockLosses: String(record.negativeAdjustments),
         stockAdditions: String(record.positiveAdjustments),
+        optionID: record.option?.id ?? '',
       };
     }
     case 'Stocktake': {

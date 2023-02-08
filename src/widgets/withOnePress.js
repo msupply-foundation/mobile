@@ -9,6 +9,7 @@ import React from 'react';
  */
 export const withOnePress = WrappedComponent =>
   class extends React.Component {
+    // eslint-disable-next-line react/static-property-placement
     static propTypes = WrappedComponent.propTypes;
 
     constructor(props) {

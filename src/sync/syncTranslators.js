@@ -197,8 +197,11 @@ class SequenceKeyTranslator extends SyncTranslator {
     return translatedKey;
   }
 }
+
 export const SEQUENCE_KEYS = new SequenceKeyTranslator({
   customer_invoice_serial_number: 'customer_invoice_number_for_store_',
+  payment_serial_number: 'payment_serial_number_for_store_',
+  receipt_serial_number: 'receipt_serial_number_for_store_',
   inventory_adjustment_serial_number: 'inventory_adjustment_serial_number_for_store_',
   requisition_serial_number: 'requisition_serial_number_for_store_',
   requisition_requester_reference: 'requisition_requester_reference_for_store_',

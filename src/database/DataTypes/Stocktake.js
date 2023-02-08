@@ -8,6 +8,7 @@ import { complement } from 'set-manipulator';
 
 import { addBatchToParent, createRecord, getTotal } from '../utilities';
 import { generalStrings, modalStrings } from '../../localization';
+import { UIDatabase } from '..';
 
 /**
  * A stocktake.
@@ -199,6 +200,46 @@ export class Stocktake extends Realm.Object {
   }
 
   /**
+   * Get if stocktake has any item without reason set
+   * First, get only counted items then check all of its batches
+   * then get only counted batch with some difference
+   * then check reason of those batches
+   *
+   * Return True if at least one of the valid batch doesn't have reason set.
+   *
+   * @return {boolean}
+   */
+  get hasReasonNotSet() {
+    const countedBatches = [];
+    const countedItems = this.items.filter(item => item.hasBeenCounted);
+    countedItems.forEach(item => {
+      item.batches.forEach(batch => {
+        if (batch.hasBeenCounted && batch.difference !== 0) {
+          countedBatches.push(batch);
+        }
+      });
+    });
+    if (countedBatches.length > 0) {
+      return countedBatches.some(batch => batch.hasValidReason === false);
+    }
+    return false;
+  }
+
+  /**
+   * Check wether Reason i.e. Option is activated in mSupply desktop
+   * Return True if all positive and negative reasons are activated
+   *
+   * @return {boolean}
+   */
+  // eslint-disable-next-line class-methods-use-this
+  get isReasonActive() {
+    return (
+      UIDatabase.objects('NegativeAdjustmentReason').length > 0 &&
+      UIDatabase.objects('PositiveAdjustmentReason').length > 0
+    );
+  }
+
+  /**
    * Resets a list of stocktake items.
    *
    * @param  {Realm}                  database
@@ -250,10 +291,15 @@ export class Stocktake extends Realm.Object {
 
   get canFinalise() {
     const finaliseStatus = { success: true, message: modalStrings.finalise_stocktake };
-
     if (!this.hasSomeCountedItems) {
       finaliseStatus.success = false;
       finaliseStatus.message = modalStrings.stocktake_no_counted_items;
+    }
+    if (this.isReasonActive && finaliseStatus.success) {
+      if (this.hasReasonNotSet) {
+        finaliseStatus.success = false;
+        finaliseStatus.message = modalStrings.reason_must_set_before_finalizing_stocktake;
+      }
     }
 
     return finaliseStatus;

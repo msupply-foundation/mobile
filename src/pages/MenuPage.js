@@ -50,7 +50,7 @@ import {
 } from '../navigation/actions';
 
 import globalStyles, { SHADOW_BORDER } from '../globalStyles';
-import { UserActions } from '../actions/index';
+import { UserActions } from '../actions';
 import { selectCurrentUserIsAdmin } from '../selectors/user';
 import {
   selectHasVaccines,
@@ -339,7 +339,6 @@ const mapStateToProps = state => {
     usingCashRegister,
     usingModules,
   } = modules;
-
   const isAdmin = selectCurrentUserIsAdmin(state);
   const hasVaccines = selectHasVaccines(state);
 

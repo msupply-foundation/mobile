@@ -56,6 +56,7 @@ export { TextEditor } from './TextEditor';
 export { EditorRow } from './EditorRow';
 export { HotBreachIcon } from './HotBreachIcon';
 export { ColdBreachIcon } from './ColdBreachIcon';
+export { FormControl } from './FormControl';
 
 export * from './StepperInputs';
 export * from './Typography';
