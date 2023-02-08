@@ -263,7 +263,9 @@ export const editSellPrice = (value, rowKey, route) => (dispatch, getState) => {
   const { value: currencyValue } = valueAsCurrency;
   if (currencyValue !== sellPrice) {
     UIDatabase.write(() => {
-      UIDatabase.update(objectDataType, { id, sellPrice: currencyValue });
+      if (!Number.isNaN(currencyValue)) {
+        UIDatabase.update(objectDataType, { id, sellPrice: currencyValue });
+      }
       dispatch(refreshRow(rowKey, route));
     });
   }
