@@ -6,7 +6,6 @@
 import moment from 'moment';
 import { generateUUID } from 'react-native-database';
 
-import UIDatabase from '../UIDatabase';
 import { versionToInteger, formatDateAndTime } from '../../utilities';
 import { parseNumber } from './parsers';
 import { NUMBER_OF_DAYS_IN_A_MONTH, NUMBER_SEQUENCE_KEYS, PATIENT_CODE_LENGTH } from './constants';
@@ -1255,7 +1254,7 @@ const createAdverseDrugReaction = (database, patient, formData, user) => {
 
   if (!formSchema) return null;
 
-  const newADR = UIDatabase.update('AdverseDrugReaction', {
+  const newADR = database.update('AdverseDrugReaction', {
     id: generateUUID(),
     name: patient,
     user,

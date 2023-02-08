@@ -6,7 +6,7 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
+import { batch, connect } from 'react-redux';
 
 import { FlexRow } from './FlexRow';
 import { FlexView } from './FlexView';
@@ -28,6 +28,7 @@ import { selectCanEditPatient } from '../selectors/patient';
 import { selectCanEditPrescriber } from '../selectors/prescriber';
 
 import { dispensingStrings } from '../localization';
+import { NameNoteActions } from '../actions';
 
 const PrescriptionInfoComponent = ({
   prescriptionPatient,
@@ -97,7 +98,12 @@ const PrescriptionInfoComponent = ({
 };
 
 const mapDispatchToProps = dispatch => {
-  const editPatient = patient => dispatch(PatientActions.editPatient(patient));
+  const editPatient = patient =>
+    batch(() => {
+      dispatch(NameNoteActions.createSurveyNameNote(patient));
+      dispatch(PatientActions.editPatient(patient));
+    });
+
   const viewHistory = patient => dispatch(PatientActions.viewPatientHistory(patient));
   const editPrescriber = prescriber => dispatch(PrescriberActions.editPrescriber(prescriber));
   return { editPatient, viewHistory, editPrescriber };
