@@ -14,6 +14,7 @@ import {
   PortugueseFlag,
   SpanishFlag,
   TetumFlag,
+  ChineseFlag,
 } from './images';
 
 const LANGUAGE_TO_FLAG = {
@@ -25,6 +26,7 @@ const LANGUAGE_TO_FLAG = {
   [LANGUAGE_CODES.PORTUGUESE]: PortugueseFlag,
   [LANGUAGE_CODES.SPANISH]: SpanishFlag,
   [LANGUAGE_CODES.TETUM]: TetumFlag,
+  [LANGUAGE_CODES.CHINESE]: ChineseFlag,
 };
 
 /**
