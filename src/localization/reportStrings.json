@@ -78,5 +78,32 @@
     "field_temperature": "Temperatura",
     "field_log_interval_minutes": "Intervalo do registro (minutos)",
     "email_vaccine_report_subject": "Relatório de temperatura para"
+  },
+  "ch": {
+    "title_logging": "记录",
+    "title_sensor_stats": "统计数据",
+    "title_breach_config": "突破配置",
+    "title_breaches": "违规行为",
+    "title_logs": "日志",
+    "field_timezone": "时区",
+    "field_device": "设备",
+    "field_sensor_name": "传感器名称",
+    "field_exported_by": "出口者",
+    "field_job_description": "职位描述",
+    "field_logging_start": "记录开始",
+    "field_logging_interval": "记录间隔",
+    "field_max_temperature": "最高温度",
+    "field_min_temperature": "最低气温",
+    "field_number_breaches": "连续违规次数",
+    "field_breach_type": "破坏类型",
+    "field_duration_threshold": "持续时间阈值",
+    "field_temperature_threshold": "温度阈值",
+    "field_starting_timestamp": "起始时间戳",
+    "field_ending_timestamp": "结束时间戳",
+    "field_exposure_duration": "曝光时间（分钟）",
+    "field_timestamp": "时间戳",
+    "field_temperature": "温度",
+    "field_log_interval_minutes": "记录间隔（分钟）",
+    "email_vaccine_report_subject": "温度记录报告"
   }
 }

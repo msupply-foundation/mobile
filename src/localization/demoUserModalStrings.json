@@ -17,5 +17,9 @@
   "es": {
     "confirm_modal_body": "Un paso más cerca de crear su tienda de demostración. Antes de generarla, primero debemos verificar su dirección de correo electrónico. Hemos enviado un enlace de verificación al correo electrónico que nos ha proporcionado. Verifique su bandeja de entrada y siga el enlace de verificación.",
     "modal_body_text": "Solicite una tienda de demostración. Su correo electrónico se utilizará para fines de verificación y notificación cuando caduque su tienda de demostración"
+  },
+  "ch": {
+    "confirm_modal_body": "距离创建您的演示商店更近了一步。在生成您的演示商店之前，我们首先需要验证您的电子邮件地址。我们已将验证链接发送到您提供的电子邮件。请检查您的收件箱并点击验证链接",
+    "modal_body_text": "请求演示商店。您的电子邮件将用于验证目的，并在您的演示商店到期时用于通知"
   }
 }
