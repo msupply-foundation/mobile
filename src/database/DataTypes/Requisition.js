@@ -496,12 +496,12 @@ export class Requisition extends Realm.Object {
    * @param  {Realm}  database
    */
   finalise(database) {
-    const requisitionWithZeroQuantity = UIDatabase.getPreference(
+    const isKeepRequisitionWithZeroQuantity = UIDatabase.getPreference(
       PREFERENCE_KEYS.KEEP_REQUISITION_LINES_WITH_ZERO_QUANTITY
     );
 
-    // Keep requisition lines with zero quantity if preference is enabled and not emergency order
-    if (!requisitionWithZeroQuantity || this.isEmergencyOrder) {
+    // Keep requisition lines with zero quantity, if preference is enabled and not emergency order
+    if (!isKeepRequisitionWithZeroQuantity || this.isEmergencyOrder) {
       this.pruneRedundantItems(database);
     }
 
