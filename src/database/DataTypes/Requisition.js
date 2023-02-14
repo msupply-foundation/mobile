@@ -11,6 +11,7 @@ import { UIDatabase } from '..';
 import { programDailyUsage } from '../../utilities/dailyUsage';
 import { generalStrings, modalStrings } from '../../localization';
 import { SETTINGS_KEYS } from '../../settings';
+import { PREFERENCE_KEYS } from '../utilities/preferenceConstants';
 
 /**
  * A requisition.
@@ -402,6 +403,21 @@ export class Requisition extends Realm.Object {
     }
   }
 
+  /**
+   * Get store tags
+   */
+  // eslint-disable-next-line class-methods-use-this
+  get storeTags() {
+    return UIDatabase.getSetting(SETTINGS_KEYS.THIS_STORE_TAGS);
+  }
+
+  /**
+   * Get customer tags
+   */
+  get customerTags() {
+    return this.otherStoreName.nameTags.join(',');
+  }
+
   get canFinaliseRequest() {
     const finaliseStatus = { success: true, message: modalStrings.finalise_supplier_requisition };
 
@@ -414,9 +430,7 @@ export class Requisition extends Realm.Object {
       finaliseStatus.message = modalStrings.record_stock_required_before_finalising;
     }
 
-    const thisStoresTags = UIDatabase.getSetting(SETTINGS_KEYS.THIS_STORE_TAGS);
-    const maxLinesForOrder = this.program?.getMaxLines?.(this.orderType, thisStoresTags);
-
+    const maxLinesForOrder = this.program?.getMaxLines?.(this.orderType, this.storeTags);
     if (this.numberOfOrderedItems > maxLinesForOrder) {
       finaliseStatus.success = false;
       finaliseStatus.message = `${modalStrings.emergency_orders_can_only_have} ${maxLinesForOrder} ${modalStrings.items_remove_some}`;
@@ -454,9 +468,7 @@ export class Requisition extends Realm.Object {
       return { success: false, message: modalStrings.requisition_days_out_of_stock };
     }
 
-    const customersTags = this.otherStoreName.nameTags.join(',');
-    const maxLinesForOrder = this.program?.getMaxLines?.(this.orderType, customersTags);
-
+    const maxLinesForOrder = this.program?.getMaxLines?.(this.orderType, this.customerTags);
     if (this.numberOfSuppliedItems > maxLinesForOrder) {
       finaliseStatus.success = false;
       finaliseStatus.message = `${modalStrings.emergency_orders_can_only_have} ${maxLinesForOrder} ${modalStrings.items_remove_some}`;
@@ -470,14 +482,30 @@ export class Requisition extends Realm.Object {
   }
 
   /**
+   * Get if order type is emergency
+   * @returns {boolean}
+   */
+  get isEmergencyOrder() {
+    const tags = this.isRequest ? this.storeTags : this.customerTags;
+    return this.program?.getOrderType?.(this.orderType, tags)?.isEmergency;
+  }
+
+  /**
    * Finalise this requisition.
    *
    * @param  {Realm}  database
    */
   finalise(database) {
-    this.pruneRedundantItems(database);
-    this.status = 'finalised';
+    const isKeepRequisitionWithZeroQuantity = UIDatabase.getPreference(
+      PREFERENCE_KEYS.KEEP_REQUISITION_LINES_WITH_ZERO_QUANTITY
+    );
 
+    // Keep requisition lines with zero quantity, if preference is enabled and not emergency order
+    if (!isKeepRequisitionWithZeroQuantity || this.isEmergencyOrder) {
+      this.pruneRedundantItems(database);
+    }
+
+    this.status = 'finalised';
     database.save('Requisition', this);
 
     if (this.linkedTransaction) this.linkedTransaction.finalise(database);
