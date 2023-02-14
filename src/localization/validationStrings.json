@@ -51,5 +51,15 @@
     "password_required": "Ingresar la contraseña",
     "repeat_password_required": "Confirmar la contraseña",
     "username_required": "Ingresar el nombre de usuario"
+  },
+  "ch": {
+    "email_required": "输入电子邮件",
+    "email_valid": "输入有效的电子邮件",
+    "password_contains_spaces": "密码不能包含空格",
+    "password_length_invalid": "密码长度必须为 8-32 个字符",
+    "password_match_repeat": "密码和重复密码必须匹配",
+    "password_required": "输入密码",
+    "repeat_password_required": "输入重复密码",
+    "username_required": "输入用户名"
   }
 }

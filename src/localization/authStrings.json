@@ -88,5 +88,24 @@
     "invalid_username_or_password": "Nombre de usuario o contraseña inválido",
     "warning_sync_edit": "ADVERTENCIA:\nEsto afectará la sincronización de esta tienda.\n¡Asegúrese de saber lo que está haciendo!",
     "incompatible_server": "El servidor mSupply con el que intenta sincronizar no es compatible con su versión actual. Por favor contacte a su administrador."
+  },
+  "ch": {
+    "logging_in": "在登录",
+    "login": "登录",
+    "password": "密码",
+    "repeat_password": "请重新输入密码",
+    "user_name": "用户名",
+    "email": "电子邮件地址",
+    "site": "地点",
+    "store": "店铺",
+    "invalid_username_or_password": "无效的用户名或密码",
+    "warning_sync_edit": "警告：{下一行}这将影响此商店的同步。{下一行}确保您知道自己在做什么！",
+    "incompatible_server": "您尝试同步的 mSupply 服务器与您当前的版本不兼容。请联系您的管理员",
+    "connection_failure": "无法连接",
+    "url_failure": "无效的网址",
+    "credentials_failure": "无效的用户名或密码",
+    "credentials_missing": "缺少用户名和/或密码",
+    "parsing_error": "无法解析服务器响应",
+    "licensing_error": "服务器报告许可证错误"
   }
 }
