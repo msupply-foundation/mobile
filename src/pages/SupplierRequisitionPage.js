@@ -277,9 +277,11 @@ const SupplierRequisition = ({
         items,
       };
 
+      // console.log('ME_REQUEST: ', requestObject);
+
       getMEPrediction(requestObject)
         .then(response => {
-          console.log('ME_RESPONSE: ', response);
+          // console.log('ME_RESPONSE: ', response);
 
           if (response?.length > 0) {
             /**
@@ -298,7 +300,9 @@ const SupplierRequisition = ({
             });
           }
         })
-        .catch(() => {})
+        .catch(error => {
+          console.log(error);
+        })
         .finally(() => {
           // Trigger the original suggested values event
           callbackFn(event);

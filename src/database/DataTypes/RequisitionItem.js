@@ -88,15 +88,17 @@ export class RequisitionItem extends Realm.Object {
    * @return  {number}
    */
   get suggestedQuantity() {
-    return (
-      /**
-       *
-       * Predicted quantity is received from the ME API
-       *
-       */
-      this.predictedQuantity ||
-      Math.ceil(Math.max(this.dailyUsage * this.daysToSupply - this.stockOnHand, 0))
-    );
+    const DAY_CONVERSION_FACTOR = 30.417;
+    const predictedDaily = this.predictedQuantity / DAY_CONVERSION_FACTOR;
+
+    /**
+     *
+     * Predicted quantity is received from the ME API
+     *
+     */
+    return this.predictedQuantity
+      ? Math.ceil(Math.max(predictedDaily * this.daysToSupply - this.stockOnHand, 0))
+      : Math.ceil(Math.max(this.dailyUsage * this.daysToSupply - this.stockOnHand, 0));
   }
 
   get daysToSupply() {
