@@ -277,11 +277,11 @@ const SupplierRequisition = ({
         items,
       };
 
-      // console.log('ME_REQUEST: ', requestObject);
+      console.log('ME_REQUEST: ', requestObject);
 
       getMEPrediction(requestObject)
         .then(response => {
-          // console.log('ME_RESPONSE: ', response);
+          console.log('ME_RESPONSE: ', response);
 
           if (response?.length > 0) {
             /**

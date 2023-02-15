@@ -157,9 +157,13 @@ export const getMEPrediction = requestObj => {
  * Update the RequisitionItem object with prediction values
  *
  */
-export const updatePredictedQuantity = (itemCode, quantity) => {
+export const updatePredictedQuantity = (requisitionId, itemCode, quantity) => {
   const item =
-    UIDatabase.objects('RequisitionItem').filtered('item.code == $0', itemCode)?.[0] || {};
+    UIDatabase.objects('RequisitionItem').filtered(
+      'requisition.id == $0 && item.code == $1',
+      requisitionId,
+      itemCode
+    )?.[0] || {};
 
   if (item?.id) {
     UIDatabase.write(() => {
