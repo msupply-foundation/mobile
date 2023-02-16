@@ -11,8 +11,6 @@ import { SETTINGS_KEYS } from '../../settings';
 import { NUMBER_OF_DAYS_IN_A_MONTH, createRecord } from '../utilities';
 import { customerRequisitionProgramDailyUsage } from '../../utilities/dailyUsage';
 
-// import { getMEPrediction } from '../../utilities/prediction/macroEyes';
-
 /**
  * A requisition item (i.e. a requisition line).
  *
@@ -88,8 +86,7 @@ export class RequisitionItem extends Realm.Object {
    * @return  {number}
    */
   get suggestedQuantity() {
-    const DAY_CONVERSION_FACTOR = 30.417;
-    const predictedDaily = this.predictedQuantity / DAY_CONVERSION_FACTOR;
+    const predictedDaily = this.predictedQuantity / NUMBER_OF_DAYS_IN_A_MONTH;
 
     /**
      *

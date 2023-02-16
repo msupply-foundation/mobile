@@ -220,6 +220,8 @@ const SupplierRequisition = ({
   );
 
   const fetchSuggestedQuantities = (callbackFn, event) => {
+    const storeId = UIDatabase.getSetting(SETTINGS_KEYS.THIS_STORE_ID);
+
     /**
      *
      * Fetch items with `requiredQuantity` > 0 (Shows intent of adding to requisition)
@@ -230,10 +232,11 @@ const SupplierRequisition = ({
         ?.filter(d => d.requiredQuantity > 0)
         ?.map(d => {
           const { dailyUsage, item, requiredQuantity, stockOnHand, requisition } = d;
+
           return {
             requisition: {
               id: requisition?.id,
-              storeId: requisition?.otherStoreName?.id,
+              storeId,
               programId: requisition?.program?.id,
               orderType: requisition?.orderType,
               period: requisition?.period?.id,
