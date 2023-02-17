@@ -42,7 +42,7 @@ import { SETTINGS_KEYS } from '../settings';
 import { useLoadingIndicator } from '../hooks/useLoadingIndicator';
 import { RowDetailActions } from '../actions/RowDetailActions';
 
-import { getMEPrediction, updatePredictedQuantity } from '../utilities/prediction/macroEyes';
+import { getMEPrediction, updatePredictions } from '../utilities/prediction/macroEyes';
 
 /**
  * Renders a mSupply mobile page with a supplier requisition loaded for editing
@@ -250,7 +250,7 @@ const SupplierRequisition = ({
 
     /**
      *
-     * Batched items into one API call
+     * Batch items into one API call
      *
      */
     if (requestedItems.length > 0) {
@@ -286,21 +286,8 @@ const SupplierRequisition = ({
         .then(response => {
           console.log('ME_RESPONSE: ', response);
 
-          if (response?.length > 0) {
-            /**
-             *
-             * For each item returned, get the item_code and suggested_quantity:
-             *
-             * {
-             *  item_code: "",
-             *  suggested_quantity: ""
-             * }
-             *
-             */
-            response?.forEach(item => {
-              const { item_code, suggested_quantity } = item;
-              updatePredictedQuantity(item_code, suggested_quantity);
-            });
+          if (!response?.error && response?.length > 0) {
+            updatePredictions(requisition?.id, response);
           }
         })
         .catch(error => {

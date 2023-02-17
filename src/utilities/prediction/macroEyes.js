@@ -156,20 +156,38 @@ export const getMEPrediction = requestObj => {
  *
  * Update the RequisitionItem object with prediction values
  *
+ * For each item returned, get the item_code and suggested_quantity e.g.:
+ *
+ * { item_code: "AS0000", suggested_quantity: 20 }
+ *
  */
-export const updatePredictedQuantity = (requisitionId, itemCode, quantity) => {
-  const item =
-    UIDatabase.objects('RequisitionItem').filtered(
-      'requisition.id == $0 && item.code == $1',
-      requisitionId,
-      itemCode
-    )?.[0] || {};
+export const updatePredictions = (requisitionId, items) => {
+  if (items.length === 0) {
+    return;
+  }
 
-  if (item?.id) {
+  /**
+   *
+   * Get available items for specific requisition
+   *
+   * Fix using `snapshot()` to fix slow iteration issue on Realm:
+   * https://github.com/realm/realm-js/issues/4436#issuecomment-1104971649
+   *
+   */
+  const selection = UIDatabase.objects('RequisitionItem')
+    .filtered('requisition.id == $0', requisitionId)
+    .snapshot();
+
+  const filterPrediction = itemCode => items.filter(item => item.item_code === itemCode);
+
+  if (selection.length > 0) {
     UIDatabase.write(() => {
-      UIDatabase.update('RequisitionItem', {
-        id: item?.id,
-        predictedQuantity: quantity,
+      selection.forEach(s => {
+        const prediction = filterPrediction(s?.item?.code);
+
+        if (prediction.length > 0) {
+          s.predictedQuantity = prediction?.[0]?.suggested_quantity;
+        }
       });
     });
   }
