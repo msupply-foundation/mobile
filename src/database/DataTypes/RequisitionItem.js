@@ -86,6 +86,16 @@ export class RequisitionItem extends Realm.Object {
    * @return  {number}
    */
   get suggestedQuantity() {
+    /**
+     *
+     * Predicted quantity is received from the ME API
+     *
+     */
+    if (this.predictedQuantity) {
+      const predictedDaily = this.predictedQuantity / NUMBER_OF_DAYS_IN_A_MONTH;
+      return Math.ceil(Math.max(predictedDaily * this.daysToSupply - this.stockOnHand, 0));
+    }
+
     return Math.ceil(Math.max(this.dailyUsage * this.daysToSupply - this.stockOnHand, 0));
   }
 
@@ -301,6 +311,7 @@ RequisitionItem.schema = {
     stockOnHand: { type: 'double', default: 0 },
     dailyUsage: { type: 'double', optional: true },
     imprestQuantity: { type: 'double', optional: true },
+    predictedQuantity: { type: 'double', default: 0 },
     requiredQuantity: { type: 'double', optional: true },
     suppliedQuantity: { type: 'double', default: 0 },
     openingStock: { type: 'double', default: 0 },

@@ -42,6 +42,8 @@ import { SETTINGS_KEYS } from '../settings';
 import { useLoadingIndicator } from '../hooks/useLoadingIndicator';
 import { RowDetailActions } from '../actions/RowDetailActions';
 
+import { getMEPrediction, updatePredictions } from '../utilities/prediction/macroEyes';
+
 /**
  * Renders a mSupply mobile page with a supplier requisition loaded for editing
  *
@@ -217,11 +219,96 @@ const SupplierRequisition = ({
     />
   );
 
+  const fetchSuggestedQuantities = (callbackFn, event) => {
+    const storeId = UIDatabase.getSetting(SETTINGS_KEYS.THIS_STORE_ID);
+
+    /**
+     *
+     * Fetch items with `requiredQuantity` > 0 (Shows intent of adding to requisition)
+     *
+     */
+    const requestedItems =
+      data
+        ?.filter(d => d.requiredQuantity > 0)
+        ?.map(d => {
+          const { dailyUsage, item, requiredQuantity, stockOnHand, requisition } = d;
+
+          return {
+            requisition: {
+              id: requisition?.id,
+              storeId,
+              programId: requisition?.program?.id,
+              orderType: requisition?.orderType,
+              period: requisition?.period?.id,
+            },
+            stockOnHand,
+            dailyUsage,
+            itemCode: item?.code || '-',
+            requiredQuantity,
+          };
+        }) || [];
+
+    /**
+     *
+     * Batch items into one API call
+     *
+     */
+    if (requestedItems.length > 0) {
+      const items = [];
+
+      requestedItems.forEach(obj => {
+        const { itemCode, stockOnHand, dailyUsage } = obj;
+
+        items.push({
+          item_code: itemCode,
+          daily_usage: dailyUsage,
+          stock_on_hand: stockOnHand,
+        });
+      });
+
+      const { requisition } = requestedItems[0];
+
+      const requestObject = {
+        // Requisition metadata
+        supplying_store_id: requisition?.storeId,
+        program: requisition?.programId,
+        order_type: requisition?.orderType,
+        period: requisition?.period,
+        requisition_id: requisition?.id,
+
+        // Items requesting prediction
+        items,
+      };
+
+      console.log('ME_REQUEST: ', requestObject);
+
+      getMEPrediction(requestObject)
+        .then(response => {
+          console.log('ME_RESPONSE: ', response);
+
+          if (!response?.error && response?.length > 0) {
+            updatePredictions(requisition?.id, response);
+          }
+        })
+        .catch(error => {
+          console.log(error);
+        })
+        .finally(() => {
+          // Trigger the original suggested values event
+          callbackFn(event);
+        });
+    } else {
+      callbackFn(event);
+    }
+  };
+
   const UseSuggestedQuantitiesButton = () => (
     <PageButton
       style={program ? globalStyles.wideButton : globalStyles.topButton}
       text={buttonStrings.use_suggested_quantities}
-      onPress={onSetRequestedToSuggested}
+      onPress={e => {
+        fetchSuggestedQuantities(onSetRequestedToSuggested, e);
+      }}
       isDisabled={isFinalised}
     />
   );
