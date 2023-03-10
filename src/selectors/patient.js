@@ -2,6 +2,7 @@
  * mSupply Mobile
  * Sustainable Solutions (NZ) Ltd. 2019
  */
+import moment from 'moment';
 
 import currency from '../localization/currency';
 import { UIDatabase } from '../database';
@@ -79,4 +80,32 @@ export const selectCanEditPatient = ({ patient }) => {
   const { isEditable = true } = currentPatient ?? {};
 
   return UIDatabase.getPreference(PREFERENCE_KEYS.CAN_EDIT_PATIENTS_FROM_ANY_STORE) || isEditable;
+};
+
+/**
+ * Query an existing patient by its name(firstName lastName) and DoB,
+ * if patient exist then return True
+ */
+
+export const selectPatientByNameAndDoB = ({ lastName, firstName, dateOfBirth }) => {
+  if (dateOfBirth) {
+    const dob = moment(dateOfBirth).format('L');
+
+    const query = 'lastName = $0 AND firstName = $1';
+    const duplicatePatients = UIDatabase.objects('Patient').filtered(
+      query,
+      lastName.trim(),
+      firstName.trim()
+    );
+
+    if (duplicatePatients) {
+      const duplicatePatient = duplicatePatients.some(selectedPatient => {
+        const selectedDoB = selectedPatient.dateOfBirth;
+        return moment(selectedDoB).format('L') === dob;
+      });
+      console.log('duplicatePatient ', duplicatePatient);
+      return duplicatePatient;
+    }
+  }
+  return false;
 };

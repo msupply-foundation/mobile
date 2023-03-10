@@ -15,6 +15,7 @@ import {
   selectIsCreatePatient,
   selectPatientModalOpen,
   selectCanEditPatient,
+  selectPatientByNameAndDoB,
 } from '../../selectors/patient';
 import { selectCompletedForm, selectCanSaveForm } from '../../selectors/form';
 import { PatientActions } from '../../actions/PatientActions';
@@ -47,12 +48,15 @@ const PatientEditModalComponent = ({
   hasVaccineEventsForm,
   isCreatePatient,
   patientEditModalOpen,
+  isDuplicatePatientLocally,
+  isDuplicatePatientExist,
 }) => {
   const isFocused = useIsFocused();
 
   let canSave = canSaveForm && canEditPatient;
 
   const hasVaccineEvents = hasVaccineEventsForm;
+  console.log('isDuplicatePatientLocally ', isDuplicatePatientLocally);
 
   if (canSave && !!surveySchema) {
     canSave = surveySchema && surveyForm && nameNoteIsValid;
@@ -63,6 +67,12 @@ const PatientEditModalComponent = ({
 
   const [removeModalOpen, toggleRemoveModal] = useToggle();
   const [cannotDeleteModalOpen, toggleCannotDeleteModal] = useToggle();
+  // const [isDuplicatePatientModalOpen, setDuplicatePatientModal] = useState(false);
+
+  const toggleDuplicatePatientModal = () => !isDuplicatePatientExist;
+  console.log('isDuplicatePatientExist ', isDuplicatePatientExist);
+
+  // const canEnterDuplicatePatient = () => setDuplicatePatient(isDuplicatePatientLocally);
 
   return (
     <ModalContainer
@@ -138,6 +148,18 @@ const PatientEditModalComponent = ({
             onCancel={toggleRemoveModal}
           />
         </PaperModalContainer>
+        <PaperModalContainer
+          isVisible={isDuplicatePatientExist}
+          onClose={toggleDuplicatePatientModal}
+        >
+          <PaperConfirmModal
+            questionText={modalStrings.are_you_sure_delete_patient}
+            confirmText={generalStrings.remove}
+            cancelText={buttonStrings.cancel}
+            onConfirm={onDeleteForm}
+            onCancel={toggleDuplicatePatientModal}
+          />
+        </PaperModalContainer>
       </FlexRow>
     </ModalContainer>
   );
@@ -178,6 +200,7 @@ PatientEditModalComponent.defaultProps = {
   surveySchema: null,
   nameNoteIsValid: true,
   isCreatePatient: false,
+  isDuplicatePatientLocally: false,
 };
 
 PatientEditModalComponent.propTypes = {
@@ -194,15 +217,20 @@ PatientEditModalComponent.propTypes = {
   hasVaccineEventsForm: PropTypes.bool.isRequired,
   isCreatePatient: PropTypes.bool,
   patientEditModalOpen: PropTypes.bool.isRequired,
+  isDuplicatePatientLocally: PropTypes.bool,
+  isDuplicatePatientExist: PropTypes.bool.isRequired,
 };
 
 const mergeProps = (stateProps, dispatchProps, ownProps) => {
-  const { completedForm } = stateProps;
+  const { completedForm, isDuplicatePatientLocally } = stateProps;
   const { onSave, onDelete, onSaveSurvey, ...otherDispatchProps } = dispatchProps;
   // const { surveySchema } = ownProps;
   const surveySchema = selectSurveySchemas()[0];
-
+  let isDuplicatePatientExist = false;
   const onSaveForm = () => {
+    if (isDuplicatePatientLocally) {
+      isDuplicatePatientExist = isDuplicatePatientLocally;
+    }
     onSave(completedForm);
     if (surveySchema) onSaveSurvey();
   };
@@ -218,6 +246,7 @@ const mergeProps = (stateProps, dispatchProps, ownProps) => {
     surveySchema,
     onSaveForm,
     onDeleteForm,
+    isDuplicatePatientExist,
   };
 };
 
@@ -239,6 +268,9 @@ const stateToProps = state => {
   const isCreatePatient = selectIsCreatePatient(state);
   const hasVaccineEventsForm = patientHistory.length > 0;
   const [patientEditModalOpen] = selectPatientModalOpen(state);
+  console.log('completedForm ', completedForm);
+
+  const isDuplicatePatientLocally = selectPatientByNameAndDoB(completedForm);
 
   return {
     canSaveForm,
@@ -250,6 +282,7 @@ const stateToProps = state => {
     surveyForm: nameNote?.data ?? null,
     patientEditModalOpen,
     inputConfig,
+    isDuplicatePatientLocally,
   };
 };
 
