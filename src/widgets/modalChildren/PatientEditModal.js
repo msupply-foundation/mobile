@@ -53,7 +53,7 @@ const PatientEditModalComponent = ({
   const isFocused = useIsFocused();
 
   let canSave = canSaveForm && canEditPatient;
-  let canDuplicatePatientEnter = false;
+  let canDuplicatePatient = false;
 
   const hasVaccineEvents = hasVaccineEventsForm;
 
@@ -61,11 +61,7 @@ const PatientEditModalComponent = ({
     canSave = surveySchema && surveyForm && nameNoteIsValid;
   }
 
-  console.log('canSave ', canSave);
-  console.log('isDuplicatePatientLocally ', isDuplicatePatientLocally);
-
-  canDuplicatePatientEnter = canSave && isDuplicatePatientLocally && isCreatePatient;
-  console.log('canDuplicatePatientEnter ', canDuplicatePatientEnter);
+  canDuplicatePatient = canSave && isDuplicatePatientLocally && isCreatePatient;
 
   const canDelete = canEditPatient;
   const showDelete = !isCreatePatient;
@@ -147,10 +143,10 @@ const PatientEditModalComponent = ({
             onCancel={toggleRemoveModal}
           />
         </PaperModalContainer>
-        <PaperModalContainer isVisible={canDuplicatePatientEnter} onClose={cancelPatientEdit}>
+        <PaperModalContainer isVisible={canDuplicatePatient} onClose={cancelPatientEdit}>
           <PaperConfirmModal
-            questionText={modalStrings.are_you_sure_delete_patient}
-            confirmText={generalStrings.remove}
+            questionText={modalStrings.are_you_sure_duplicate_patient}
+            confirmText={generalStrings.save}
             cancelText={buttonStrings.cancel}
             onConfirm={onSaveForm}
             onCancel={cancelPatientEdit}

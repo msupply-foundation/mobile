@@ -85,6 +85,8 @@ export const selectCanEditPatient = ({ patient }) => {
 /**
  * Query an existing patient by its name(firstName lastName) and DoB,
  * if patient exist then return True
+ * @param { lastName, firstName, dateOfBirth } from completed Form
+ * @returns boolean, True if patient exist with same lastName, firstName, dateOfBirth
  */
 
 export const selectPatientByNameAndDoB = ({ lastName, firstName, dateOfBirth }) => {
@@ -103,7 +105,6 @@ export const selectPatientByNameAndDoB = ({ lastName, firstName, dateOfBirth }) 
         const selectedDoB = selectedPatient.dateOfBirth;
         return moment(selectedDoB).format('L') === dob;
       });
-      console.log('duplicatePatient ', duplicatePatient);
       return duplicatePatient;
     }
   }
