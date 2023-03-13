@@ -64,10 +64,8 @@ const PatientEditModalComponent = ({
   console.log('canSave ', canSave);
   console.log('isDuplicatePatientLocally ', isDuplicatePatientLocally);
 
-  if (canSave && isDuplicatePatientLocally) {
-    canDuplicatePatientEnter = canSave && isDuplicatePatientLocally;
-    console.log('canDuplicatePatientEnter ', canDuplicatePatientEnter);
-  }
+  canDuplicatePatientEnter = canSave && isDuplicatePatientLocally && isCreatePatient;
+  console.log('canDuplicatePatientEnter ', canDuplicatePatientEnter);
 
   const canDelete = canEditPatient;
   const showDelete = !isCreatePatient;
