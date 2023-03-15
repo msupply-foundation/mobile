@@ -9,6 +9,8 @@ import PropTypes from 'prop-types';
 import { ToastAndroid, View } from 'react-native';
 import { connect } from 'react-redux';
 import * as Animatable from 'react-native-animatable';
+import moment from 'moment';
+
 import useButtonEnabled from '../../hooks/useButtonEnabled';
 import { FormControl } from '../FormControl';
 import { PageButton } from '../PageButton';
@@ -70,12 +72,21 @@ const PatientEditComponent = ({
   const { pageTopViewContainer } = globalStyles;
   const [isDeceasedModalOpen, toggleIsDeceasedAlert] = useToggle(false);
   const [canDuplicatePatient, setDuplicatePatient] = useState(false);
-
+  const [alertText, setAlertText] = useState(modalStrings.are_you_sure_duplicate_patient);
   const { enabled: nextButtonEnabled, setEnabled: setNextButtonEnabled } = useButtonEnabled();
 
   useEffect(() => {
     if (isDuplicatePatientLocally && !canSaveForm) {
       setDuplicatePatient(true);
+
+      const dateOfBirth = moment(completedForm.dateOfBirth).format('LL');
+      const name = `${completedForm.firstName} ${completedForm.lastName}`;
+      const alert = modalStrings.formatString(
+        modalStrings.are_you_sure_duplicate_patient,
+        name,
+        dateOfBirth
+      );
+      setAlertText(alert);
     }
   }, [isDuplicatePatientLocally]);
 
@@ -162,7 +173,7 @@ const PatientEditComponent = ({
       </PaperModalContainer>
       <PaperModalContainer isVisible={canDuplicatePatient} onClose={previousTab}>
         <PaperConfirmModal
-          questionText={modalStrings.are_you_sure_duplicate_patient}
+          questionText={alertText}
           confirmText={generalStrings.ok}
           cancelText={buttonStrings.cancel}
           onConfirm={onConfirmDuplicatePatient}
