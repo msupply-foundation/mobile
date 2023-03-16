@@ -1,9 +1,11 @@
 /* eslint-disable react/forbid-prop-types */
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, StyleSheet } from 'react-native';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { useIsFocused } from '@react-navigation/core';
+import moment from 'moment';
+
 import { FormControl } from '..';
 import { PageButton } from '../PageButton';
 import { FlexRow } from '../FlexRow';
@@ -49,8 +51,10 @@ const PatientEditModalComponent = ({
   isCreatePatient,
   patientEditModalOpen,
   isDuplicatePatientLocally,
+  completedForm,
 }) => {
   const isFocused = useIsFocused();
+  const [alertText, setAlertText] = useState(modalStrings.are_you_sure_duplicate_patient);
 
   let canSave = canSaveForm && canEditPatient;
   let canDuplicatePatient = false;
@@ -62,6 +66,16 @@ const PatientEditModalComponent = ({
   }
 
   canDuplicatePatient = canSave && isDuplicatePatientLocally && isCreatePatient;
+  useEffect(() => {
+    const dateOfBirth = moment(completedForm.dateOfBirth).format('LL');
+    const name = `${completedForm.firstName} ${completedForm.lastName}`;
+    const alert = modalStrings.formatString(
+      modalStrings.are_you_sure_duplicate_patient,
+      name,
+      dateOfBirth
+    );
+    setAlertText(alert);
+  }, [isDuplicatePatientLocally]);
 
   const canDelete = canEditPatient;
   const showDelete = !isCreatePatient;
@@ -145,7 +159,7 @@ const PatientEditModalComponent = ({
         </PaperModalContainer>
         <PaperModalContainer isVisible={canDuplicatePatient} onClose={cancelPatientEdit}>
           <PaperConfirmModal
-            questionText={modalStrings.are_you_sure_duplicate_patient}
+            questionText={alertText}
             confirmText={generalStrings.save}
             cancelText={buttonStrings.cancel}
             onConfirm={onSaveForm}
@@ -210,6 +224,7 @@ PatientEditModalComponent.propTypes = {
   isCreatePatient: PropTypes.bool,
   patientEditModalOpen: PropTypes.bool.isRequired,
   isDuplicatePatientLocally: PropTypes.bool,
+  completedForm: PropTypes.object.isRequired,
 };
 
 const mergeProps = (stateProps, dispatchProps, ownProps) => {
