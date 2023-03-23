@@ -93,11 +93,12 @@ export const selectPatientByNameAndDoB = ({ lastName, firstName, dateOfBirth }) 
   if (dateOfBirth) {
     const dob = moment(dateOfBirth).format('L');
 
-    const query = 'lastName = $0 AND firstName = $1';
+    const query = 'lastName = $0 AND firstName = $1 AND isDeleted = $2';
     const duplicatePatients = UIDatabase.objects('Patient').filtered(
       query,
       lastName.trim(),
-      firstName.trim()
+      firstName.trim(),
+      false
     );
 
     if (duplicatePatients) {
