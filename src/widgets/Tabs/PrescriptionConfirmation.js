@@ -92,7 +92,7 @@ const PrescriptionConfirmationComponent = ({
   goBack,
 }) => {
   const runWithLoadingIndicator = useLoadingIndicator();
-
+  console.log('transactionStart ', transaction);
   const confirmAndPay = React.useCallback(() => {
     pay(
       currentUser,
@@ -121,7 +121,13 @@ const PrescriptionConfirmationComponent = ({
     () =>
       runWithLoadingIndicator(() => {
         const shouldPay = usingPayments && total?.value;
+        console.log('shouldPay ', shouldPay);
+        console.log('transaction ', transaction);
+
         UIDatabase.write(() => {
+          console.log('UIDatabase ', UIDatabase);
+          console.log('transaction.finalise ', transaction.finalise);
+
           if (shouldPay) confirmAndPay();
           else transaction.finalise(UIDatabase);
         });
@@ -149,6 +155,12 @@ const PrescriptionConfirmationComponent = ({
               onPress={onDelete}
               isDisabled={isFinalised}
               debounceTimer={3000}
+              style={{ marginRight: 7 }}
+            />
+            <PageButtonWithOnePress
+              text={buttonStrings.save_and_close}
+              onPress={onDelete}
+              isDisabled={isFinalised}
               style={{ marginRight: 7 }}
             />
             <PageButtonWithOnePress

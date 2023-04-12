@@ -31,7 +31,7 @@ import { WizardActions } from '../../actions/WizardActions';
 import { PrescriptionActions } from '../../actions/PrescriptionActions';
 import { SearchBar } from '../SearchBar';
 
-import { dispensingStrings, generalStrings } from '../../localization';
+import { buttonStrings, dispensingStrings, generalStrings } from '../../localization';
 import globalStyles from '../../globalStyles';
 import { PageButtonWithOnePress } from '../PageButtonWithOnePress';
 
@@ -117,6 +117,11 @@ const ItemSelectComponent = ({
 
           <FlexRow justifyContent="flex-end">
             <PageButtonWithOnePress text="Cancel" onPress={onDelete} style={{ marginRight: 7 }} />
+            <PageButtonWithOnePress
+              text={buttonStrings.save_and_close}
+              onPress={onDelete}
+              style={{ marginRight: 7 }}
+            />
             <PageButton
               debounceTimer={1000}
               text="Next"
