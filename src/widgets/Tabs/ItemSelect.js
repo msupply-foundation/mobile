@@ -8,6 +8,7 @@ import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { ToastAndroid } from 'react-native';
+import { CommonActions } from '@react-navigation/core';
 
 import { TABS } from '../constants';
 
@@ -61,6 +62,7 @@ const ItemSelectComponent = ({
   selectedRows,
   onDelete,
   reloadItems,
+  goBack,
 }) => {
   const columns = React.useMemo(() => getColumns(TABS.ITEM), []);
   const showToast = React.useCallback(
@@ -119,7 +121,7 @@ const ItemSelectComponent = ({
             <PageButtonWithOnePress text="Cancel" onPress={onDelete} style={{ marginRight: 7 }} />
             <PageButtonWithOnePress
               text={buttonStrings.save_and_close}
-              onPress={onDelete}
+              onPress={goBack}
               style={{ marginRight: 7 }}
             />
             <PageButton
@@ -141,7 +143,8 @@ const mapDispatchToProps = dispatch => {
   const filterItems = searchTerm => dispatch(PrescriptionActions.filter(searchTerm));
   const onDelete = () => dispatch(PrescriptionActions.cancelPrescription());
   const reloadItems = () => dispatch(PrescriptionActions.reloadItems());
-  return { onDelete, filterItems, nextTab, chooseItem, updateQuantity, reloadItems };
+  const goBack = () => dispatch(CommonActions.goBack());
+  return { onDelete, filterItems, nextTab, chooseItem, updateQuantity, reloadItems, goBack };
 };
 
 const mapStateToProps = state => {
@@ -166,6 +169,7 @@ ItemSelectComponent.propTypes = {
   selectedRows: PropTypes.object.isRequired,
   onDelete: PropTypes.func.isRequired,
   reloadItems: PropTypes.func.isRequired,
+  goBack: PropTypes.func.isRequired,
 };
 
 export const ItemSelect = connect(mapStateToProps, mapDispatchToProps)(ItemSelectComponent);
