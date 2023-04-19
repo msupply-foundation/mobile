@@ -121,13 +121,7 @@ const PrescriptionConfirmationComponent = ({
     () =>
       runWithLoadingIndicator(() => {
         const shouldPay = usingPayments && total?.value;
-        console.log('shouldPay ', shouldPay);
-        console.log('transaction ', transaction);
-
         UIDatabase.write(() => {
-          console.log('UIDatabase ', UIDatabase);
-          console.log('transaction.finalise ', transaction.finalise);
-
           if (shouldPay) confirmAndPay();
           else transaction.finalise(UIDatabase);
         });
@@ -159,7 +153,7 @@ const PrescriptionConfirmationComponent = ({
             />
             <PageButtonWithOnePress
               text={buttonStrings.save_and_close}
-              onPress={onDelete}
+              onPress={goBack}
               isDisabled={isFinalised}
               style={{ marginRight: 7 }}
             />
