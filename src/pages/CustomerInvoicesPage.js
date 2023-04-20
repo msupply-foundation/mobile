@@ -60,9 +60,11 @@ export const CustomerInvoices = ({
   const toggleCurrentAndPast = useDebounce(toggleFinalised, 250, true);
 
   const onNavigateToInvoice = useCallback(invoice => {
-    const isPrescription = invoice.mode === 'dispensary';
+    const isConfirmedPrescription = invoice.mode === 'dispensary' && invoice.status === 'confirmed';
     // eslint-disable-next-line @typescript-eslint/no-unused-expressions
-    isPrescription ? dispatch(gotoPrescription(invoice)) : dispatch(gotoCustomerInvoice(invoice));
+    isConfirmedPrescription
+      ? dispatch(gotoPrescription(invoice))
+      : dispatch(gotoCustomerInvoice(invoice));
     onDeselectAll();
   }, []);
 
