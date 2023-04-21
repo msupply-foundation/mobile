@@ -4,7 +4,7 @@
  * Sustainable Solutions (NZ) Ltd. 2019
  */
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { CommonActions } from '@react-navigation/native';
@@ -33,9 +33,10 @@ import {
 import { selectInsuranceDiscountRate } from '../../selectors/insurance';
 import { selectPrescriptionIsFinalised } from '../../selectors/prescription';
 
-import { buttonStrings } from '../../localization';
+import { buttonStrings, modalStrings } from '../../localization';
 import globalStyles from '../../globalStyles';
 import { PageButtonWithOnePress } from '../PageButtonWithOnePress';
+import { ConfirmForm, ModalContainer } from '../modals';
 
 const { pageTopViewContainer } = globalStyles;
 const mapStateToProps = state => {
@@ -43,6 +44,10 @@ const mapStateToProps = state => {
   const { transaction, paymentValid, paymentAmount, paymentType } = payment;
   const { isComplete } = wizard;
   const { usingPayments } = modules;
+  console.log('payment ', payment);
+  console.log('modules ', modules);
+  console.log('usingPayments ', usingPayments);
+
   const currentPatient = selectCurrentPatient(state);
   const currentUser = selectCurrentUser(state);
   const canConfirm = paymentValid && !isComplete;
@@ -92,6 +97,11 @@ const PrescriptionConfirmationComponent = ({
   goBack,
 }) => {
   const runWithLoadingIndicator = useLoadingIndicator();
+  const [alertModal, setAlertModal] = useState(false);
+  useEffect(() => {
+    if (usingPayments && total?.value) setAlertModal(true);
+  }, [total?.value]);
+
   console.log('transactionStart ', transaction);
   const confirmAndPay = React.useCallback(() => {
     pay(
@@ -154,7 +164,7 @@ const PrescriptionConfirmationComponent = ({
             <PageButtonWithOnePress
               text={buttonStrings.save_and_close}
               onPress={goBack}
-              isDisabled={isFinalised}
+              isDisabled={canConfirm}
               style={{ marginRight: 7 }}
             />
             <PageButtonWithOnePress
@@ -165,6 +175,15 @@ const PrescriptionConfirmationComponent = ({
           </FlexRow>
         </FlexColumn>
       </FlexRow>
+      <ModalContainer isVisible={alertModal} title={modalStrings.edit_the_prescription_comment}>
+        <ConfirmForm
+          isOpen={alertModal}
+          questionText={`You have entered a payment, this prescription must be finalised.
+          If you want to save the prescription you must clear the payment details`}
+          cancelText={modalStrings.got_it}
+          onCancel={() => setAlertModal(false)}
+        />
+      </ModalContainer>
     </FlexView>
   );
 };
