@@ -33,7 +33,7 @@ import {
 import { selectInsuranceDiscountRate } from '../../selectors/insurance';
 import { selectPrescriptionIsFinalised } from '../../selectors/prescription';
 
-import { buttonStrings, modalStrings } from '../../localization';
+import { buttonStrings, dispensingStrings, modalStrings } from '../../localization';
 import globalStyles from '../../globalStyles';
 import { PageButtonWithOnePress } from '../PageButtonWithOnePress';
 import { ConfirmForm, ModalContainer } from '../modals';
@@ -171,7 +171,7 @@ const PrescriptionConfirmationComponent = ({
             />
             <PageButtonWithOnePress
               isDisabled={!canConfirm}
-              text={buttonStrings.confirm}
+              text={dispensingStrings.finalise}
               onPress={confirmPrescription}
             />
           </FlexRow>
