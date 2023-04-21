@@ -56,6 +56,8 @@ const mapStateToProps = state => {
   const discountAmount = selectDiscountAmount(state);
   const discountRate = selectInsuranceDiscountRate(state);
   const isFinalised = selectPrescriptionIsFinalised(state);
+  const shouldPay = !!(usingPayments && total?.value);
+  console.log('shouldPay ', shouldPay);
 
   return {
     subtotal,
@@ -70,6 +72,7 @@ const mapStateToProps = state => {
     currentPatient,
     usingPayments,
     isFinalised,
+    shouldPay,
   };
 };
 
@@ -95,14 +98,14 @@ const PrescriptionConfirmationComponent = ({
   onDelete,
   isFinalised,
   goBack,
+  shouldPay,
 }) => {
   const runWithLoadingIndicator = useLoadingIndicator();
   const [alertModal, setAlertModal] = useState(false);
   useEffect(() => {
-    if (usingPayments && total?.value) setAlertModal(true);
-  }, [total?.value]);
+    if (shouldPay) setAlertModal(true);
+  }, [shouldPay]);
 
-  console.log('transactionStart ', transaction);
   const confirmAndPay = React.useCallback(() => {
     pay(
       currentUser,
@@ -130,7 +133,6 @@ const PrescriptionConfirmationComponent = ({
   const confirmPrescription = React.useCallback(
     () =>
       runWithLoadingIndicator(() => {
-        const shouldPay = usingPayments && total?.value;
         UIDatabase.write(() => {
           if (shouldPay) confirmAndPay();
           else transaction.finalise(UIDatabase);
@@ -164,7 +166,7 @@ const PrescriptionConfirmationComponent = ({
             <PageButtonWithOnePress
               text={buttonStrings.save_and_close}
               onPress={goBack}
-              isDisabled={canConfirm}
+              isDisabled={shouldPay}
               style={{ marginRight: 7 }}
             />
             <PageButtonWithOnePress
@@ -175,11 +177,10 @@ const PrescriptionConfirmationComponent = ({
           </FlexRow>
         </FlexColumn>
       </FlexRow>
-      <ModalContainer isVisible={alertModal} title={modalStrings.edit_the_prescription_comment}>
+      <ModalContainer isVisible={alertModal}>
         <ConfirmForm
           isOpen={alertModal}
-          questionText={`You have entered a payment, this prescription must be finalised.
-          If you want to save the prescription you must clear the payment details`}
+          questionText={modalStrings.finalize_prescription_if_payment_entered}
           cancelText={modalStrings.got_it}
           onCancel={() => setAlertModal(false)}
         />
@@ -210,6 +211,7 @@ PrescriptionConfirmationComponent.propTypes = {
   discountRate: PropTypes.number,
   isFinalised: PropTypes.bool.isRequired,
   goBack: PropTypes.func.isRequired,
+  shouldPay: PropTypes.bool.isRequired,
 };
 
 export const PrescriptionConfirmation = connect(

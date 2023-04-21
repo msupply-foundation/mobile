@@ -82,7 +82,8 @@
     "bluetooth_permission_comment": "Required to connect to bluetooth sensors",
     "permissions_intro_1": "The following permissions and services are required for cold chain functionality.",
     "permissions_intro_2": "If disabled, you can press an item to enable it.",
-    "version_incompatible": "Unable to import! This is version of {0} of mSupply mobile and the selected import file has a newer version of {1}"
+    "version_incompatible": "Unable to import! This is version of {0} of mSupply mobile and the selected import file has a newer version of {1}",
+    "finalize_prescription_if_payment_entered": "You have entered a payment, this prescription must be finalised. If you want to save the prescription you must clear the payment details"
   },
   "fr": {
     "adr_form_for": "Formulaire RIM pour:",
