@@ -44,9 +44,6 @@ const mapStateToProps = state => {
   const { transaction, paymentValid, paymentAmount, paymentType } = payment;
   const { isComplete } = wizard;
   const { usingPayments } = modules;
-  console.log('payment ', payment);
-  console.log('modules ', modules);
-  console.log('usingPayments ', usingPayments);
 
   const currentPatient = selectCurrentPatient(state);
   const currentUser = selectCurrentUser(state);
@@ -57,7 +54,6 @@ const mapStateToProps = state => {
   const discountRate = selectInsuranceDiscountRate(state);
   const isFinalised = selectPrescriptionIsFinalised(state);
   const shouldPay = !!(usingPayments && total?.value);
-  console.log('shouldPay ', shouldPay);
 
   return {
     subtotal,

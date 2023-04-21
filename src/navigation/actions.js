@@ -104,7 +104,6 @@ export const createPrescription = patientID => (dispatch, getState) => {
   const { currentUser } = user;
 
   const patient = UIDatabase.get('Name', patientID);
-  console.log('patient ', patient);
   let newPrescription;
   UIDatabase.write(() => {
     newPrescription = createRecord(
@@ -115,7 +114,6 @@ export const createPrescription = patientID => (dispatch, getState) => {
       'dispensary'
     );
   });
-  console.log('newPrescription ', newPrescription);
 
   dispatch(gotoPrescription(newPrescription));
 };
