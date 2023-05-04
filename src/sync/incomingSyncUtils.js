@@ -215,14 +215,12 @@ export const sanityCheckIncomingRecord = (recordType, record) => {
     InsurancePolicy: {
       cannotBeBlank: [
         'insuranceProviderID',
-        'nameID',
         'isActive',
         'policyNumberFamily',
-        'policyNumberPerson',
         'expiryDate',
         'discountRate',
       ],
-      canBeBlank: ['type', 'policyNumberFull', 'enteredByID'],
+      canBeBlank: ['type', 'nameID', 'policyNumberFull', 'policyNumberPerson', 'enteredByID'],
     },
     Report: {
       cannotBeBlank: ['ID', 'title', 'type', 'json'],

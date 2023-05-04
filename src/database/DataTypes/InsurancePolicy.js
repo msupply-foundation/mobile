@@ -13,14 +13,14 @@ InsurancePolicy.schema = {
   properties: {
     id: 'string',
     policyNumberFamily: 'string',
-    policyNumberPerson: { type: 'string', default: '' },
+    policyNumberPerson: 'string',
     type: 'string',
     discountRate: 'double',
     isActive: { type: 'bool', default: true },
     expiryDate: 'date',
     enteredBy: { type: 'User', optional: true },
-    patient: { type: 'Name', optional: false },
-    insuranceProvider: { type: 'InsuranceProvider', optional: false },
+    patient: { type: 'Name', optional: true },
+    insuranceProvider: { type: 'InsuranceProvider', optional: true },
   },
 };
 
