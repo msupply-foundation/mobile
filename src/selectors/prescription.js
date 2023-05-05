@@ -95,3 +95,14 @@ export const selectPrescriptionIsFinalised = ({ prescription }) => {
   const { isFinalised = false } = transaction ?? {};
   return isFinalised;
 };
+
+export const selectPrescriptionInsuracePolicy = ({ prescription }) => {
+  const { transaction } = prescription;
+  const selectedPrescription = UIDatabase.objects('Transaction').filtered(
+    'id == $0',
+    transaction?.id
+  )[0];
+
+  const { insurancePolicy } = selectedPrescription ?? {};
+  return insurancePolicy;
+};

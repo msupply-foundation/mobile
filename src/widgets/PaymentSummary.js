@@ -36,6 +36,7 @@ import { selectUsingPaymentTypes } from '../selectors/modules';
 
 import { dispensingStrings } from '../localization';
 import { FINALISED_RED, SUSSOL_ORANGE, APP_FONT_FAMILY } from '../globalStyles';
+import { selectPrescriptionInsuracePolicy } from '../selectors/prescription';
 
 const paymentState = state => {
   const { insurance, payment, wizard, modules } = state;
@@ -43,7 +44,7 @@ const paymentState = state => {
   const { isComplete } = wizard;
   const { paymentAmount, creditOverflow, paymentType } = payment;
   const { selectedInsurancePolicy } = insurance;
-
+  const selectedPrescriptionInsurancePolicy = selectPrescriptionInsuracePolicy(state);
   const subtotal = selectPrescriptionSubTotal(state);
   const total = selectPrescriptionTotal(state);
   const creditUsed = selectCreditBeingUsed(state);
@@ -74,6 +75,7 @@ const paymentState = state => {
     availableCredit,
     changeRequired,
     usingInsurance,
+    selectedPrescriptionInsurancePolicy,
   };
 };
 
@@ -111,10 +113,24 @@ const PaymentSummaryComponent = ({
   changeRequired,
   usingInsurance,
   usingPaymentTypes,
+  selectedPrescriptionInsurancePolicy,
 }) => {
   const policyNumbers = React.useMemo(() => insurancePolicies.map(policy => policy.policyNumber), [
     insurancePolicies,
   ]);
+
+  const selectedPolicyNumber = React.useMemo(() => {
+    let policyNumberFull = '';
+    if (selectedPrescriptionInsurancePolicy) {
+      // console.log('selectedInsuracePolicy ', selectedInsuracePolicy);
+      if (!selectedPrescriptionInsurancePolicy.policyNumberPerson) {
+        policyNumberFull = selectedPrescriptionInsurancePolicy.policyNumberFamily;
+      } else {
+        policyNumberFull = `${selectedPrescriptionInsurancePolicy.policyNumberFamily}-${selectedPrescriptionInsurancePolicy.policyNumberPerson}`;
+      }
+    }
+    return policyNumberFull;
+  }, [selectedPrescriptionInsurancePolicy]);
 
   const onSelectPolicy = React.useCallback(
     (_, index) => {
@@ -142,7 +158,7 @@ const PaymentSummaryComponent = ({
             <DropDown
               headerValue={dispensingStrings.select_a_policy}
               values={policyNumbers}
-              selectedValue={selectedInsurancePolicy?.policyNumber}
+              selectedValue={selectedPolicyNumber}
               onValueChange={onSelectPolicy}
               style={localStyles.dropdown}
             />
@@ -231,6 +247,7 @@ PaymentSummaryComponent.defaultProps = {
   selectedInsurancePolicy: null,
   isPolicyEditable: false,
   creditOverflow: false,
+  selectedPrescriptionInsurancePolicy: null,
 };
 
 PaymentSummaryComponent.propTypes = {
@@ -256,6 +273,7 @@ PaymentSummaryComponent.propTypes = {
   changeRequired: PropTypes.object.isRequired,
   usingInsurance: PropTypes.bool.isRequired,
   usingPaymentTypes: PropTypes.bool.isRequired,
+  selectedPrescriptionInsurancePolicy: PropTypes.object,
 };
 
 const localStyles = {
