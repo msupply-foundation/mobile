@@ -606,6 +606,7 @@ export class Transaction extends Realm.Object {
       insuranceDiscountAmount: this.insuranceDiscountAmount,
       isCancellation: this.isCancellation,
       insurancePolicy: this.insurancePolicy,
+      paymentType: this.paymentType,
     };
   }
 }

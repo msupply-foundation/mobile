@@ -36,15 +36,19 @@ import { selectUsingPaymentTypes } from '../selectors/modules';
 
 import { dispensingStrings } from '../localization';
 import { FINALISED_RED, SUSSOL_ORANGE, APP_FONT_FAMILY } from '../globalStyles';
-import { selectPrescriptionInsuracePolicy } from '../selectors/prescription';
+import {
+  selectPrescriptionInsuracePolicy,
+  selectPrescriptionPaymentType,
+} from '../selectors/prescription';
 
 const paymentState = state => {
   const { insurance, payment, wizard, modules } = state;
   const { usingInsurance } = modules;
   const { isComplete } = wizard;
-  const { paymentAmount, creditOverflow, paymentType } = payment;
+  const { paymentAmount, creditOverflow } = payment;
   const { selectedInsurancePolicy } = insurance;
   const selectedPrescriptionInsurancePolicy = selectPrescriptionInsuracePolicy(state);
+  const selectedPaymentType = selectPrescriptionPaymentType(state);
   const subtotal = selectPrescriptionSubTotal(state);
   const total = selectPrescriptionTotal(state);
   const creditUsed = selectCreditBeingUsed(state);
@@ -69,13 +73,13 @@ const paymentState = state => {
     isComplete,
     insurancePolicies,
     paymentTypes,
-    paymentType,
     selectedInsurancePolicy,
     isPolicyEditable,
     availableCredit,
     changeRequired,
     usingInsurance,
     selectedPrescriptionInsurancePolicy,
+    selectedPaymentType,
   };
 };
 
@@ -102,7 +106,6 @@ const PaymentSummaryComponent = ({
   choosePolicy,
   paymentTypes,
   choosePaymentType,
-  paymentType,
   selectedInsurancePolicy,
   isPolicyEditable,
   editPolicy,
@@ -114,6 +117,7 @@ const PaymentSummaryComponent = ({
   usingInsurance,
   usingPaymentTypes,
   selectedPrescriptionInsurancePolicy,
+  selectedPaymentType,
 }) => {
   const policyNumbers = React.useMemo(() => insurancePolicies.map(policy => policy.policyNumber), [
     insurancePolicies,
@@ -122,7 +126,6 @@ const PaymentSummaryComponent = ({
   const selectedPolicyNumber = React.useMemo(() => {
     let policyNumberFull = '';
     if (selectedPrescriptionInsurancePolicy) {
-      // console.log('selectedInsuracePolicy ', selectedInsuracePolicy);
       if (!selectedPrescriptionInsurancePolicy.policyNumberPerson) {
         policyNumberFull = selectedPrescriptionInsurancePolicy.policyNumberFamily;
       } else {
@@ -176,7 +179,7 @@ const PaymentSummaryComponent = ({
           <DropDown
             headerValue={dispensingStrings.select_a_payment_type}
             values={paymentTypeTitles}
-            selectedValue={paymentType?.description}
+            selectedValue={selectedPaymentType?.description}
             onValueChange={onSelectPaymentType}
             style={localStyles.dropdown}
           />
@@ -243,11 +246,11 @@ const PaymentSummaryComponent = ({
 };
 
 PaymentSummaryComponent.defaultProps = {
-  paymentType: null,
   selectedInsurancePolicy: null,
   isPolicyEditable: false,
   creditOverflow: false,
   selectedPrescriptionInsurancePolicy: null,
+  selectedPaymentType: null,
 };
 
 PaymentSummaryComponent.propTypes = {
@@ -266,7 +269,6 @@ PaymentSummaryComponent.propTypes = {
   newPolicy: PropTypes.func.isRequired,
   paymentTypes: PropTypes.object.isRequired,
   choosePaymentType: PropTypes.func.isRequired,
-  paymentType: PropTypes.object,
   discountRate: PropTypes.number.isRequired,
   discountAmount: PropTypes.object.isRequired,
   availableCredit: PropTypes.object.isRequired,
@@ -274,6 +276,7 @@ PaymentSummaryComponent.propTypes = {
   usingInsurance: PropTypes.bool.isRequired,
   usingPaymentTypes: PropTypes.bool.isRequired,
   selectedPrescriptionInsurancePolicy: PropTypes.object,
+  selectedPaymentType: PropTypes.object,
 };
 
 const localStyles = {
