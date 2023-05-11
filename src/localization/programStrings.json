@@ -32,7 +32,10 @@
     "general_order": "General order",
     "emergency_order": "Emergency order",
     "max_items": "Max. Items",
-    "customer_is_store": "Warning: This customer is also a store"
+    "customer_is_store": "Warning: This customer is also a store",
+    "ai_predictions_received": "AI predictions received",
+    "ai_predictions_error": "Error retrieving AI predictions",
+    "ai_predictions_fetching_suggestions": "Fetching AI suggestions"
   },
   "fr": {
     "select_a_program": "Sélectionnez un programme",
@@ -67,7 +70,10 @@
     "general_order": "Commande Générale",
     "emergency_order": "Commande Urgente",
     "max_items": "Nb Max d'Articles",
-    "customer_is_store": "Avertissement: ce client est aussi un dépôt"
+    "customer_is_store": "Avertissement: ce client est aussi un dépôt",
+    "ai_predictions_received": "Prédictions IA reçues",
+    "ai_predictions_error": "Erreur lors de la récupération des prédictions IA",
+    "ai_predictions_fetching_suggestions": "Récupérer les suggestions de l'IA"
   },
   "gil": {
     "select_a_program": "Select a program",
