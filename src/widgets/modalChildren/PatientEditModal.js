@@ -1,9 +1,11 @@
 /* eslint-disable react/forbid-prop-types */
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, StyleSheet } from 'react-native';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { useIsFocused } from '@react-navigation/core';
+import moment from 'moment';
+
 import { FormControl } from '..';
 import { PageButton } from '../PageButton';
 import { FlexRow } from '../FlexRow';
@@ -15,6 +17,7 @@ import {
   selectIsCreatePatient,
   selectPatientModalOpen,
   selectCanEditPatient,
+  selectPatientByNameAndDoB,
 } from '../../selectors/patient';
 import { selectCompletedForm, selectCanSaveForm } from '../../selectors/form';
 import { PatientActions } from '../../actions/PatientActions';
@@ -47,16 +50,32 @@ const PatientEditModalComponent = ({
   hasVaccineEventsForm,
   isCreatePatient,
   patientEditModalOpen,
+  isDuplicatePatientLocally,
+  completedForm,
 }) => {
   const isFocused = useIsFocused();
+  const [alertText, setAlertText] = useState(modalStrings.are_you_sure_duplicate_patient);
 
   let canSave = canSaveForm && canEditPatient;
+  let canDuplicatePatient = false;
 
   const hasVaccineEvents = hasVaccineEventsForm;
 
   if (canSave && !!surveySchema) {
     canSave = surveySchema && surveyForm && nameNoteIsValid;
   }
+
+  canDuplicatePatient = canSave && isDuplicatePatientLocally && isCreatePatient;
+  useEffect(() => {
+    const dateOfBirth = moment(completedForm.dateOfBirth).format('LL');
+    const name = `${completedForm.firstName} ${completedForm.lastName}`;
+    const alert = modalStrings.formatString(
+      modalStrings.are_you_sure_duplicate_patient,
+      name,
+      dateOfBirth
+    );
+    setAlertText(alert);
+  }, [isDuplicatePatientLocally]);
 
   const canDelete = canEditPatient;
   const showDelete = !isCreatePatient;
@@ -138,6 +157,15 @@ const PatientEditModalComponent = ({
             onCancel={toggleRemoveModal}
           />
         </PaperModalContainer>
+        <PaperModalContainer isVisible={canDuplicatePatient} onClose={cancelPatientEdit}>
+          <PaperConfirmModal
+            questionText={alertText}
+            confirmText={generalStrings.save}
+            cancelText={buttonStrings.cancel}
+            onConfirm={onSaveForm}
+            onCancel={cancelPatientEdit}
+          />
+        </PaperModalContainer>
       </FlexRow>
     </ModalContainer>
   );
@@ -178,6 +206,7 @@ PatientEditModalComponent.defaultProps = {
   surveySchema: null,
   nameNoteIsValid: true,
   isCreatePatient: false,
+  isDuplicatePatientLocally: false,
 };
 
 PatientEditModalComponent.propTypes = {
@@ -194,6 +223,8 @@ PatientEditModalComponent.propTypes = {
   hasVaccineEventsForm: PropTypes.bool.isRequired,
   isCreatePatient: PropTypes.bool,
   patientEditModalOpen: PropTypes.bool.isRequired,
+  isDuplicatePatientLocally: PropTypes.bool,
+  completedForm: PropTypes.object.isRequired,
 };
 
 const mergeProps = (stateProps, dispatchProps, ownProps) => {
@@ -201,7 +232,6 @@ const mergeProps = (stateProps, dispatchProps, ownProps) => {
   const { onSave, onDelete, onSaveSurvey, ...otherDispatchProps } = dispatchProps;
   // const { surveySchema } = ownProps;
   const surveySchema = selectSurveySchemas()[0];
-
   const onSaveForm = () => {
     onSave(completedForm);
     if (surveySchema) onSaveSurvey();
@@ -239,6 +269,7 @@ const stateToProps = state => {
   const isCreatePatient = selectIsCreatePatient(state);
   const hasVaccineEventsForm = patientHistory.length > 0;
   const [patientEditModalOpen] = selectPatientModalOpen(state);
+  const isDuplicatePatientLocally = selectPatientByNameAndDoB(completedForm);
 
   return {
     canSaveForm,
@@ -250,6 +281,7 @@ const stateToProps = state => {
     surveyForm: nameNote?.data ?? null,
     patientEditModalOpen,
     inputConfig,
+    isDuplicatePatientLocally,
   };
 };
 

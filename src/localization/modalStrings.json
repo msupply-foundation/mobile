@@ -3,6 +3,7 @@
     "adr_form_for": "ADR Form for:",
     "are_you_sure_delete_sensor": "Are you sure you want to delete this sensor?",
     "are_you_sure_delete_patient": "Are you sure you want to delete this patient?",
+    "are_you_sure_duplicate_patient": "Are you sure you want to duplicate this patient? A patient with name: {0} and date of birth: {1} already exist.",
     "patient_cant_delete_with_vaccine_events": "You can only delete records of patients who do not have any active vaccine events. Please make sure that the vaccine events has been deleted if you want to delete this patient.",
     "add_at_least_one_item_before_finalising": "You need to add at least one item before finalising",
     "and": "and",
