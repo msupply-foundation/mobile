@@ -70,11 +70,6 @@ export class SyncQueue {
     if (!record) return false;
 
     switch (recordType) {
-      // Only sync prescriptions which are finalised.
-      case 'Transaction':
-        return !(record.isPrescription && !record.isFinalised);
-      case 'TransactionBatch':
-        return !(record.transaction.isPrescription && !record.transaction.isFinalised);
       // Only sync out prescribers from this store.
       case 'Prescriber':
         return record.fromThisStore;

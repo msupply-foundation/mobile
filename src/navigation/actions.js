@@ -69,9 +69,6 @@ export const goBack = () => dispatch => {
   if (!RootNavigator.canGoBack()) BackHandler.exitApp();
   else {
     UIDatabase.write(() => {
-      const prescriptions = UIDatabase.objects('Prescription').filtered('status != "finalised"');
-      UIDatabase.delete('Transaction', prescriptions);
-
       const prevRouteName = RootNavigator.getPrevRouteName();
 
       const navigateBack = () =>
@@ -107,7 +104,6 @@ export const createPrescription = patientID => (dispatch, getState) => {
   const { currentUser } = user;
 
   const patient = UIDatabase.get('Name', patientID);
-
   let newPrescription;
   UIDatabase.write(() => {
     newPrescription = createRecord(
@@ -152,13 +148,6 @@ export const gotoPrescriptions = () =>
   });
 
 export const gotoDispensingPage = () => dispatch => {
-  UIDatabase.write(() => {
-    UIDatabase.delete(
-      'Transaction',
-      UIDatabase.objects('Prescription').filtered('status != $0', 'finalised')
-    );
-  });
-
   dispatch(
     CommonActions.navigate({
       name: ROUTES.DISPENSARY,
@@ -202,13 +191,6 @@ export const gotoRealmExplorer = () =>
  * Pushes the Customer Invoices route onto the main navigation stack.
  */
 export const gotoCustomerInvoices = () => dispatch => {
-  UIDatabase.write(() => {
-    UIDatabase.delete(
-      'Transaction',
-      UIDatabase.objects('Prescription').filtered('status != $0', 'finalised')
-    );
-  });
-
   dispatch(
     CommonActions.navigate({
       name: ROUTES.CUSTOMER_INVOICES,

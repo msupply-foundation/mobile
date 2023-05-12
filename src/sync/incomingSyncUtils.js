@@ -215,14 +215,12 @@ export const sanityCheckIncomingRecord = (recordType, record) => {
     InsurancePolicy: {
       cannotBeBlank: [
         'insuranceProviderID',
-        'nameID',
         'isActive',
         'policyNumberFamily',
-        'policyNumberPerson',
         'expiryDate',
         'discountRate',
       ],
-      canBeBlank: ['type', 'policyNumberFull', 'enteredByID'],
+      canBeBlank: ['type', 'nameID', 'policyNumberPerson', 'enteredByID'],
     },
     Report: {
       cannotBeBlank: ['ID', 'title', 'type', 'json'],
@@ -800,13 +798,13 @@ export const createOrUpdateRecord = (database, settings, recordType, record) => 
       const linkedRequisition = record.requisition_ID
         ? database.getOrCreate('Requisition', record.requisition_ID)
         : null;
-      const insurancePolicy = record.nameInsuranceJoin?.id
-        ? database.getOrCreate('InsurancePolicy', record.nameInsuranceJoin.id)
-        : null;
       const linkedTransaction = record.linked_transaction_id
         ? database.getOrCreate('Transaction', record.linked_transaction_id)
         : null;
       const category = database.getOrCreate('TransactionCategory', record.category_ID);
+      const insurancePolicy = record.nameInsuranceJoinID
+        ? database.getOrCreate('InsurancePolicy', record.nameInsuranceJoinID)
+        : null;
 
       internalRecord = {
         id: record.ID,

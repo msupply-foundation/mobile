@@ -12,7 +12,11 @@ import { View } from 'react-native';
 import { MODAL_KEYS } from '../utilities';
 import { useNavigationFocus, useSyncListener, useDebounce } from '../hooks';
 import { getItemLayout, getPageDispatchers, PageActions } from './dataTableUtilities';
-import { gotoCustomerInvoice, createCustomerInvoice } from '../navigation/actions';
+import {
+  gotoCustomerInvoice,
+  createCustomerInvoice,
+  gotoPrescription,
+} from '../navigation/actions';
 import { ROUTES } from '../navigation/constants';
 import { selectCurrentUser } from '../selectors/user';
 
@@ -56,7 +60,11 @@ export const CustomerInvoices = ({
   const toggleCurrentAndPast = useDebounce(toggleFinalised, 250, true);
 
   const onNavigateToInvoice = useCallback(invoice => {
-    dispatch(gotoCustomerInvoice(invoice));
+    const isConfirmedPrescription = invoice.mode === 'dispensary' && invoice.status === 'confirmed';
+    // eslint-disable-next-line @typescript-eslint/no-unused-expressions
+    isConfirmedPrescription
+      ? dispatch(gotoPrescription(invoice))
+      : dispatch(gotoCustomerInvoice(invoice));
     onDeselectAll();
   }, []);
 

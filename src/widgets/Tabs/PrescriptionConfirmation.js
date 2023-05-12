@@ -4,7 +4,7 @@
  * Sustainable Solutions (NZ) Ltd. 2019
  */
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { CommonActions } from '@react-navigation/native';
@@ -33,9 +33,10 @@ import {
 import { selectInsuranceDiscountRate } from '../../selectors/insurance';
 import { selectPrescriptionIsFinalised } from '../../selectors/prescription';
 
-import { buttonStrings } from '../../localization';
+import { buttonStrings, dispensingStrings, modalStrings } from '../../localization';
 import globalStyles from '../../globalStyles';
 import { PageButtonWithOnePress } from '../PageButtonWithOnePress';
+import { ConfirmForm, ModalContainer } from '../modals';
 
 const { pageTopViewContainer } = globalStyles;
 const mapStateToProps = state => {
@@ -43,6 +44,7 @@ const mapStateToProps = state => {
   const { transaction, paymentValid, paymentAmount, paymentType } = payment;
   const { isComplete } = wizard;
   const { usingPayments } = modules;
+
   const currentPatient = selectCurrentPatient(state);
   const currentUser = selectCurrentUser(state);
   const canConfirm = paymentValid && !isComplete;
@@ -51,6 +53,7 @@ const mapStateToProps = state => {
   const discountAmount = selectDiscountAmount(state);
   const discountRate = selectInsuranceDiscountRate(state);
   const isFinalised = selectPrescriptionIsFinalised(state);
+  const shouldPay = !!(usingPayments && total?.value);
 
   return {
     subtotal,
@@ -65,6 +68,7 @@ const mapStateToProps = state => {
     currentPatient,
     usingPayments,
     isFinalised,
+    shouldPay,
   };
 };
 
@@ -90,8 +94,13 @@ const PrescriptionConfirmationComponent = ({
   onDelete,
   isFinalised,
   goBack,
+  shouldPay,
 }) => {
   const runWithLoadingIndicator = useLoadingIndicator();
+  const [alertModal, setAlertModal] = useState(false);
+  useEffect(() => {
+    if (shouldPay) setAlertModal(true);
+  }, [shouldPay]);
 
   const confirmAndPay = React.useCallback(() => {
     pay(
@@ -120,7 +129,6 @@ const PrescriptionConfirmationComponent = ({
   const confirmPrescription = React.useCallback(
     () =>
       runWithLoadingIndicator(() => {
-        const shouldPay = usingPayments && total?.value;
         UIDatabase.write(() => {
           if (shouldPay) confirmAndPay();
           else transaction.finalise(UIDatabase);
@@ -152,13 +160,27 @@ const PrescriptionConfirmationComponent = ({
               style={{ marginRight: 7 }}
             />
             <PageButtonWithOnePress
+              text={buttonStrings.save_and_close}
+              onPress={goBack}
+              isDisabled={shouldPay}
+              style={{ marginRight: 7 }}
+            />
+            <PageButtonWithOnePress
               isDisabled={!canConfirm}
-              text={buttonStrings.confirm}
+              text={dispensingStrings.finalise}
               onPress={confirmPrescription}
             />
           </FlexRow>
         </FlexColumn>
       </FlexRow>
+      <ModalContainer isVisible={alertModal}>
+        <ConfirmForm
+          isOpen={alertModal}
+          questionText={modalStrings.finalize_prescription_if_payment_entered}
+          cancelText={modalStrings.got_it}
+          onCancel={() => setAlertModal(false)}
+        />
+      </ModalContainer>
     </FlexView>
   );
 };
@@ -185,6 +207,7 @@ PrescriptionConfirmationComponent.propTypes = {
   discountRate: PropTypes.number,
   isFinalised: PropTypes.bool.isRequired,
   goBack: PropTypes.func.isRequired,
+  shouldPay: PropTypes.bool.isRequired,
 };
 
 export const PrescriptionConfirmation = connect(
