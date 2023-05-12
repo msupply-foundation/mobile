@@ -221,6 +221,7 @@ const SupplierRequisition = ({
 
   const fetchSuggestedQuantities = (callbackFn, event) => {
     const storeId = UIDatabase.getSetting(SETTINGS_KEYS.THIS_STORE_ID);
+    const API_URL = UIDatabase.getSetting(SETTINGS_KEYS.ME_PREDICTION_API_URL);
 
     /**
      *
@@ -292,7 +293,7 @@ const SupplierRequisition = ({
             console.log('Update Predictions');
             updatePredictions(requisition?.id, response);
           } else {
-            const toastMessage = `${programStrings.ai_predictions_error} - ${response?.message}:${response?.stack}`;
+            const toastMessage = `${programStrings.ai_predictions_error} - ${response?.message}:${response?.stack}:${API_URL}`;
             ToastAndroid.show(toastMessage, ToastAndroid.LONG);
           }
         })
