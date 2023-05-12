@@ -221,15 +221,16 @@ const SupplierRequisition = ({
 
   const fetchSuggestedQuantities = (callbackFn, event) => {
     const storeId = UIDatabase.getSetting(SETTINGS_KEYS.THIS_STORE_ID);
+    const API_URL = UIDatabase.getSetting(SETTINGS_KEYS.ME_PREDICTION_API_URL);
 
     /**
      *
-     * Fetch items with `requiredQuantity` > 0 (Shows intent of adding to requisition)
+     * Fetch items with `dailyUsage` > 0 (items that are being used regularly should be predicted)
      *
      */
     const requestedItems =
       data
-        ?.filter(d => d.requiredQuantity > 0)
+        ?.filter(d => d.dailyUsage > 0 || d.requiredQuantity > 0)
         ?.map(d => {
           const { dailyUsage, item, requiredQuantity, stockOnHand, requisition } = d;
 
@@ -287,10 +288,17 @@ const SupplierRequisition = ({
           console.log('ME_RESPONSE: ', response);
 
           if (!response?.error && response?.length > 0) {
+            const toastMessage = `${programStrings.ai_predictions_received} - ${response?.length}`;
+            ToastAndroid.show(toastMessage, ToastAndroid.LONG);
+            console.log('Update Predictions');
             updatePredictions(requisition?.id, response);
+          } else {
+            const toastMessage = `${programStrings.ai_predictions_error} - ${response?.message}:${response?.stack}:${API_URL}`;
+            ToastAndroid.show(toastMessage, ToastAndroid.LONG);
           }
         })
         .catch(error => {
+          ToastAndroid.show(error, ToastAndroid.LONG);
           console.log(error);
         })
         .finally(() => {

@@ -6,15 +6,12 @@
  * - Update suggested values in requisition item list
  *
  */
+import { ToastAndroid } from 'react-native';
 import { useEffect, useState } from 'react';
 
 import { UIDatabase } from '../../database';
 import { SETTINGS_KEYS } from '../../settings';
-
-const API_URL =
-  UIDatabase.getSetting(SETTINGS_KEYS.ME_PREDICTION_API_URL) || 'http://civapi.dev.macro-eyes.com';
-
-const API_KEY = UIDatabase.getSetting(SETTINGS_KEYS.ME_PREDICTION_API_KEY);
+import { programStrings } from '../../localization';
 
 const RETRY_COUNT = 3;
 const TIMEOUT_MS = 10 * 1000;
@@ -30,6 +27,12 @@ export const useMEPrediction = ({ item, retryCount = 3, timeout = TIMEOUT_MS }) 
   const [data, setData] = useState({});
 
   useEffect(() => {
+    const API_URL =
+      UIDatabase.getSetting(SETTINGS_KEYS.ME_PREDICTION_API_URL) ||
+      'http://civapi.dev.macro-eyes.com';
+
+    const API_KEY = UIDatabase.getSetting(SETTINGS_KEYS.ME_PREDICTION_API_KEY);
+
     if (!API_URL || !API_KEY) return;
 
     // Build url string from parameters
@@ -84,7 +87,7 @@ export const useMEPrediction = ({ item, retryCount = 3, timeout = TIMEOUT_MS }) 
         message: 'Could not fetch data',
       });
     }
-  }, [API_URL, retries, retryCount]);
+  }, [retries, retryCount]);
 
   return { MEData: data, loading, retries };
 };
@@ -95,12 +98,18 @@ export const useMEPrediction = ({ item, retryCount = 3, timeout = TIMEOUT_MS }) 
  *
  */
 export const getMEPrediction = requestObj => {
+  const API_URL =
+    UIDatabase.getSetting(SETTINGS_KEYS.ME_PREDICTION_API_URL) ||
+    'http://civapi.dev.macro-eyes.com';
+
+  const API_KEY = UIDatabase.getSetting(SETTINGS_KEYS.ME_PREDICTION_API_KEY);
   if (!API_URL || !API_KEY) {
     return Promise.resolve({
       error: true,
       message: 'Provide valid API credentials',
     });
   }
+  ToastAndroid.show(programStrings.ai_predictions_fetching_suggestions, ToastAndroid.SHORT);
 
   const { supplying_store_id, items } = requestObj;
 
