@@ -230,7 +230,7 @@ const SupplierRequisition = ({
      */
     const requestedItems =
       data
-        ?.filter(d => d.dailyUsage > 0)
+        ?.filter(d => d.dailyUsage > 0 || d.requiredQuantity > 0)
         ?.map(d => {
           const { dailyUsage, item, requiredQuantity, stockOnHand, requisition } = d;
 
