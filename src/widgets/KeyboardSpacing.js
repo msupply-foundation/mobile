@@ -1,17 +1,17 @@
 import React, { useRef } from 'react';
 import { Animated, Easing } from 'react-native';
-import { useKeyboardHeight } from '../hooks/index';
+import { useKeyboard } from '../hooks';
 
 export const KeyboardSpacing = React.memo(() => {
-  const height = useKeyboardHeight();
-  const animatedValue = useRef(new Animated.Value(0));
+  const { height, duration } = useKeyboard();
+  const animatedValue = useRef(new Animated.Value(0)).current;
 
-  Animated.timing(animatedValue.current, {
+  Animated.timing(animatedValue, {
     toValue: height,
-    duration: 100,
+    duration,
     easing: Easing.linear,
     useNativeDriver: false,
   }).start();
 
-  return <Animated.View style={{ height: animatedValue.current }} />;
+  return <Animated.View style={{ height: animatedValue }} />;
 });
