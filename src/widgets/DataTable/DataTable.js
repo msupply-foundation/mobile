@@ -5,7 +5,7 @@
  */
 
 import PropTypes from 'prop-types';
-import React, { useMemo, useRef, useCallback } from 'react';
+import React, { useMemo, useRef, useCallback, createRef } from 'react';
 import {
   View,
   StyleSheet,
@@ -72,7 +72,7 @@ const DataTable = React.memo(
     const getCellRef = refIndex => {
       if (cellRefs.current[refIndex]) return cellRefs.current[refIndex];
 
-      const newRef = React.createRef();
+      const newRef = createRef();
       cellRefs.current[refIndex] = newRef;
 
       return newRef;
@@ -113,13 +113,12 @@ const DataTable = React.memo(
     return (
       <RefContext.Provider value={contextValue}>
         <View style={{ flex: 1 }}>
-          {renderHeader && renderHeader()}
           <VirtualizedList
             ref={virtualizedListRef}
-            keyboardDismissMode="none"
             data={data}
             keyboardShouldPersistTaps="always"
             style={style}
+            ListHeaderComponent={() => renderHeader && renderHeader()}
             ListFooterComponent={<KeyboardSpacing />}
             renderItem={renderItem}
             {...otherProps}

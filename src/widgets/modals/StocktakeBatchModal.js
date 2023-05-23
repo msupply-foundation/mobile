@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 /* eslint-disable indent */
 /* eslint-disable react/forbid-prop-types */
 /**
@@ -5,9 +6,9 @@
  * Sustainable Solutions (NZ) Ltd. 2019
  */
 
-import React, { useCallback, useMemo } from 'react';
+import React, { useCallback, useEffect, useMemo } from 'react';
 import PropTypes from 'prop-types';
-import { View } from 'react-native';
+import { View, ScrollView } from 'react-native';
 import { connect, batch } from 'react-redux';
 
 import { ROUTES } from '../../navigation/constants';
@@ -269,6 +270,17 @@ export const StocktakeBatchModalComponent = ({
     pageTopLeftSectionContainer,
     pageTopRightSectionContainer,
   } = globalStyles;
+
+  useEffect(() => {
+    // Suppress console error only for this component in production
+    // eslint-disable-next-line no-undef
+    console.reportErrorsAsExceptions = __DEV__;
+    // Retain console.error back
+    return () => {
+      console.reportErrorsAsExceptions = true;
+    };
+  }, []);
+
   return (
     <DataTablePageView>
       <View style={pageTopSectionContainer}>
@@ -283,17 +295,19 @@ export const StocktakeBatchModalComponent = ({
           />
         </View>
       </View>
-      <DataTable
-        data={data}
-        extraData={dataState}
-        renderRow={renderRow}
-        renderHeader={renderHeader}
-        keyExtractor={keyExtractor}
-        getItemLayout={getItemLayout}
-        columns={columns}
-        windowSize={1}
-        initialNumToRender={0}
-      />
+      <ScrollView>
+        <DataTable
+          data={data}
+          extraData={dataState}
+          renderRow={renderRow}
+          renderHeader={renderHeader}
+          keyExtractor={keyExtractor}
+          getItemLayout={getItemLayout}
+          columns={columns}
+          windowSize={1}
+          initialNumToRender={0}
+        />
+      </ScrollView>
       <ModalContainer isVisible={!!modalKey} onClose={onCloseModal} title={getModalTitle(modalKey)}>
         {renderModal()}
       </ModalContainer>
