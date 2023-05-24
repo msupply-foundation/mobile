@@ -13,7 +13,6 @@
  *   getRefIndex,
  *   getCellRef,
  *   focusNextCell,
- *   adjustToTop,
  * }
  *
  */

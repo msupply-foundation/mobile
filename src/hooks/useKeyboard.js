@@ -1,6 +1,11 @@
 import { useEffect, useRef } from 'react';
 import { Keyboard } from 'react-native';
 
+/**
+ * Hooks used to return keyboard event details when the keyboard is opened/closed.
+ * @returns {object} Keyboard event details object. E.g.
+ * `{"height": 350, "duration": 100, "visible": true}`
+ */
 export const useKeyboard = () => {
   const keyboard = useRef({ height: 0, duration: 0, visible: false }).current;
 

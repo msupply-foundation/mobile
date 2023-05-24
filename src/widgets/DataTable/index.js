@@ -10,6 +10,7 @@ import DataTableHeaderRow from './DataTableHeaderRow';
 import DataTableRow from './DataTableRow';
 import TouchableNoFeedback from './TouchableNoFeedback';
 import DATA_TABLE_DEFAULTS from './constants';
+import { DataTableView } from './DataTableView';
 
 export {
   DataTable,
@@ -24,4 +25,5 @@ export {
   DataTableRow,
   TouchableNoFeedback,
   DATA_TABLE_DEFAULTS,
+  DataTableView,
 };
