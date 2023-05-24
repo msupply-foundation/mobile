@@ -194,10 +194,20 @@ export const updatePredictions = (requisitionId, items) => {
       selection.forEach(s => {
         const prediction = filterPrediction(s?.item?.code);
 
-        if (prediction.length > 0) {
-          s.predictedQuantity = prediction?.[0]?.suggested_quantity;
-        }
+        /**
+         * If no prediction available for an item, set predictedQuanity to -1, which triggers
+         * fallback to the default calculated based on dailyUsage
+         */
+        s.predictedQuantity = prediction.length > 0 ? prediction?.[0]?.suggested_quantity : -1;
       });
     });
   }
+};
+
+/**
+ * ME Logger
+ *
+ */
+export const logME = (...args) => {
+  console.log('ME_', args);
 };

@@ -42,7 +42,7 @@ import { SETTINGS_KEYS } from '../settings';
 import { useLoadingIndicator } from '../hooks/useLoadingIndicator';
 import { RowDetailActions } from '../actions/RowDetailActions';
 
-import { getMEPrediction, updatePredictions } from '../utilities/prediction/macroEyes';
+import { getMEPrediction, updatePredictions, logME } from '../utilities/prediction/macroEyes';
 
 /**
  * Renders a mSupply mobile page with a supplier requisition loaded for editing
@@ -232,82 +232,54 @@ const SupplierRequisition = ({
       data
         ?.filter(d => d.dailyUsage > 0 || d.requiredQuantity > 0)
         ?.map(d => {
-          const { dailyUsage, item, requiredQuantity, stockOnHand, requisition } = d;
+          const { dailyUsage, item, stockOnHand } = d;
 
           return {
-            requisition: {
-              id: requisition?.id,
-              storeId,
-              programId: requisition?.program?.id,
-              orderType: requisition?.orderType,
-              period: requisition?.period?.id,
-            },
-            stockOnHand,
-            dailyUsage,
-            itemCode: item?.code || '-',
-            requiredQuantity,
+            item_code: item?.code,
+            daily_usage: dailyUsage,
+            stock_on_hand: stockOnHand,
           };
         }) || [];
 
-    /**
-     *
-     * Batch items into one API call
-     *
-     */
-    if (requestedItems.length > 0) {
-      const items = [];
+    const { requisition } = data[0];
 
-      requestedItems.forEach(obj => {
-        const { itemCode, stockOnHand, dailyUsage } = obj;
+    const requestObject = {
+      // Requisition metadata
+      supplying_store_id: storeId,
+      program: program?.id,
+      order_type: requisition?.orderType,
+      period: requisition?.period?.id,
+      requisition_id: requisition?.id,
 
-        items.push({
-          item_code: itemCode,
-          daily_usage: dailyUsage,
-          stock_on_hand: stockOnHand,
-        });
+      // Items requesting prediction
+      items: requestedItems,
+    };
+
+    logME('REQUEST: ', requestObject);
+
+    getMEPrediction(requestObject)
+      .then(response => {
+        logME('RESPONSE: ', response);
+
+        if (!response?.error && response?.length > 0) {
+          const toastMessage = `${programStrings.ai_predictions_received}: ${response?.length}`;
+          ToastAndroid.show(toastMessage, ToastAndroid.LONG);
+          logME('UPDATE_PREDICTIONS');
+
+          updatePredictions(requisition?.id, response);
+        } else {
+          const toastMessage = `${programStrings.ai_predictions_error} - ${response?.message}:${response?.stack}:${API_URL}`;
+          ToastAndroid.show(toastMessage, ToastAndroid.LONG);
+        }
+      })
+      .catch(error => {
+        ToastAndroid.show(error, ToastAndroid.LONG);
+        logME('ERROR: ', error);
+      })
+      .finally(() => {
+        // Trigger the original suggested values event
+        callbackFn(event);
       });
-
-      const { requisition } = requestedItems[0];
-
-      const requestObject = {
-        // Requisition metadata
-        supplying_store_id: requisition?.storeId,
-        program: requisition?.programId,
-        order_type: requisition?.orderType,
-        period: requisition?.period,
-        requisition_id: requisition?.id,
-
-        // Items requesting prediction
-        items,
-      };
-
-      console.log('ME_REQUEST: ', requestObject);
-
-      getMEPrediction(requestObject)
-        .then(response => {
-          console.log('ME_RESPONSE: ', response);
-
-          if (!response?.error && response?.length > 0) {
-            const toastMessage = `${programStrings.ai_predictions_received} - ${response?.length}`;
-            ToastAndroid.show(toastMessage, ToastAndroid.LONG);
-            console.log('Update Predictions');
-            updatePredictions(requisition?.id, response);
-          } else {
-            const toastMessage = `${programStrings.ai_predictions_error} - ${response?.message}:${response?.stack}:${API_URL}`;
-            ToastAndroid.show(toastMessage, ToastAndroid.LONG);
-          }
-        })
-        .catch(error => {
-          ToastAndroid.show(error, ToastAndroid.LONG);
-          console.log(error);
-        })
-        .finally(() => {
-          // Trigger the original suggested values event
-          callbackFn(event);
-        });
-    } else {
-      callbackFn(event);
-    }
   };
 
   const UseSuggestedQuantitiesButton = () => (
