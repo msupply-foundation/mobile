@@ -268,13 +268,15 @@ const SupplierRequisition = ({
 
           updatePredictions(requisition?.id, response);
         } else {
+          logME('ERROR: ', response?.message);
+
           const toastMessage = `${programStrings.ai_predictions_error} - ${response?.message}:${response?.stack}:${API_URL}`;
           ToastAndroid.show(toastMessage, ToastAndroid.LONG);
         }
       })
       .catch(error => {
         ToastAndroid.show(error, ToastAndroid.LONG);
-        logME('ERROR: ', error);
+        logME('EXCEPTION: ', error);
       })
       .finally(() => {
         // Trigger the original suggested values event

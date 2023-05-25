@@ -106,17 +106,17 @@ export const getMEPrediction = requestObj => {
   if (!API_URL || !API_KEY) {
     return Promise.resolve({
       error: true,
-      message: 'Provide valid API credentials',
+      message: 'ME API credentials not found',
     });
   }
   ToastAndroid.show(programStrings.ai_predictions_fetching_suggestions, ToastAndroid.SHORT);
 
-  const { supplying_store_id, items } = requestObj;
+  const { supplying_store_id } = requestObj;
 
-  if (supplying_store_id === undefined || items.length === 0) {
+  if (supplying_store_id === undefined) {
     return Promise.resolve({
       error: true,
-      message: 'Provide valid item object',
+      message: 'Supplying store is required',
     });
   }
 
