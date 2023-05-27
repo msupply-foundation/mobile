@@ -10,7 +10,6 @@ import { StyleSheet, VirtualizedList, VirtualizedListPropTypes, Keyboard } from 
 import RefContext from './RefContext';
 import { DataTableView } from './DataTableView';
 import { DATA_TABLE_DEFAULTS } from './constants';
-import { KeyboardSpacing } from '../KeyboardSpacing';
 
 /**
  * Base DataTable component. Wrapper around VirtualizedList, providing
@@ -102,7 +101,6 @@ const DataTable = React.memo(
             keyboardShouldPersistTaps="always"
             style={style}
             ListHeaderComponent={() => renderHeader && renderHeader()}
-            ListFooterComponent={<KeyboardSpacing />}
             renderItem={renderItem}
             {...otherProps}
           />

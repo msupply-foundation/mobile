@@ -43,7 +43,6 @@ export { TextInput } from './TextInput';
 export { ToggleBar } from './ToggleBar';
 export { Wizard } from './Wizard';
 export { FridgeDisplayInfo } from './FridgeDisplayInfo';
-export { KeyboardSpacing } from './KeyboardSpacing';
 export { Spacer } from './Spacer';
 export { SpacedChildren } from './Spacer';
 export { WithSpace } from './Spacer';
