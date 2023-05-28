@@ -25,7 +25,7 @@ export const DataTableView = React.memo(({ children, style }) => (
   />
 ));
 
-const styles = StyleSheet.create({ virtualizedView: { flex: 1 } });
+const styles = StyleSheet.create({ dataTableView: { flex: 1 } });
 
 DataTableView.defaultProps = {
   style: styles.dataTableView,
