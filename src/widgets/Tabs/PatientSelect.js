@@ -42,7 +42,7 @@ import globalStyles, { DARK_GREY } from '../../globalStyles';
 import { NameNoteActions } from '../../actions/Entities/NameNoteActions';
 import { AfterInteractions } from '../AfterInteractions';
 import { generateUUID, UIDatabase } from '../../database/index';
-import { useKeyboardIsOpen } from '../../hooks/useKeyboardIsOpen';
+import { useKeyboard } from '../../hooks';
 import { Paper } from '../Paper';
 import { selectCompletedForm } from '../../selectors/form';
 
@@ -204,7 +204,7 @@ const PatientSelectComponent = ({
     return getColumns(MODALS.PATIENT_LOOKUP);
   }, []);
   const { pageTopViewContainer } = globalStyles;
-  const keyboardIsOpen = useKeyboardIsOpen();
+  const { visible: keyboardIsOpen } = useKeyboard();
 
   const handleUpdate = useMemo(
     (key, value) => {

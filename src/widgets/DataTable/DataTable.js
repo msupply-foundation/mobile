@@ -5,17 +5,11 @@
  */
 
 import PropTypes from 'prop-types';
-import React, { useMemo, useRef, useCallback } from 'react';
-import {
-  View,
-  StyleSheet,
-  VirtualizedList,
-  VirtualizedListPropTypes,
-  Keyboard,
-} from 'react-native';
+import React, { useMemo, useRef, useCallback, createRef } from 'react';
+import { StyleSheet, VirtualizedList, VirtualizedListPropTypes, Keyboard } from 'react-native';
 import RefContext from './RefContext';
+import { DataTableView } from './DataTableView';
 import { DATA_TABLE_DEFAULTS } from './constants';
-import { KeyboardSpacing } from '../KeyboardSpacing';
 
 /**
  * Base DataTable component. Wrapper around VirtualizedList, providing
@@ -31,7 +25,6 @@ import { KeyboardSpacing } from '../KeyboardSpacing';
  * - `getRefIndex`   : Gets the ref index for an editable cell given the columnkey and row index.
  * - `getCellRef`    : Lazily creates a ref for a cell.
  * - `focusNextCell` : Focus' the next editable cell. Call during onEditingSubmit.
- * - `adjustToTop`   : Scrolls so the focused row is at the top of the list.
  *
  * @param {Func}   renderRow    Renaming of VirtualizedList renderItem prop.
  * @param {Func}   renderHeader Function which should return a header component
@@ -41,9 +34,6 @@ import { KeyboardSpacing } from '../KeyboardSpacing';
  */
 const DataTable = React.memo(
   ({ renderRow, renderHeader, style, data, columns, footerHeight, ...otherProps }) => {
-    // Reference to the virtualized list for scroll operations.
-    const virtualizedListRef = useRef();
-
     // Array of column keys for determining ref indicies.
     const editableColumnKeys = useMemo(
       () =>
@@ -72,7 +62,7 @@ const DataTable = React.memo(
     const getCellRef = refIndex => {
       if (cellRefs.current[refIndex]) return cellRefs.current[refIndex];
 
-      const newRef = React.createRef();
+      const newRef = createRef();
       cellRefs.current[refIndex] = newRef;
 
       return newRef;
@@ -89,42 +79,32 @@ const DataTable = React.memo(
       return cellRef.current && cellRef.current.focus();
     };
 
-    // Adjusts the passed row to the top of the list.
-    const adjustToTop = useCallback(rowIndex => {
-      virtualizedListRef.current.scrollToIndex({ index: Math.max(0, rowIndex - 1) });
-    }, []);
-
     // Contexts values. Functions passed to rows and editable cells to control focus/scrolling.
     const contextValue = useMemo(
       () => ({
         getRefIndex,
         getCellRef,
         focusNextCell,
-        adjustToTop,
       }),
       [numberOfEditableCells]
     );
 
-    const renderItem = useCallback(
-      rowItem => renderRow(rowItem, focusNextCell, getCellRef, adjustToTop),
-      [renderRow]
-    );
+    const renderItem = useCallback(rowItem => renderRow(rowItem, focusNextCell, getCellRef), [
+      renderRow,
+    ]);
 
     return (
       <RefContext.Provider value={contextValue}>
-        <View style={{ flex: 1 }}>
-          {renderHeader && renderHeader()}
+        <DataTableView style={{ flex: 1 }}>
           <VirtualizedList
-            ref={virtualizedListRef}
-            keyboardDismissMode="none"
             data={data}
             keyboardShouldPersistTaps="always"
             style={style}
-            ListFooterComponent={<KeyboardSpacing />}
+            ListHeaderComponent={() => renderHeader && renderHeader()}
             renderItem={renderItem}
             {...otherProps}
           />
-        </View>
+        </DataTableView>
       </RefContext.Provider>
     );
   }

@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 /* eslint-disable indent */
 /* eslint-disable react/forbid-prop-types */
 /**
@@ -269,6 +270,12 @@ export const StocktakeBatchModalComponent = ({
     pageTopLeftSectionContainer,
     pageTopRightSectionContainer,
   } = globalStyles;
+
+  const initialNumToRender = useMemo(() => {
+    if (data.length > 15) return 15; // Max no. of rows get visible at a time in the modal container
+    return data.length; // Return whatever no. of rows in the data
+  }, [data]);
+
   return (
     <DataTablePageView>
       <View style={pageTopSectionContainer}>
@@ -291,8 +298,7 @@ export const StocktakeBatchModalComponent = ({
         keyExtractor={keyExtractor}
         getItemLayout={getItemLayout}
         columns={columns}
-        windowSize={1}
-        initialNumToRender={0}
+        initialNumToRender={initialNumToRender}
       />
       <ModalContainer isVisible={!!modalKey} onClose={onCloseModal} title={getModalTitle(modalKey)}>
         {renderModal()}

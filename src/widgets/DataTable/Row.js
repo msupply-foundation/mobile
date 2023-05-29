@@ -1,13 +1,11 @@
 /* eslint-disable react/forbid-prop-types */
 
-import React, { useContext, useCallback } from 'react';
+import React, { useCallback } from 'react';
 import PropTypes from 'prop-types';
 
 import { TouchableOpacity } from 'react-native';
 
 import TouchableNoFeedback from './TouchableNoFeedback';
-
-import RefContext from './RefContext';
 
 /**
  * Renders a row of children as outputted by renderCells render prop
@@ -50,13 +48,11 @@ const Row = React.memo(
       console.log(`Row: ${rowKey}`);
     }
 
-    const { adjustToTop } = useContext(RefContext);
     const onPressRow = useCallback(() => onPress(rowData), [onPress]);
-    const onFocus = () => adjustToTop(rowIndex);
 
     const Container = onPress ? TouchableOpacity : TouchableNoFeedback;
     return (
-      <Container onPress={onPressRow} style={style} onFocus={onFocus}>
+      <Container onPress={onPressRow} style={style}>
         {renderCells(rowData, rowState, rowKey, rowIndex)}
       </Container>
     );

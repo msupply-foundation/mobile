@@ -63,7 +63,7 @@ export const ExpiryDateInput = React.memo(
     // eslint-disable-next-line no-console
     if (debug) console.log(`- ExpiryTextInputCell: ${value}`);
 
-    const { focusNextCell, getRefIndex, getCellRef, adjustToTop } = React.useContext(RefContext);
+    const { focusNextCell, getRefIndex, getCellRef } = React.useContext(RefContext);
 
     const refIndex = getRefIndex(rowIndex, columnKey);
 
@@ -71,15 +71,6 @@ export const ExpiryDateInput = React.memo(
     const [expiryDate, setExpiryDate, finaliseExpiryDate] = useExpiryDateMask(
       formatExpiryDate(value)
     );
-
-    // Scrolls the parent scroll view such that this row is near the top of the data table,
-    // which should ensure it is above the keyboard - without it, if the row is in a position
-    // which will be behind the keyboard once it appears, the keyboard will show then disappear
-    // jankily. Also calls the isFocus callback with { rowKey, columnKey, value }
-    const internalOnFocus = () => {
-      if (onFocus) onFocus({ rowKey, columnKey, value });
-      adjustToTop(rowIndex);
-    };
 
     // Debounce onEndEditing so that when it is called on the two events: EndEditing/Blur
     // and onSubmit the callback is not triggered twice, causing two renders.
@@ -139,7 +130,7 @@ export const ExpiryDateInput = React.memo(
           underlineColorAndroid={underlineColor}
           keyboardType="numeric"
           blurOnSubmit={false}
-          onFocus={internalOnFocus}
+          onFocus={() => onFocus({ rowKey, columnKey, value })}
           onBlur={onBlur}
         />
       </View>
