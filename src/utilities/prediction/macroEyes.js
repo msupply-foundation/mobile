@@ -106,17 +106,17 @@ export const getMEPrediction = requestObj => {
   if (!API_URL || !API_KEY) {
     return Promise.resolve({
       error: true,
-      message: 'Provide valid API credentials',
+      message: 'ME API credentials not found',
     });
   }
   ToastAndroid.show(programStrings.ai_predictions_fetching_suggestions, ToastAndroid.SHORT);
 
-  const { supplying_store_id, items } = requestObj;
+  const { supplying_store_id } = requestObj;
 
-  if (supplying_store_id === undefined || items.length === 0) {
+  if (supplying_store_id === undefined) {
     return Promise.resolve({
       error: true,
-      message: 'Provide valid item object',
+      message: 'Supplying store is required',
     });
   }
 
@@ -194,10 +194,20 @@ export const updatePredictions = (requisitionId, items) => {
       selection.forEach(s => {
         const prediction = filterPrediction(s?.item?.code);
 
-        if (prediction.length > 0) {
-          s.predictedQuantity = prediction?.[0]?.suggested_quantity;
-        }
+        /**
+         * If no prediction available for an item, set predictedQuanity to -1, which triggers
+         * fallback to the default calculated based on dailyUsage
+         */
+        s.predictedQuantity = prediction.length > 0 ? prediction?.[0]?.suggested_quantity : -1;
       });
     });
   }
+};
+
+/**
+ * ME Logger
+ *
+ */
+export const logME = (...args) => {
+  console.log('ME_', args);
 };
