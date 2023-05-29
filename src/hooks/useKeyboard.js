@@ -1,5 +1,6 @@
-import { useEffect, useRef } from 'react';
+import { useEffect } from 'react';
 import { Keyboard } from 'react-native';
+import { useMountProtectedState } from './useMountProtectedState';
 
 /**
  * Hooks used to return keyboard event details when the keyboard is opened/closed.
@@ -7,13 +8,14 @@ import { Keyboard } from 'react-native';
  * `{"height": 350, "duration": 100, "visible": true}`
  */
 export const useKeyboard = () => {
-  const keyboard = useRef({ height: 0, duration: 0, visible: false }).current;
+  const [keyboard, setKeyboard] = useMountProtectedState({
+    height: 0,
+    duration: 0,
+    visible: false,
+  });
 
-  const callback = (event, visible) => {
-    keyboard.height = event.endCoordinates.height;
-    keyboard.duration = event.duration;
-    keyboard.visible = visible;
-  };
+  const callback = (event, visible) =>
+    setKeyboard({ height: event.endCoordinates.height, duration: event.duration, visible });
 
   useEffect(() => {
     const subscriptions = [
