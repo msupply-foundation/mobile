@@ -241,11 +241,14 @@ const SupplierRequisition = ({
           };
         }) || [];
 
-    const { requisition } = data[0];
+    const { requisition } = data?.[0] || {};
 
     const requestObject = {
       // Requisition metadata
+
+      // TODO: Rename to `store_id`
       supplying_store_id: storeId,
+
       program: program?.id,
       order_type: requisition?.orderType,
       period: requisition?.period?.id,
@@ -254,6 +257,8 @@ const SupplierRequisition = ({
       // Items requesting prediction
       items: requestedItems,
     };
+
+    logME('REQUISITION: ', requisition);
 
     logME('REQUEST: ', requestObject);
 

@@ -10,7 +10,7 @@ import { UIDatabase } from '..';
 import { SETTINGS_KEYS } from '../../settings';
 import { NUMBER_OF_DAYS_IN_A_MONTH, createRecord } from '../utilities';
 import { customerRequisitionProgramDailyUsage } from '../../utilities/dailyUsage';
-import { logME } from '../../utilities/prediction/macroEyes';
+import { PREDICTION_NOT_AVAILABLE, logME } from '../../utilities/prediction/macroEyes';
 
 /**
  * A requisition item (i.e. a requisition line).
@@ -93,7 +93,7 @@ export class RequisitionItem extends Realm.Object {
      *
      */
     if (this.predictedQuantity >= 0) {
-      logME('USE_ME_PREDICTION: ', this.item?.code);
+      logME('USE_ME_PREDICTION: ', this.predictedQuantity, this.item?.code);
       const predictedDaily = this.predictedQuantity / NUMBER_OF_DAYS_IN_A_MONTH;
       return Math.ceil(Math.max(predictedDaily * this.daysToSupply - this.stockOnHand, 0));
     }
@@ -313,10 +313,7 @@ RequisitionItem.schema = {
     stockOnHand: { type: 'double', default: 0 },
     dailyUsage: { type: 'double', optional: true },
     imprestQuantity: { type: 'double', optional: true },
-
-    // Default of -1 is used instead of 0 to enable checking for ME predictions = 0
-    predictedQuantity: { type: 'double', default: -1 },
-
+    predictedQuantity: { type: 'double', default: PREDICTION_NOT_AVAILABLE },
     requiredQuantity: { type: 'double', optional: true },
     suppliedQuantity: { type: 'double', default: 0 },
     openingStock: { type: 'double', default: 0 },

@@ -18,6 +18,14 @@ const TIMEOUT_MS = 10 * 1000;
 
 /**
  *
+ * Default value for the predictedQuantity in a RequisitionItem. This ensures
+ * predictions from the ME API = 0 will not default to the mSupply calculation
+ *
+ */
+export const PREDICTION_NOT_AVAILABLE = -1;
+
+/**
+ *
  * Fetches suggested quantities using React hooks
  *
  */
@@ -100,9 +108,9 @@ export const useMEPrediction = ({ item, retryCount = 3, timeout = TIMEOUT_MS }) 
 export const getMEPrediction = requestObj => {
   const API_URL =
     UIDatabase.getSetting(SETTINGS_KEYS.ME_PREDICTION_API_URL) ||
-    'http://civapi.dev.macro-eyes.com';
-
+    'https://civapi.dev.macro-eyes.com';
   const API_KEY = UIDatabase.getSetting(SETTINGS_KEYS.ME_PREDICTION_API_KEY);
+
   if (!API_URL || !API_KEY) {
     return Promise.resolve({
       error: true,
@@ -209,5 +217,5 @@ export const updatePredictions = (requisitionId, items) => {
  *
  */
 export const logME = (...args) => {
-  console.log('ME_', args);
+  console.debug('ME_', args);
 };
