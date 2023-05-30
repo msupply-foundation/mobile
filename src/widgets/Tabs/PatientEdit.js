@@ -4,11 +4,13 @@
  * Sustainable Solutions (NZ) Ltd. 2021
  */
 
-import React, { useCallback, useRef } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import PropTypes from 'prop-types';
 import { ToastAndroid, View } from 'react-native';
 import { connect } from 'react-redux';
 import * as Animatable from 'react-native-animatable';
+import moment from 'moment';
+
 import useButtonEnabled from '../../hooks/useButtonEnabled';
 import { FormControl } from '../FormControl';
 import { PageButton } from '../PageButton';
@@ -40,6 +42,7 @@ import { NameNoteActions } from '../../actions/Entities/NameNoteActions';
 import { selectCreatingNameNote, selectNameNoteIsValid } from '../../selectors/Entities/nameNote';
 import { AfterInteractions } from '../AfterInteractions';
 import { Paper } from '../Paper';
+import { selectPatientByNameAndDoB } from '../../selectors/patient';
 
 /**
  * Layout component used for a tab within the vaccine prescription wizard.
@@ -63,11 +66,31 @@ const PatientEditComponent = ({
   surveyFormData,
   updateForm,
   canEditPatient,
+  isDuplicatePatientLocally,
+  previousTab,
 }) => {
   const { pageTopViewContainer } = globalStyles;
   const [isDeceasedModalOpen, toggleIsDeceasedAlert] = useToggle(false);
-
+  const [canDuplicatePatient, setDuplicatePatient] = useState(false);
+  const [alertText, setAlertText] = useState(modalStrings.are_you_sure_duplicate_patient);
   const { enabled: nextButtonEnabled, setEnabled: setNextButtonEnabled } = useButtonEnabled();
+
+  useEffect(() => {
+    if (isDuplicatePatientLocally && !canSaveForm) {
+      setDuplicatePatient(true);
+
+      const dateOfBirth = moment(completedForm.dateOfBirth).format('LL');
+      const name = `${completedForm.firstName} ${completedForm.lastName}`;
+      const alert = modalStrings.formatString(
+        modalStrings.are_you_sure_duplicate_patient,
+        name,
+        dateOfBirth
+      );
+      setAlertText(alert);
+    }
+  }, [isDuplicatePatientLocally]);
+
+  const onConfirmDuplicatePatient = () => setDuplicatePatient(false);
 
   const formRef = useRef(null);
   const savePatient = useCallback(
@@ -148,6 +171,15 @@ const PatientEditComponent = ({
           onConfirm={toggleIsDeceasedAlert}
         />
       </PaperModalContainer>
+      <PaperModalContainer isVisible={canDuplicatePatient} onClose={previousTab}>
+        <PaperConfirmModal
+          questionText={alertText}
+          confirmText={generalStrings.ok}
+          cancelText={buttonStrings.cancel}
+          onConfirm={onConfirmDuplicatePatient}
+          onCancel={previousTab}
+        />
+      </PaperModalContainer>
     </FlexView>
   );
 };
@@ -160,8 +192,9 @@ const mapDispatchToProps = dispatch => {
   const updatePatientDetails = detailsEntered =>
     dispatch(NameActions.updatePatient(detailsEntered));
   const onCompleted = () => dispatch(WizardActions.nextTab());
+  const previousTab = () => dispatch(WizardActions.previousTab());
 
-  return { onCancelPrescription, onCompleted, updatePatientDetails, updateForm };
+  return { onCancelPrescription, onCompleted, updatePatientDetails, updateForm, previousTab };
 };
 
 const mapStateToProps = state => {
@@ -172,6 +205,7 @@ const mapStateToProps = state => {
   const [surveySchema] = surveySchemas;
   const nameNote = selectCreatingNameNote(state);
   const canEditPatient = selectCanEditPatient(state);
+  const isDuplicatePatientLocally = selectPatientByNameAndDoB(completedForm);
 
   return {
     canEditPatient,
@@ -180,12 +214,14 @@ const mapStateToProps = state => {
     currentPatient,
     surveySchema,
     surveyFormData: nameNote?.data ?? null,
+    isDuplicatePatientLocally,
   };
 };
 
 PatientEditComponent.defaultProps = {
   surveySchema: undefined,
   currentPatient: null,
+  isDuplicatePatientLocally: false,
 };
 
 PatientEditComponent.propTypes = {
@@ -199,6 +235,8 @@ PatientEditComponent.propTypes = {
   surveyFormData: PropTypes.object.isRequired,
   updateForm: PropTypes.func.isRequired,
   canEditPatient: PropTypes.bool.isRequired,
+  isDuplicatePatientLocally: PropTypes.bool,
+  previousTab: PropTypes.func.isRequired,
 };
 
 export const PatientEdit = connect(mapStateToProps, mapDispatchToProps)(PatientEditComponent);

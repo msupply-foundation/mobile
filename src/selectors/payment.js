@@ -15,7 +15,9 @@ export const selectPrescriptionSubTotal = ({ payment }) => {
 };
 
 export const selectDiscountRate = ({ payment }) => {
-  const { discountRate } = payment;
+  const { transaction } = payment;
+  const { insurancePolicy } = transaction || {};
+  const discountRate = selectInsurancePolicyDiscountRate({ insurancePolicy });
   return discountRate;
 };
 

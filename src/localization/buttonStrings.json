@@ -39,7 +39,8 @@
     "factory_reset": "Factory Reset",
     "check_connection": "Check connection",
     "connection_status": "Connection successful",
-    "hide_zero_stocks": "Hide zero stocks"
+    "hide_zero_stocks": "Hide zero stocks",
+    "save_and_close": "Save & Close"
   },
   "fr": {
     "back": "Précédent",
