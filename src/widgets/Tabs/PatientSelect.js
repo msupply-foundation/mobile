@@ -63,6 +63,7 @@ import { DataTable, DataTableRow, DataTableHeaderRow } from '../DataTable';
 import { selectVaccinePatientHistory } from '../../selectors/Entities/name';
 import { PatientHistoryModal } from '../modals/PatientHistory';
 import { VaccinationEvent } from '../modals/VaccinationEvent';
+import { PatientActions } from '../../actions/PatientActions';
 
 const getMessage = (noResults, error) => {
   if (noResults) return generalStrings.could_not_find_patient;
@@ -371,7 +372,12 @@ const PatientSelectComponent = ({
 };
 
 const mapDispatchToProps = dispatch => {
-  const onCancelPrescription = () => dispatch(VaccinePrescriptionActions.cancel());
+  const onCancelPrescription = () =>
+    batch(() => {
+      dispatch(VaccinePrescriptionActions.cancel());
+      dispatch(PatientActions.refresh());
+      dispatch(NameActions.reset());
+    });
 
   const selectPatient = patient =>
     batch(async () => {
@@ -386,9 +392,8 @@ const mapDispatchToProps = dispatch => {
 
   const createPatient = () =>
     batch(() => {
-      const id = generateUUID();
-      const patient = createDefaultName('patient', id);
-      dispatch(NameActions.create(patient));
+      const patient = createDefaultName('patient', generateUUID());
+      dispatch(PatientActions.createPatient(patient));
       dispatch(NameNoteActions.createSurveyNameNote(patient));
       dispatch(WizardActions.switchTab(1));
     });

@@ -7,7 +7,7 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import PropTypes from 'prop-types';
 import { ToastAndroid, View } from 'react-native';
-import { connect } from 'react-redux';
+import { batch, connect } from 'react-redux';
 import * as Animatable from 'react-native-animatable';
 import moment from 'moment';
 
@@ -42,7 +42,8 @@ import { NameNoteActions } from '../../actions/Entities/NameNoteActions';
 import { selectCreatingNameNote, selectNameNoteIsValid } from '../../selectors/Entities/nameNote';
 import { AfterInteractions } from '../AfterInteractions';
 import { Paper } from '../Paper';
-import { selectPatientByNameAndDoB } from '../../selectors/patient';
+import { selectIsCreatePatient, selectPatientByNameAndDoB } from '../../selectors/patient';
+import { PatientActions } from '../../actions/PatientActions';
 
 /**
  * Layout component used for a tab within the vaccine prescription wizard.
@@ -68,6 +69,7 @@ const PatientEditComponent = ({
   canEditPatient,
   isDuplicatePatientLocally,
   previousTab,
+  isCreatePatient,
 }) => {
   const { pageTopViewContainer } = globalStyles;
   const [isDeceasedModalOpen, toggleIsDeceasedAlert] = useToggle(false);
@@ -76,7 +78,7 @@ const PatientEditComponent = ({
   const { enabled: nextButtonEnabled, setEnabled: setNextButtonEnabled } = useButtonEnabled();
 
   useEffect(() => {
-    if (isDuplicatePatientLocally && !canSaveForm) {
+    if (isDuplicatePatientLocally && !canSaveForm && isCreatePatient) {
       setDuplicatePatient(true);
 
       const dateOfBirth = moment(completedForm.dateOfBirth).format('LL');
@@ -185,7 +187,12 @@ const PatientEditComponent = ({
 };
 
 const mapDispatchToProps = dispatch => {
-  const onCancelPrescription = () => dispatch(VaccinePrescriptionActions.cancel());
+  const onCancelPrescription = () =>
+    batch(() => {
+      dispatch(VaccinePrescriptionActions.cancel());
+      dispatch(PatientActions.refresh());
+    });
+
   const updateForm = (data, validator) => {
     dispatch(NameNoteActions.updateForm(data, validator));
   };
@@ -206,6 +213,7 @@ const mapStateToProps = state => {
   const nameNote = selectCreatingNameNote(state);
   const canEditPatient = selectCanEditPatient(state);
   const isDuplicatePatientLocally = selectPatientByNameAndDoB(completedForm);
+  const isCreatePatient = selectIsCreatePatient(state);
 
   return {
     canEditPatient,
@@ -215,6 +223,7 @@ const mapStateToProps = state => {
     surveySchema,
     surveyFormData: nameNote?.data ?? null,
     isDuplicatePatientLocally,
+    isCreatePatient,
   };
 };
 
@@ -222,6 +231,7 @@ PatientEditComponent.defaultProps = {
   surveySchema: undefined,
   currentPatient: null,
   isDuplicatePatientLocally: false,
+  isCreatePatient: false,
 };
 
 PatientEditComponent.propTypes = {
@@ -237,6 +247,7 @@ PatientEditComponent.propTypes = {
   canEditPatient: PropTypes.bool.isRequired,
   isDuplicatePatientLocally: PropTypes.bool,
   previousTab: PropTypes.func.isRequired,
+  isCreatePatient: PropTypes.bool,
 };
 
 export const PatientEdit = connect(mapStateToProps, mapDispatchToProps)(PatientEditComponent);

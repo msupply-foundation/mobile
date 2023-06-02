@@ -71,6 +71,7 @@ export const selectPatientModalOpen = ({ patient }) => {
  * @returns boolean
  */
 export const selectIsCreatePatient = ({ patient }) => {
+  console.log('patient ', patient);
   const { isCreating } = patient;
   return isCreating;
 };
@@ -92,7 +93,6 @@ export const selectCanEditPatient = ({ patient }) => {
 export const selectPatientByNameAndDoB = ({ lastName, firstName, dateOfBirth }) => {
   if (dateOfBirth) {
     const dob = moment(dateOfBirth).format('L');
-
     const query = 'lastName = $0 AND firstName = $1 AND isDeleted = $2';
     const duplicatePatients = UIDatabase.objects('Patient').filtered(
       query,
@@ -100,7 +100,7 @@ export const selectPatientByNameAndDoB = ({ lastName, firstName, dateOfBirth }) 
       firstName.trim(),
       false
     );
-
+    console.log('duplicatePatients ', duplicatePatients);
     if (duplicatePatients) {
       const duplicatePatient = duplicatePatients.some(selectedPatient => {
         const selectedDoB = selectedPatient.dateOfBirth;

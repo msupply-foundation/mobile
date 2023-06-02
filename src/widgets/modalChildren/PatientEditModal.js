@@ -253,7 +253,6 @@ const mergeProps = (stateProps, dispatchProps, ownProps) => {
 
 const stateToProps = state => {
   const { patient } = state;
-
   const { currentPatient } = patient;
   const inputConfig = getFormInputConfig('patient', currentPatient);
 
