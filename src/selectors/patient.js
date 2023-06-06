@@ -71,7 +71,6 @@ export const selectPatientModalOpen = ({ patient }) => {
  * @returns boolean
  */
 export const selectIsCreatePatient = ({ patient }) => {
-  console.log('patient ', patient);
   const { isCreating } = patient;
   return isCreating;
 };
@@ -100,7 +99,6 @@ export const selectPatientByNameAndDoB = ({ lastName, firstName, dateOfBirth }) 
       firstName.trim(),
       false
     );
-    console.log('duplicatePatients ', duplicatePatients);
     if (duplicatePatients) {
       const duplicatePatient = duplicatePatients.some(selectedPatient => {
         const selectedDoB = selectedPatient.dateOfBirth;

@@ -7,7 +7,7 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import PropTypes from 'prop-types';
 import { ToastAndroid, View } from 'react-native';
-import { batch, connect } from 'react-redux';
+import { connect } from 'react-redux';
 import * as Animatable from 'react-native-animatable';
 import moment from 'moment';
 
@@ -20,7 +20,11 @@ import { PageButtonWithOnePress } from '../PageButtonWithOnePress';
 import { PaperModalContainer } from '../PaperModal/PaperModalContainer';
 import { PaperConfirmModal } from '../PaperModal/PaperConfirmModal';
 
-import { selectCanEditPatient, selectEditingName } from '../../selectors/Entities/name';
+import {
+  selectCanEditPatient,
+  selectEditingName,
+  selectIsNewName,
+} from '../../selectors/Entities/name';
 import { selectSurveySchemas } from '../../selectors/formSchema';
 import { NameActions } from '../../actions/Entities/NameActions';
 import { WizardActions } from '../../actions/WizardActions';
@@ -42,8 +46,7 @@ import { NameNoteActions } from '../../actions/Entities/NameNoteActions';
 import { selectCreatingNameNote, selectNameNoteIsValid } from '../../selectors/Entities/nameNote';
 import { AfterInteractions } from '../AfterInteractions';
 import { Paper } from '../Paper';
-import { selectIsCreatePatient, selectPatientByNameAndDoB } from '../../selectors/patient';
-import { PatientActions } from '../../actions/PatientActions';
+import { selectPatientByNameAndDoB } from '../../selectors/patient';
 
 /**
  * Layout component used for a tab within the vaccine prescription wizard.
@@ -77,8 +80,11 @@ const PatientEditComponent = ({
   const [alertText, setAlertText] = useState(modalStrings.are_you_sure_duplicate_patient);
   const { enabled: nextButtonEnabled, setEnabled: setNextButtonEnabled } = useButtonEnabled();
 
+  // We need to check name duplicity for new name only
+  // If new name is created and name is duplicated by firstName, lastName and DoB
+  // then we need confirmation alert before processing.
   useEffect(() => {
-    if (isDuplicatePatientLocally && !canSaveForm && isCreatePatient) {
+    if (isDuplicatePatientLocally && isCreatePatient) {
       setDuplicatePatient(true);
 
       const dateOfBirth = moment(completedForm.dateOfBirth).format('LL');
@@ -187,11 +193,7 @@ const PatientEditComponent = ({
 };
 
 const mapDispatchToProps = dispatch => {
-  const onCancelPrescription = () =>
-    batch(() => {
-      dispatch(VaccinePrescriptionActions.cancel());
-      dispatch(PatientActions.refresh());
-    });
+  const onCancelPrescription = () => dispatch(VaccinePrescriptionActions.cancel());
 
   const updateForm = (data, validator) => {
     dispatch(NameNoteActions.updateForm(data, validator));
@@ -213,7 +215,7 @@ const mapStateToProps = state => {
   const nameNote = selectCreatingNameNote(state);
   const canEditPatient = selectCanEditPatient(state);
   const isDuplicatePatientLocally = selectPatientByNameAndDoB(completedForm);
-  const isCreatePatient = selectIsCreatePatient(state);
+  const isCreatePatient = selectIsNewName(state);
 
   return {
     canEditPatient,
