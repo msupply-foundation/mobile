@@ -138,6 +138,8 @@ export const selectIsNewName = state => {
   const { editing } = nameState;
   const { id } = editing ?? '';
 
-  const isNewName = UIDatabase.objects('Name').filtered('id = $0', id).length === 0;
-  return isNewName;
+  if (id) {
+    return UIDatabase.objects('Name').filtered('id = $0', id).length === 0;
+  }
+  return false;
 };
