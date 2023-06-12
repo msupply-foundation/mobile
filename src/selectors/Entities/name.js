@@ -132,3 +132,14 @@ export const selectWasPatientVaccinatedWithinOneDay = state => {
 
   return !!history.filter(historyRecord => historyRecord.confirmDate.getTime() > oneDayAgo).length;
 };
+
+export const selectIsNewName = state => {
+  const nameState = selectSpecificEntityState(state, 'name');
+  const { editing } = nameState;
+  const { id } = editing ?? '';
+
+  if (id) {
+    return UIDatabase.objects('Name').filtered('id = $0', id).length === 0;
+  }
+  return false;
+};

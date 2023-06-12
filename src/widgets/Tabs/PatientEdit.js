@@ -20,7 +20,11 @@ import { PageButtonWithOnePress } from '../PageButtonWithOnePress';
 import { PaperModalContainer } from '../PaperModal/PaperModalContainer';
 import { PaperConfirmModal } from '../PaperModal/PaperConfirmModal';
 
-import { selectCanEditPatient, selectEditingName } from '../../selectors/Entities/name';
+import {
+  selectCanEditPatient,
+  selectEditingName,
+  selectIsNewName,
+} from '../../selectors/Entities/name';
 import { selectSurveySchemas } from '../../selectors/formSchema';
 import { NameActions } from '../../actions/Entities/NameActions';
 import { WizardActions } from '../../actions/WizardActions';
@@ -68,6 +72,7 @@ const PatientEditComponent = ({
   canEditPatient,
   isDuplicatePatientLocally,
   previousTab,
+  isCreatePatient,
 }) => {
   const { pageTopViewContainer } = globalStyles;
   const [isDeceasedModalOpen, toggleIsDeceasedAlert] = useToggle(false);
@@ -75,8 +80,11 @@ const PatientEditComponent = ({
   const [alertText, setAlertText] = useState(modalStrings.are_you_sure_duplicate_patient);
   const { enabled: nextButtonEnabled, setEnabled: setNextButtonEnabled } = useButtonEnabled();
 
+  // We need to check name duplicity for new name only
+  // If new name is created and name is duplicated by firstName, lastName and DoB
+  // then we need confirmation alert before processing.
   useEffect(() => {
-    if (isDuplicatePatientLocally && !canSaveForm) {
+    if (isDuplicatePatientLocally && isCreatePatient) {
       setDuplicatePatient(true);
 
       const dateOfBirth = moment(completedForm.dateOfBirth).format('LL');
@@ -186,6 +194,7 @@ const PatientEditComponent = ({
 
 const mapDispatchToProps = dispatch => {
   const onCancelPrescription = () => dispatch(VaccinePrescriptionActions.cancel());
+
   const updateForm = (data, validator) => {
     dispatch(NameNoteActions.updateForm(data, validator));
   };
@@ -206,6 +215,7 @@ const mapStateToProps = state => {
   const nameNote = selectCreatingNameNote(state);
   const canEditPatient = selectCanEditPatient(state);
   const isDuplicatePatientLocally = selectPatientByNameAndDoB(completedForm);
+  const isCreatePatient = selectIsNewName(state);
 
   return {
     canEditPatient,
@@ -215,6 +225,7 @@ const mapStateToProps = state => {
     surveySchema,
     surveyFormData: nameNote?.data ?? null,
     isDuplicatePatientLocally,
+    isCreatePatient,
   };
 };
 
@@ -222,6 +233,7 @@ PatientEditComponent.defaultProps = {
   surveySchema: undefined,
   currentPatient: null,
   isDuplicatePatientLocally: false,
+  isCreatePatient: false,
 };
 
 PatientEditComponent.propTypes = {
@@ -237,6 +249,7 @@ PatientEditComponent.propTypes = {
   canEditPatient: PropTypes.bool.isRequired,
   isDuplicatePatientLocally: PropTypes.bool,
   previousTab: PropTypes.func.isRequired,
+  isCreatePatient: PropTypes.bool,
 };
 
 export const PatientEdit = connect(mapStateToProps, mapDispatchToProps)(PatientEditComponent);

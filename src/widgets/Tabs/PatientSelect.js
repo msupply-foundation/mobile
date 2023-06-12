@@ -386,8 +386,7 @@ const mapDispatchToProps = dispatch => {
 
   const createPatient = () =>
     batch(() => {
-      const id = generateUUID();
-      const patient = createDefaultName('patient', id);
+      const patient = createDefaultName('patient', generateUUID());
       dispatch(NameActions.create(patient));
       dispatch(NameNoteActions.createSurveyNameNote(patient));
       dispatch(WizardActions.switchTab(1));
@@ -405,7 +404,6 @@ const mapDispatchToProps = dispatch => {
 const mapStateToProps = state => {
   const patientState = selectSpecificEntityState(state, 'name');
   const { searchTerm, sortKey, isAscending } = patientState;
-
   const completedForm = selectCompletedForm(state);
   const formConfig = selectPatientSearchFormConfig();
 
