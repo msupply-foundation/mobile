@@ -52,14 +52,19 @@ export const selectAvailableCredit = ({ patient }) =>
 // TODO
 export const selectPatientInsurancePolicies = ({ patient }) => {
   const { currentPatient } = patient;
-  const { policies } = currentPatient;
-  return policies.map(policy => {
-    const { isActive, policyNumber, id, discountRate } = policy;
-    return isActive
-      ? policy
-      : { isActive, id, discountRate, policyNumber: `${policyNumber} (inactive)` };
-  });
+  const { policies } = currentPatient ?? [];
+
+  if (policies) {
+    return policies?.map(policy => {
+      const { isActive, policyNumber, id, discountRate } = policy;
+      return isActive
+        ? policy
+        : { isActive, id, discountRate, policyNumber: `${policyNumber} (inactive)` };
+    });
+  }
+  return [];
 };
+
 export const selectPatientModalOpen = ({ patient }) => {
   const { creatingADR, viewingHistory, isCreating, isEditing } = patient;
   return [isCreating || isEditing, viewingHistory, creatingADR];

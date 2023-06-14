@@ -119,9 +119,10 @@ const PaymentSummaryComponent = ({
   selectedPrescriptionInsurancePolicy,
   selectedPaymentType,
 }) => {
-  const policyNumbers = React.useMemo(() => insurancePolicies.map(policy => policy.policyNumber), [
-    insurancePolicies,
-  ]);
+  const policyNumbers = React.useMemo(
+    () => insurancePolicies?.map(policy => policy.policyNumber) ?? [],
+    [insurancePolicies]
+  );
 
   const selectedPolicyNumber = React.useMemo(() => {
     let policyNumberFull = '';
