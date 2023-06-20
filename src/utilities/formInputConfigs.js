@@ -128,7 +128,7 @@ const FORM_INPUT_CONFIGS = seedObject => ({
     isRequired: true,
     validator: input => {
       let inputDate = moment(input, DATE_FORMAT.DD_MM_YYYY, null, true);
-      if (input instanceof Date && !Number.isNaN(input)) {
+      if (typeof input === 'number') {
         inputDate = moment(input);
       }
 
