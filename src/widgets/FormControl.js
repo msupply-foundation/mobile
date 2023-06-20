@@ -85,7 +85,6 @@ const FormControlComponent = ({
   const debouncedUpdateForm = useDebounce(onUpdateForm, 500);
 
   const nextFocus = (index, key) => value => {
-    debouncedUpdateForm(key, value);
     refs[index + 1]?.current?.focus?.();
   };
 
