@@ -84,8 +84,7 @@ const FormControlComponent = ({
 
   const debouncedUpdateForm = useDebounce(onUpdateForm, 500);
 
-  const nextFocus = (index, key) => value => {
-    debouncedUpdateForm(key, value);
+  const nextFocus = index => () => {
     refs[index + 1]?.current?.focus?.();
   };
 
@@ -113,7 +112,7 @@ const FormControlComponent = ({
                 ref={refs[index]}
                 form={form}
                 formKey={key}
-                onSubmit={nextFocus(index, key)}
+                onSubmit={nextFocus(index)}
                 key={key}
                 value={initialValue}
                 isRequired={isRequired}
@@ -137,7 +136,7 @@ const FormControlComponent = ({
                 onChangeDate={value => debouncedUpdateForm(key, value)}
                 onValidate={validator}
                 invalidMessage={invalidMessage}
-                onSubmit={nextFocus(index, key)}
+                onSubmit={nextFocus(index)}
                 isDisabled={isDisabled}
                 autoFocus={index === 0}
               />
@@ -154,7 +153,7 @@ const FormControlComponent = ({
                 onChangeDate={value => debouncedUpdateForm(key, value)}
                 onValidate={validator}
                 invalidMessage={invalidMessage}
-                onSubmit={nextFocus(index, key)}
+                onSubmit={nextFocus(index)}
                 isDisabled={isDisabled}
                 autoFocus={index === 0}
               />

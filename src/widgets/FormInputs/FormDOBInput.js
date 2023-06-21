@@ -125,10 +125,8 @@ const useDobInput = (initialValue, onChangeDate, onValidate) => {
 
   const onTypeDate = newDate => {
     const isValid = onValidate(newDate);
-    if (isValid) {
-      typedDate(newDate, isValid);
-      onChangeDate(moment(newDate, DATE_FORMAT.DD_MM_YYYY).toDate());
-    }
+    typedDate(newDate, isValid);
+    onChangeDate(moment(newDate, DATE_FORMAT.DD_MM_YYYY).toDate());
   };
 
   const onTypeAge = newAge => {
