@@ -92,7 +92,7 @@ export const selectCanEditPatient = ({ patient }) => {
 export const selectPatientByNameAndDoB = ({ lastName, firstName, dateOfBirth }) => {
   if (dateOfBirth) {
     const dob = moment(dateOfBirth).format('L');
-    const query = 'lastName = $0 AND firstName = $1 AND isDeleted = $2';
+    const query = 'lastName BEGINSWITH[c] $0 AND firstName BEGINSWITH[c] $1 AND isDeleted = $2';
     const duplicatePatients = UIDatabase.objects('Patient').filtered(
       query,
       lastName.trim(),
