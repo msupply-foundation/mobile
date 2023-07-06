@@ -156,7 +156,6 @@ const patientUpdate = patientDetails => async (dispatch, getState) => {
     dispatch(closeModal());
     dispatch(DispensaryActions.closeLookupModal());
     dispatch(DispensaryActions.refresh());
-    dispatch(PatientActions.refresh());
   });
 };
 
