@@ -39,7 +39,8 @@
     "is_required": "Is required",
     "gender": "Gender",
     "female": "Female",
-    "male": "Male"
+    "male": "Male",
+    "gender_must_be_selected": "Gender must be selected"
   },
   "fr": {
     "select_an_option": "Sélectionner une option",
