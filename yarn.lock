@@ -1415,10 +1415,10 @@
     "@nodelib/fs.scandir" "2.1.5"
     fastq "^1.6.0"
 
-"@openmsupply/msupply-ble-service@^0.5.0":
-  version "0.5.0"
-  resolved "https://registry.yarnpkg.com/@openmsupply/msupply-ble-service/-/msupply-ble-service-0.5.0.tgz#c2fa9cadb1d7641d8bd40a2b458d17f13ac64642"
-  integrity sha512-J4TU1YWqRA/0lwyD+tMnYQPnU0k3pTZG5BCNrBOT+TnnmuhPL6DCm3nzGaZTrUPOlGktCcFAh5iMVy8fQumupg==
+"@openmsupply/msupply-ble-service@^0.5.4":
+  version "0.5.4"
+  resolved "https://registry.yarnpkg.com/@openmsupply/msupply-ble-service/-/msupply-ble-service-0.5.4.tgz#ffcebe7158a4a65d1745ae13ad4b2f0494779dab"
+  integrity sha512-hzC6zoSsB+heCbM5fmujG6NYq7K0BXYcalj86y5apXqmQdv7noFEbHoJ5p+SsCJ4Vql/gHldBBdilWa6Y+6wSQ==
   dependencies:
     buffer "^6.0.3"
 
