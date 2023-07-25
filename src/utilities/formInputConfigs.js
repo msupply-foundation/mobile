@@ -8,6 +8,7 @@ import { UIDatabase } from '../database';
 
 import { formInputStrings } from '../localization';
 import { DATE_FORMAT } from './constants';
+import { PREFERENCE_KEYS } from '../database/utilities/preferenceConstants';
 
 /**
  * File contains constants and config objects which declaritively define
@@ -28,6 +29,7 @@ import { DATE_FORMAT } from './constants';
  * }
  */
 
+const isSetMandatoryFields = !!UIDatabase.getPreference(PREFERENCE_KEYS.SET_MORE_MANDATORY_FIELDS);
 export const FORM_INPUT_TYPES = {
   TEXT: 'text',
   DATE: 'date',
@@ -141,14 +143,19 @@ const FORM_INPUT_CONFIGS = seedObject => ({
   },
   [FORM_INPUT_KEYS.GENDER]: {
     type: FORM_INPUT_TYPES.TOGGLE,
-    initialValue: null,
+    initialValue: isSetMandatoryFields ? null : false,
     key: 'female',
     options: [true, false],
     optionLabels: [formInputStrings.female, formInputStrings.male],
     label: formInputStrings.gender,
     isEditable: true,
-    isRequired: true,
-    validator: input => input !== null,
+    isRequired: isSetMandatoryFields || false,
+    validator: input => {
+      if (isSetMandatoryFields) {
+        return input !== null;
+      }
+      return true;
+    },
     invalidMessage: `${formInputStrings.gender_must_be_selected}`,
   },
   [FORM_INPUT_KEYS.EMAIL]: {
@@ -163,18 +170,28 @@ const FORM_INPUT_CONFIGS = seedObject => ({
     type: FORM_INPUT_TYPES.TEXT,
     initialValue: '',
     key: 'phoneNumber',
-    isRequired: true,
+    isRequired: isSetMandatoryFields || false,
     label: formInputStrings.phone,
     isEditable: true,
-    validator: input => input.length > 0,
+    validator: input => {
+      if (isSetMandatoryFields) {
+        return input.length > 0;
+      }
+      return true;
+    },
     invalidMessage: formInputStrings.must_not_be_empty,
   },
   [FORM_INPUT_KEYS.COUNTRY]: {
     type: FORM_INPUT_TYPES.TEXT,
     initialValue: '',
     key: 'country',
-    validator: input => input.length > 0 && input.length < 20,
-    isRequired: true,
+    validator: input => {
+      if (isSetMandatoryFields) {
+        return input.length > 0 && input.length < 20;
+      }
+      return input.length < 20;
+    },
+    isRequired: isSetMandatoryFields || false,
     invalidMessage: `${formInputStrings.must_not_be_empty} ${formInputStrings.and} ${formInputStrings.less_than_20_characters}`,
     label: formInputStrings.country,
     isEditable: true,
@@ -183,8 +200,13 @@ const FORM_INPUT_CONFIGS = seedObject => ({
     type: FORM_INPUT_TYPES.TEXT,
     initialValue: '',
     key: 'addressOne',
-    validator: input => input.length > 0 && input.length < 50,
-    isRequired: true,
+    validator: input => {
+      if (isSetMandatoryFields) {
+        return input.length > 0 && input.length < 50;
+      }
+      return input.length < 50;
+    },
+    isRequired: isSetMandatoryFields || false,
     invalidMessage: `${formInputStrings.must_not_be_empty} ${formInputStrings.and} ${formInputStrings.less_than_50_characters}`,
     label: formInputStrings.address_one,
     isEditable: true,
