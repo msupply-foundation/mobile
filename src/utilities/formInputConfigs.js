@@ -29,7 +29,9 @@ import { PREFERENCE_KEYS } from '../database/utilities/preferenceConstants';
  * }
  */
 
-const isSetMandatoryFields = !!UIDatabase.getPreference(PREFERENCE_KEYS.SET_MORE_MANDATORY_FIELDS);
+const makeDemographicFieldsMandatory = !!UIDatabase.getPreference(
+  PREFERENCE_KEYS.MAKE_PATIENT_PRESCRIBER_DEMOGRAPHICS_MANDATORY
+);
 export const FORM_INPUT_TYPES = {
   TEXT: 'text',
   DATE: 'date',
@@ -143,15 +145,15 @@ const FORM_INPUT_CONFIGS = seedObject => ({
   },
   [FORM_INPUT_KEYS.GENDER]: {
     type: FORM_INPUT_TYPES.TOGGLE,
-    initialValue: isSetMandatoryFields ? null : false,
+    initialValue: makeDemographicFieldsMandatory ? null : false,
     key: 'female',
     options: [true, false],
     optionLabels: [formInputStrings.female, formInputStrings.male],
     label: formInputStrings.gender,
     isEditable: true,
-    isRequired: isSetMandatoryFields || false,
+    isRequired: makeDemographicFieldsMandatory || false,
     validator: input => {
-      if (isSetMandatoryFields) {
+      if (makeDemographicFieldsMandatory) {
         return input !== null;
       }
       return true;
@@ -170,11 +172,11 @@ const FORM_INPUT_CONFIGS = seedObject => ({
     type: FORM_INPUT_TYPES.TEXT,
     initialValue: '',
     key: 'phoneNumber',
-    isRequired: isSetMandatoryFields || false,
+    isRequired: makeDemographicFieldsMandatory || false,
     label: formInputStrings.phone,
     isEditable: true,
     validator: input => {
-      if (isSetMandatoryFields) {
+      if (makeDemographicFieldsMandatory) {
         return input.length > 0;
       }
       return true;
@@ -186,12 +188,12 @@ const FORM_INPUT_CONFIGS = seedObject => ({
     initialValue: '',
     key: 'country',
     validator: input => {
-      if (isSetMandatoryFields) {
+      if (makeDemographicFieldsMandatory) {
         return input.length > 0 && input.length < 20;
       }
       return input.length < 20;
     },
-    isRequired: isSetMandatoryFields || false,
+    isRequired: makeDemographicFieldsMandatory || false,
     invalidMessage: `${formInputStrings.must_not_be_empty} ${formInputStrings.and} ${formInputStrings.less_than_20_characters}`,
     label: formInputStrings.country,
     isEditable: true,
@@ -201,12 +203,12 @@ const FORM_INPUT_CONFIGS = seedObject => ({
     initialValue: '',
     key: 'addressOne',
     validator: input => {
-      if (isSetMandatoryFields) {
+      if (makeDemographicFieldsMandatory) {
         return input.length > 0 && input.length < 50;
       }
       return input.length < 50;
     },
-    isRequired: isSetMandatoryFields || false,
+    isRequired: makeDemographicFieldsMandatory || false,
     invalidMessage: `${formInputStrings.must_not_be_empty} ${formInputStrings.and} ${formInputStrings.less_than_50_characters}`,
     label: formInputStrings.address_one,
     isEditable: true,
