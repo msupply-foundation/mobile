@@ -29,7 +29,7 @@ import { PREFERENCE_KEYS } from '../database/utilities/preferenceConstants';
  * }
  */
 
-const makeDemographicFieldsMandatory = !!UIDatabase.getPreference(
+const makeDemographicFieldsMandatory = UIDatabase.getPreference(
   PREFERENCE_KEYS.MAKE_PATIENT_PRESCRIBER_DEMOGRAPHICS_MANDATORY
 );
 export const FORM_INPUT_TYPES = {
