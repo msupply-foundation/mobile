@@ -151,7 +151,7 @@ const FORM_INPUT_CONFIGS = seedObject => ({
     optionLabels: [formInputStrings.female, formInputStrings.male],
     label: formInputStrings.gender,
     isEditable: true,
-    isRequired: makeDemographicFieldsMandatory || false,
+    isRequired: makeDemographicFieldsMandatory,
     validator: input => {
       if (makeDemographicFieldsMandatory) {
         return input !== null;
@@ -172,7 +172,7 @@ const FORM_INPUT_CONFIGS = seedObject => ({
     type: FORM_INPUT_TYPES.TEXT,
     initialValue: '',
     key: 'phoneNumber',
-    isRequired: makeDemographicFieldsMandatory || false,
+    isRequired: makeDemographicFieldsMandatory,
     label: formInputStrings.phone,
     isEditable: true,
     validator: input => {
@@ -193,7 +193,7 @@ const FORM_INPUT_CONFIGS = seedObject => ({
       }
       return input.length < 20;
     },
-    isRequired: makeDemographicFieldsMandatory || false,
+    isRequired: makeDemographicFieldsMandatory,
     invalidMessage: `${formInputStrings.must_not_be_empty} ${formInputStrings.and} ${formInputStrings.less_than_20_characters}`,
     label: formInputStrings.country,
     isEditable: true,
@@ -208,7 +208,7 @@ const FORM_INPUT_CONFIGS = seedObject => ({
       }
       return input.length < 50;
     },
-    isRequired: makeDemographicFieldsMandatory || false,
+    isRequired: makeDemographicFieldsMandatory,
     invalidMessage: `${formInputStrings.must_not_be_empty} ${formInputStrings.and} ${formInputStrings.less_than_50_characters}`,
     label: formInputStrings.address_one,
     isEditable: true,
