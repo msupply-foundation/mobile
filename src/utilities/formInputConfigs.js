@@ -8,6 +8,7 @@ import { UIDatabase } from '../database';
 
 import { formInputStrings } from '../localization';
 import { DATE_FORMAT } from './constants';
+import { PREFERENCE_KEYS } from '../database/utilities/preferenceConstants';
 
 /**
  * File contains constants and config objects which declaritively define
@@ -28,6 +29,9 @@ import { DATE_FORMAT } from './constants';
  * }
  */
 
+const makeDemographicFieldsMandatory = UIDatabase.getPreference(
+  PREFERENCE_KEYS.MAKE_PATIENT_PRESCRIBER_DEMOGRAPHICS_MANDATORY
+);
 export const FORM_INPUT_TYPES = {
   TEXT: 'text',
   DATE: 'date',
@@ -141,12 +145,20 @@ const FORM_INPUT_CONFIGS = seedObject => ({
   },
   [FORM_INPUT_KEYS.GENDER]: {
     type: FORM_INPUT_TYPES.TOGGLE,
-    initialValue: false,
+    initialValue: makeDemographicFieldsMandatory ? null : false,
     key: 'female',
     options: [true, false],
     optionLabels: [formInputStrings.female, formInputStrings.male],
     label: formInputStrings.gender,
     isEditable: true,
+    isRequired: makeDemographicFieldsMandatory,
+    validator: input => {
+      if (makeDemographicFieldsMandatory) {
+        return input !== null;
+      }
+      return true;
+    },
+    invalidMessage: `${formInputStrings.gender_must_be_selected}`,
   },
   [FORM_INPUT_KEYS.EMAIL]: {
     type: FORM_INPUT_TYPES.TEXT,
@@ -160,17 +172,29 @@ const FORM_INPUT_CONFIGS = seedObject => ({
     type: FORM_INPUT_TYPES.TEXT,
     initialValue: '',
     key: 'phoneNumber',
-    isRequired: false,
+    isRequired: makeDemographicFieldsMandatory,
     label: formInputStrings.phone,
     isEditable: true,
+    validator: input => {
+      if (makeDemographicFieldsMandatory) {
+        return input.length > 0;
+      }
+      return true;
+    },
+    invalidMessage: formInputStrings.must_not_be_empty,
   },
   [FORM_INPUT_KEYS.COUNTRY]: {
     type: FORM_INPUT_TYPES.TEXT,
     initialValue: '',
     key: 'country',
-    validator: input => input.length < 20,
-    isRequired: false,
-    invalidMessage: `${formInputStrings.must_be} ${formInputStrings.less_than_20_characters}`,
+    validator: input => {
+      if (makeDemographicFieldsMandatory) {
+        return input.length > 0 && input.length < 20;
+      }
+      return input.length < 20;
+    },
+    isRequired: makeDemographicFieldsMandatory,
+    invalidMessage: `${formInputStrings.must_not_be_empty} ${formInputStrings.and} ${formInputStrings.less_than_20_characters}`,
     label: formInputStrings.country,
     isEditable: true,
   },
@@ -178,9 +202,14 @@ const FORM_INPUT_CONFIGS = seedObject => ({
     type: FORM_INPUT_TYPES.TEXT,
     initialValue: '',
     key: 'addressOne',
-    validator: input => input.length < 50,
-    isRequired: false,
-    invalidMessage: `${formInputStrings.must_be} ${formInputStrings.less_than_50_characters}`,
+    validator: input => {
+      if (makeDemographicFieldsMandatory) {
+        return input.length > 0 && input.length < 50;
+      }
+      return input.length < 50;
+    },
+    isRequired: makeDemographicFieldsMandatory,
+    invalidMessage: `${formInputStrings.must_not_be_empty} ${formInputStrings.and} ${formInputStrings.less_than_50_characters}`,
     label: formInputStrings.address_one,
     isEditable: true,
   },
