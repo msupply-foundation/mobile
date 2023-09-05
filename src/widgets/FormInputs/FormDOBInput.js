@@ -16,7 +16,22 @@ import { FormLabel } from './FormLabel';
 import { FormInvalidMessage } from './FormInvalidMessage';
 import { DATE_FORMAT } from '../../utilities/constants';
 
-const calculateAge = dob => (!dob ? '' : `${Math.floor(moment().diff(dob, 'years', true))}`);
+const calculateAge = dob => {
+  console.log('dob ', dob);
+  if (dob) {
+    console.log('age ', `${moment().diff(dob, 'years', true)}`);
+    if (moment().diff(dob, 'years', true) < 1) {
+      const ageCalculated = moment.duration(moment().diff(dob));
+      console.log(
+        'ageCalculated ',
+        `${ageCalculated.months()} months ${ageCalculated.days()} days`
+      );
+      return `${ageCalculated.months()} months ${ageCalculated.days()} days`;
+    }
+    return `${moment().diff(dob, 'years', true)}`;
+  }
+  return '';
+};
 
 const Action = {
   toggleDatePicker: 'toggleDatePicker',
