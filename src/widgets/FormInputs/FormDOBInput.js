@@ -182,7 +182,7 @@ export const FormDOBInput = React.forwardRef(
     return (
       <>
         <FlexRow flex={1}>
-          <FlexColumn flex={6}>
+          <FlexColumn flex={5}>
             <FormLabel value={`${label}`} isRequired={isRequired} />
             <FlexRow flex={1}>
               <TextInput
@@ -219,7 +219,7 @@ export const FormDOBInput = React.forwardRef(
             )}
           </FlexColumn>
 
-          <FlexColumn flex={1}>
+          <FlexColumn flex={2}>
             <FormLabel
               value={`${generalStrings.age}:`}
               isRequired={isRequired}
