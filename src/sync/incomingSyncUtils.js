@@ -796,7 +796,7 @@ export const createOrUpdateRecord = (database, settings, recordType, record) => 
       const otherParty = database.getOrCreate('Name', record.name_ID);
       const enteredBy = database.getOrCreate('User', record.user_ID);
       const linkedRequisition = record.requisition_ID
-        ? database.getOrCreate('Requisition', record.requisition_ID)
+        ? database.get('Requisition', record.requisition_ID)
         : null;
       const linkedTransaction = record.linked_transaction_id
         ? database.getOrCreate('Transaction', record.linked_transaction_id)
