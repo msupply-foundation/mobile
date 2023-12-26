@@ -11,6 +11,8 @@ import { TextInput } from 'react-native';
 
 import globalStyles, { SUSSOL_ORANGE } from '../../globalStyles';
 import { authStrings } from '../../localization';
+import { IconButton } from '../IconButton';
+import { EyeIcon, EyeSlashIcon } from '../icons';
 
 export const FormPasswordInput = forwardRef(
   (
@@ -26,23 +28,33 @@ export const FormPasswordInput = forwardRef(
       value,
     },
     ref
-  ) => (
-    <TextInput
-      ref={ref}
-      autoCompleteType="password"
-      editable={isEditable}
-      onChangeText={onChangeText}
-      onSubmitEditing={onSubmitEditing}
-      placeholder={placeholder}
-      placeholderTextColor={placeholderTextColor}
-      returnKeyType={returnKeyType}
-      style={style}
-      underlineColorAndroid={underlineColorAndroid}
-      value={value}
-      secureTextEntry
-      selectTextOnFocus
-    />
-  )
+  ) => {
+    const [isHidden, setIsHidden] = React.useState(true);
+    return (
+      <>
+        <TextInput
+          ref={ref}
+          autoCompleteType="password"
+          editable={isEditable}
+          onChangeText={onChangeText}
+          onSubmitEditing={onSubmitEditing}
+          placeholder={placeholder}
+          placeholderTextColor={placeholderTextColor}
+          returnKeyType={returnKeyType}
+          style={style}
+          underlineColorAndroid={underlineColorAndroid}
+          value={value}
+          secureTextEntry={isHidden}
+          selectTextOnFocus
+        />
+        <IconButton
+          containerStyle={{ marginRight: 60 }}
+          onPress={() => setIsHidden(!isHidden)}
+          Icon={isHidden ? <EyeIcon /> : <EyeSlashIcon />}
+        />
+      </>
+    );
+  }
 );
 
 FormPasswordInput.defaultProps = {

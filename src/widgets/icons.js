@@ -420,3 +420,23 @@ ClockIcon.propTypes = {
   style: PropTypes.object,
   color: PropTypes.string,
 };
+
+export const EyeIcon = ({ size, style, color }) => (
+  <FAIcon size={size} style={style} color={color} name="eye" />
+);
+EyeIcon.defaultProps = { size: 30, style: {}, color: SUSSOL_ORANGE };
+EyeIcon.propTypes = {
+  size: PropTypes.number,
+  style: PropTypes.object,
+  color: PropTypes.string,
+};
+
+export const EyeSlashIcon = ({ size, style, color }) => (
+  <FAIcon size={size} style={style} color={color} name="eye-slash" />
+);
+EyeSlashIcon.defaultProps = { size: 30, style: {}, color: SUSSOL_ORANGE };
+EyeSlashIcon.propTypes = {
+  size: PropTypes.number,
+  style: PropTypes.object,
+  color: PropTypes.string,
+};
