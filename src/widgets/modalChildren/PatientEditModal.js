@@ -55,33 +55,34 @@ const PatientEditModalComponent = ({
 }) => {
   const isFocused = useIsFocused();
   const [alertText, setAlertText] = useState(modalStrings.are_you_sure_duplicate_patient);
+  const [removeModalOpen, toggleRemoveModal] = useToggle();
+  const [cannotDeleteModalOpen, toggleCannotDeleteModal] = useToggle();
+  const [canDuplicatePatient, setDuplicatePatient] = useState(false);
 
   let canSave = canSaveForm && canEditPatient;
-  let canDuplicatePatient = false;
-
   const hasVaccineEvents = hasVaccineEventsForm;
+  const canDelete = canEditPatient;
+  const showDelete = !isCreatePatient;
 
   if (canSave && !!surveySchema) {
     canSave = surveySchema && surveyForm && nameNoteIsValid;
   }
 
-  canDuplicatePatient = canSave && isDuplicatePatientLocally && isCreatePatient;
   useEffect(() => {
-    const dateOfBirth = moment(completedForm.dateOfBirth).format('LL');
-    const name = `${completedForm.firstName} ${completedForm.lastName}`;
-    const alert = modalStrings.formatString(
-      modalStrings.are_you_sure_duplicate_patient,
-      name,
-      dateOfBirth
-    );
-    setAlertText(alert);
+    if (isDuplicatePatientLocally && isCreatePatient) {
+      setDuplicatePatient(true);
+      const dateOfBirth = moment(completedForm.dateOfBirth).format('LL');
+      const name = `${completedForm.firstName} ${completedForm.lastName}`;
+      const alert = modalStrings.formatString(
+        modalStrings.are_you_sure_duplicate_patient,
+        name,
+        dateOfBirth
+      );
+      setAlertText(alert);
+    }
   }, [isDuplicatePatientLocally]);
 
-  const canDelete = canEditPatient;
-  const showDelete = !isCreatePatient;
-
-  const [removeModalOpen, toggleRemoveModal] = useToggle();
-  const [cannotDeleteModalOpen, toggleCannotDeleteModal] = useToggle();
+  const onConfirmDuplicatePatient = () => setDuplicatePatient(false);
 
   return (
     <ModalContainer
@@ -160,9 +161,9 @@ const PatientEditModalComponent = ({
         <PaperModalContainer isVisible={canDuplicatePatient} onClose={cancelPatientEdit}>
           <PaperConfirmModal
             questionText={alertText}
-            confirmText={generalStrings.save}
+            confirmText={generalStrings.ok}
             cancelText={buttonStrings.cancel}
-            onConfirm={onSaveForm}
+            onConfirm={onConfirmDuplicatePatient}
             onCancel={cancelPatientEdit}
           />
         </PaperModalContainer>
