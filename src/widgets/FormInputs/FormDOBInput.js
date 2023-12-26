@@ -16,7 +16,13 @@ import { FormLabel } from './FormLabel';
 import { FormInvalidMessage } from './FormInvalidMessage';
 import { DATE_FORMAT } from '../../utilities/constants';
 
-const calculateAge = dob => (!dob ? '' : `${Math.floor(moment().diff(dob, 'years', true))}`);
+const calculateAge = dob => {
+  if (!dob) return '';
+  const ageCalculated = moment.duration(moment().diff(dob));
+  return ageCalculated.years() < 1
+    ? `${ageCalculated.months()} months ${ageCalculated.days()} days`
+    : `${moment().diff(dob, 'years')}`;
+};
 
 const Action = {
   toggleDatePicker: 'toggleDatePicker',
@@ -167,7 +173,7 @@ export const FormDOBInput = React.forwardRef(
     return (
       <>
         <FlexRow flex={1}>
-          <FlexColumn flex={6}>
+          <FlexColumn flex={5}>
             <FormLabel value={`${label}`} isRequired={isRequired} />
             <FlexRow flex={1}>
               <TextInput
@@ -204,7 +210,7 @@ export const FormDOBInput = React.forwardRef(
             )}
           </FlexColumn>
 
-          <FlexColumn flex={1}>
+          <FlexColumn flex={2}>
             <FormLabel
               value={`${generalStrings.age}:`}
               isRequired={isRequired}
