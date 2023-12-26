@@ -17,14 +17,11 @@ import { FormInvalidMessage } from './FormInvalidMessage';
 import { DATE_FORMAT } from '../../utilities/constants';
 
 const calculateAge = dob => {
-  if (dob) {
-    const ageCalculated = moment.duration(moment().diff(dob));
-    if (moment().diff(dob, 'years', true) < 1) {
-      return `${ageCalculated.months()} months ${ageCalculated.days()} days`;
-    }
-    return `${moment().diff(dob, 'years')}`;
-  }
-  return '';
+  if (!dob) return '';
+  const ageCalculated = moment.duration(moment().diff(dob));
+  return ageCalculated.years() < 1
+    ? `${ageCalculated.months()} months ${ageCalculated.days()} days`
+    : `${moment().diff(dob, 'years')}`;
 };
 
 const Action = {
