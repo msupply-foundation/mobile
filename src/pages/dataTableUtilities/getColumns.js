@@ -62,6 +62,7 @@ const PAGE_COLUMN_WIDTHS = {
   editableCustomerRequisitionFormEntry: [2, 1.5, 1, 1, 1, 1.5, 1, 1, 1, 1.5],
   customerRequisitionFormEntry: [2, 2, 1, 1, 1, 1, 2, 2, 2, 2],
   patientWithAdverseDrugReactions: [2.5, 4, 4, 2.5, 2, 2, 2, 2],
+  patientWithCreatedDate: [2.5, 2.5, 4, 4, 2.5, 2, 2, 2],
 };
 
 const PAGE_COLUMNS = {
@@ -108,6 +109,16 @@ const PAGE_COLUMNS = {
     COLUMN_NAMES.REMOVE,
   ],
   [FORMS.PATIENT]: [
+    COLUMN_NAMES.CODE,
+    COLUMN_NAMES.LAST_NAME,
+    COLUMN_NAMES.FIRST_NAME,
+    COLUMN_NAMES.DATE_OF_BIRTH,
+    COLUMN_NAMES.PATIENT_HISTORY,
+    COLUMN_NAMES.PATIENT_EDIT,
+    COLUMN_NAMES.DISPENSE,
+  ],
+  patientWithCreatedDate: [
+    COLUMN_NAMES.CREATED_DATE,
     COLUMN_NAMES.CODE,
     COLUMN_NAMES.LAST_NAME,
     COLUMN_NAMES.FIRST_NAME,
