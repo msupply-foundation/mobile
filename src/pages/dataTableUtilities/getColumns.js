@@ -10,7 +10,7 @@ import { ROUTES } from '../../navigation/constants';
 import { FORMS, MODALS, TABS } from '../../widgets/constants';
 
 const PAGE_COLUMN_WIDTHS = {
-  [FORMS.PATIENT]: [2.5, 4, 4, 2.5, 2, 2, 2],
+  [FORMS.PATIENT]: [2.5, 2, 4, 4, 2, 2, 2, 2],
   [FORMS.PRESCRIBER]: [1, 3, 3, 1],
   [MODALS.PATIENT_HISTORY]: [1, 4, 1, 1, 2],
   [MODALS.VACCINE_HISTORY]: [1, 4, 1, 1, 2],
@@ -61,7 +61,7 @@ const PAGE_COLUMN_WIDTHS = {
   [TABS.VACCINE_BATCH]: [1, 1, 1, 1],
   editableCustomerRequisitionFormEntry: [2, 1.5, 1, 1, 1, 1.5, 1, 1, 1, 1.5],
   customerRequisitionFormEntry: [2, 2, 1, 1, 1, 1, 2, 2, 2, 2],
-  patientWithAdverseDrugReactions: [2.5, 4, 4, 2.5, 2, 2, 2, 2],
+  patientWithAdverseDrugReactions: [2.5, 2, 4, 4, 2, 2, 2, 2, 2],
 };
 
 const PAGE_COLUMNS = {
@@ -108,6 +108,7 @@ const PAGE_COLUMNS = {
     COLUMN_NAMES.REMOVE,
   ],
   [FORMS.PATIENT]: [
+    COLUMN_KEYS.CREATED_DATE,
     COLUMN_NAMES.CODE,
     COLUMN_NAMES.LAST_NAME,
     COLUMN_NAMES.FIRST_NAME,
@@ -117,6 +118,7 @@ const PAGE_COLUMNS = {
     COLUMN_NAMES.DISPENSE,
   ],
   patientWithAdverseDrugReactions: [
+    COLUMN_KEYS.CREATED_DATE,
     COLUMN_NAMES.CODE,
     COLUMN_NAMES.LAST_NAME,
     COLUMN_NAMES.FIRST_NAME,
