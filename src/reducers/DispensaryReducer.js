@@ -7,16 +7,11 @@ import { DISPENSARY_ACTIONS } from '../actions/DispensaryActions';
 import { getColumns } from '../pages/dataTableUtilities';
 import { UIDatabase } from '../database';
 import { ROUTES } from '../navigation';
-import { PREFERENCE_KEYS } from '../database/utilities/preferenceConstants';
 
 const initialState = () => {
-  let defaultDataSet = 'patient';
-
   const usingAdverseDrugReactions = UIDatabase.objects('ADRForm').length > 0;
-  defaultDataSet = usingAdverseDrugReactions ? 'patientWithAdverseDrugReactions' : 'patient';
+  const defaultDataSet = usingAdverseDrugReactions ? 'patientWithAdverseDrugReactions' : 'patient';
 
-  const patientWithCreatedDate = UIDatabase.getPreference(PREFERENCE_KEYS.SORTED_BY_CREATED_DATE);
-  defaultDataSet = patientWithCreatedDate ? 'patientWithCreatedDate' : defaultDataSet;
   return {
     searchTerm: '',
     sortKey: 'firstName',
@@ -63,14 +58,9 @@ export const DispensaryReducer = (state = initialState(), action) => {
       const { usingAdverseDrugReactions } = payload;
       const { dataSet } = state;
 
-      let patientDataSet = usingAdverseDrugReactions
+      const patientDataSet = usingAdverseDrugReactions
         ? 'patientWithAdverseDrugReactions'
         : 'patient';
-
-      const patientWithCreatedDate = UIDatabase.getPreference(
-        PREFERENCE_KEYS.SORTED_BY_CREATED_DATE
-      );
-      patientDataSet = patientWithCreatedDate ? 'patientWithCreatedDate' : patientDataSet;
 
       const prescriberDataSet = 'prescriber';
       const newDataSet = dataSet === patientDataSet ? prescriberDataSet : patientDataSet;
@@ -93,9 +83,7 @@ export const DispensaryReducer = (state = initialState(), action) => {
       const { dataSet } = state;
 
       const usingPatientDataSet =
-        dataSet === 'patientWithAdverseDrugReactions' ||
-        dataSet === 'patientWithCreatedDate' ||
-        dataSet === 'patient';
+        dataSet === 'patientWithAdverseDrugReactions' || dataSet === 'patient';
       const objectType = usingPatientDataSet ? 'Patient' : 'Prescriber';
       const newData = UIDatabase.objects(objectType);
 
