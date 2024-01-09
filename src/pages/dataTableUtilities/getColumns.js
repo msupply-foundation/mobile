@@ -61,7 +61,7 @@ const PAGE_COLUMN_WIDTHS = {
   [TABS.VACCINE_BATCH]: [1, 1, 1, 1],
   editableCustomerRequisitionFormEntry: [2, 1.5, 1, 1, 1, 1.5, 1, 1, 1, 1.5],
   customerRequisitionFormEntry: [2, 2, 1, 1, 1, 1, 2, 2, 2, 2],
-  patientWithAdverseDrugReactions: [2.5, 2, 4, 4, 2, 2, 2, 2, 2],
+  patientWithAdverseDrugReactions: [3, 2, 4, 4, 2, 2, 1.5, 1.5, 2],
 };
 
 const PAGE_COLUMNS = {
