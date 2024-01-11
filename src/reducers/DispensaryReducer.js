@@ -14,8 +14,8 @@ const initialState = () => {
 
   return {
     searchTerm: '',
-    sortKey: 'firstName',
-    isAscending: true,
+    sortKey: 'createdDate',
+    isAscending: false,
     dataSet: defaultDataSet,
     columns: getColumns(defaultDataSet),
     data: UIDatabase.objects('Patient'),
@@ -73,8 +73,8 @@ export const DispensaryReducer = (state = initialState(), action) => {
         ...state,
         dataSet: newDataSet,
         columns: newColumns,
-        sortKey: 'firstName',
-        isAscending: true,
+        sortKey: 'createdDate',
+        isAscending: false,
         searchTerm: '',
         data: newData,
       };
