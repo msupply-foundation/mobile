@@ -10,7 +10,7 @@ import { ROUTES } from '../../navigation/constants';
 import { FORMS, MODALS, TABS } from '../../widgets/constants';
 
 const PAGE_COLUMN_WIDTHS = {
-  [FORMS.PATIENT]: [2.5, 2, 4, 4, 2, 2, 2, 2],
+  [FORMS.PATIENT]: [3, 2, 4, 4, 2, 2, 1.5, 2],
   [FORMS.PRESCRIBER]: [1, 3, 3, 1],
   [MODALS.PATIENT_HISTORY]: [1, 4, 1, 1, 2],
   [MODALS.VACCINE_HISTORY]: [1, 4, 1, 1, 2],
