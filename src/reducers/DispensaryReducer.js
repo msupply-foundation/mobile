@@ -58,14 +58,22 @@ export const DispensaryReducer = (state = initialState(), action) => {
       const { usingAdverseDrugReactions } = payload;
       const { dataSet } = state;
 
+      // Default to patient
+      let sortBy = 'createdDate';
+      let isAscending = false;
+
       const patientDataSet = usingAdverseDrugReactions
         ? 'patientWithAdverseDrugReactions'
         : 'patient';
 
       const prescriberDataSet = 'prescriber';
       const newDataSet = dataSet === patientDataSet ? prescriberDataSet : patientDataSet;
-
       const newColumns = getColumns(newDataSet);
+
+      if (newDataSet === 'prescriber') {
+        sortBy = 'firstName';
+        isAscending = true;
+      }
 
       const newData = UIDatabase.objects(newDataSet === patientDataSet ? 'Patient' : 'Prescriber');
 
@@ -73,8 +81,8 @@ export const DispensaryReducer = (state = initialState(), action) => {
         ...state,
         dataSet: newDataSet,
         columns: newColumns,
-        sortKey: 'createdDate',
-        isAscending: false,
+        sortKey: sortBy,
+        isAscending,
         searchTerm: '',
         data: newData,
       };
