@@ -95,7 +95,7 @@ const dataMigrations = [
       // as supplying store during initial sync.
       if (
         settings.get(SETTINGS_KEYS.SUPPLYING_STORE_NAME_ID) ===
-        'B1938F4FFDC2074DB5408B435ACEB198' ||
+          'B1938F4FFDC2074DB5408B435ACEB198' ||
         settings.get(SETTINGS_KEYS.SUPPLYING_STORE_ID) === '734CC3EC70283A4AABC4E645C8B1E11D'
       ) {
         settings.set(SETTINGS_KEYS.SUPPLYING_STORE_NAME_ID, 'E5D7BB38571C1F428AF397240EEB285F');
@@ -284,6 +284,32 @@ const dataMigrations = [
     version: '8.6.2',
     migrate: database => {
       clearNumberSequences(database);
+    },
+  },
+  {
+    version: '8.7.0',
+    migrate: database => {
+      // Get all blank request requisitions (i.e requisitions they have been created possibly
+      // from web entries - having status 'wp', 'wf' etc in the mSupply)
+      const blankRequisitions = database
+        .objects('Requisition')
+        .filtered('otherStoreName == null and status == "new" and type == "request"');
+
+      // Delete all blank request requisitions and their requisition items
+      database.write(() => {
+        blankRequisitions.forEach(requisition => {
+          const requisitionItems = database
+            .objects('RequisitionItem')
+            .filtered('requisition.id == $0', requisition.id);
+
+          // delete the requisition items
+          requisitionItems.forEach(requisitionItem => {
+            database.delete('RequisitionItem', requisitionItem);
+          });
+          // delete the requisition
+          database.delete('Requisition', requisition);
+        });
+      });
     },
   },
 ];
