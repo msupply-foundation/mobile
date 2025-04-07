@@ -675,19 +675,16 @@ export const createOrUpdateRecord = (database, settings, recordType, record) => 
       break;
     }
     case 'Requisition': {
-      let status = REQUISITION_STATUSES.translate(record.status, EXTERNAL_TO_INTERNAL);
-      let period;
-      // If not a special 'wp' or 'wf' status, use the normal status translation.
-      if (!status) {
-        status = STATUSES.translate(record.status, EXTERNAL_TO_INTERNAL);
-      }
-      if (record.periodID) {
-        period = database.getOrCreate('Period', record.periodID);
-      }
+      if (record.store_ID !== settings.get(THIS_STORE_ID)) break; // Not for this store
+      if (record.name_ID === '') break; // No name ID means no requisition
+
+      const status = REQUISITION_STATUSES.translate(record.status, EXTERNAL_TO_INTERNAL);
+      if (!status) break; // Must be a requisition status, either 'suggested' or 'finalised'
+      const period = database.getOrCreate('Period', record.periodID);
 
       internalRecord = {
         id: record.ID,
-        status: REQUISITION_STATUSES.translate(record.status, EXTERNAL_TO_INTERNAL),
+        status,
         entryDate: parseDate(record.date_entered),
         daysToSupply: parseNumber(record.daysToSupply),
         serialNumber: record.serial_number,
@@ -709,7 +706,11 @@ export const createOrUpdateRecord = (database, settings, recordType, record) => 
       break;
     }
     case 'RequisitionItem': {
-      const requisition = database.getOrCreate('Requisition', record.requisition_ID);
+      const requisition = database.get('Requisition', record.requisition_ID);
+      // Technically, if the requisition is null, this item becomes an orphan record
+      // and shouldn't be saved.
+      // But for the history of the requisition and to investigate the orphaned item,
+      // we will save it.
       internalRecord = {
         id: record.ID,
         requisition,
@@ -729,9 +730,12 @@ export const createOrUpdateRecord = (database, settings, recordType, record) => 
         option: database.getOrCreate('Options', record.optionID),
       };
       const requisitionItem = database.update(recordType, internalRecord);
-      // requisitionItem will be an orphan record if it's not unique?
-      requisition.addItemIfUnique(requisitionItem);
-      database.save('Requisition', requisition);
+
+      if (requisition) {
+        // requisitionItem will be an orphan record if it's not unique?
+        requisition.addItemIfUnique(requisitionItem);
+        database.save('Requisition', requisition);
+      }
       break;
     }
     case 'Stocktake': {
