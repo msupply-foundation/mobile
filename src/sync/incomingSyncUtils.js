@@ -118,7 +118,7 @@ export const sanityCheckIncomingRecord = (recordType, record) => {
       canBeBlank: ['user_ID', 'network_ID'],
     },
     Requisition: {
-      cannotBeBlank: ['status', 'type', 'daysToSupply'],
+      cannotBeBlank: ['name_ID', 'store_ID', 'status', 'type', 'daysToSupply'],
       canBeBlank: ['date_entered', 'serial_number', 'requester_reference', 'programID', 'periodID'],
     },
     RequisitionItem: {
@@ -676,11 +676,16 @@ export const createOrUpdateRecord = (database, settings, recordType, record) => 
     }
     case 'Requisition': {
       if (record.store_ID !== settings.get(THIS_STORE_ID)) break; // Not for this store
-      if (record.name_ID === '') break; // No name ID means no requisition
 
       const status = REQUISITION_STATUSES.translate(record.status, EXTERNAL_TO_INTERNAL);
       if (!status) break; // Must be a requisition status, either 'suggested' or 'finalised'
       const period = database.getOrCreate('Period', record.periodID);
+
+      // Look for transactions that are waiting for this requisition to be linked
+      const pendingTransactions = database
+        .objects('Transaction')
+        .filtered('pendingRequisitionId == $0', record.ID);
+      const linkedTransaction = pendingTransactions.length > 0 ? pendingTransactions[0] : null;
 
       internalRecord = {
         id: record.ID,
@@ -700,8 +705,17 @@ export const createOrUpdateRecord = (database, settings, recordType, record) => 
         customData: parseJsonString(record.custom_data),
         isRemoteOrder: parseBoolean(record.isRemoteOrder),
         createdDate: parseDate(record.date_order_received),
+        linkedTransaction,
       };
       const requisition = database.update(recordType, internalRecord);
+
+      if (linkedTransaction) {
+        database.update('Transaction', {
+          id: linkedTransaction.id,
+          linkedRequisition: requisition,
+          pendingRequisitionId: null,
+        });
+      }
       if (period) period.addRequisitionIfUnique(requisition);
       break;
     }
@@ -799,9 +813,7 @@ export const createOrUpdateRecord = (database, settings, recordType, record) => 
       if (record.store_ID !== settings.get(THIS_STORE_ID)) break; // Not for this store
       const otherParty = database.getOrCreate('Name', record.name_ID);
       const enteredBy = database.getOrCreate('User', record.user_ID);
-      const linkedRequisition = record.requisition_ID
-        ? database.get('Requisition', record.requisition_ID)
-        : null;
+      const linkedRequisition = database.get('Requisition', record.requisition_ID);
       const linkedTransaction = record.linked_transaction_id
         ? database.getOrCreate('Transaction', record.linked_transaction_id)
         : null;
@@ -826,6 +838,7 @@ export const createOrUpdateRecord = (database, settings, recordType, record) => 
         mode: record.mode,
         prescriber: database.getOrCreate('Prescriber', record.prescriber_ID),
         linkedRequisition,
+        pendingRequisitionId: record.requisition_ID,
         subtotal: parseFloat(record.subtotal),
         outstanding: parseFloat(record.total),
         insurancePolicy,
@@ -837,13 +850,8 @@ export const createOrUpdateRecord = (database, settings, recordType, record) => 
         paymentType: database.getOrCreate('PaymentType', record.paymentTypeID),
         isCancellation: parseBoolean(record.is_cancellation),
       };
-      const transaction = database.update(recordType, internalRecord);
-      if (linkedRequisition) {
-        database.update('Requisition', {
-          id: linkedRequisition.id,
-          linkedTransaction: transaction,
-        });
-      }
+      database.update(recordType, internalRecord);
+
       break;
     }
     case 'TransactionCategory': {

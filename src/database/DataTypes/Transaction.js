@@ -631,6 +631,7 @@ Transaction.schema = {
     mode: { type: 'string', default: 'store' },
     prescriber: { type: 'Prescriber', optional: true },
     linkedRequisition: { type: 'Requisition', optional: true },
+    pendingRequisitionId: { type: 'string', optional: true, indexed: true },
     subtotal: { type: 'double', optional: true },
     outstanding: { type: 'double', optional: true },
     insurancePolicy: { type: 'InsurancePolicy', optional: true },
