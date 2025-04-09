@@ -286,32 +286,6 @@ const dataMigrations = [
       clearNumberSequences(database);
     },
   },
-  {
-    version: '8.7.0',
-    migrate: database => {
-      // Get all blank request requisitions (i.e requisitions they have been created possibly
-      // from web entries - having status 'wp', 'wf' etc in the mSupply)
-      const blankRequisitions = database
-        .objects('Requisition')
-        .filtered('otherStoreName == null and status == "new" and type == "request"');
-
-      // Delete all blank request requisitions and their requisition items
-      database.write(() => {
-        blankRequisitions.forEach(requisition => {
-          const requisitionItems = database
-            .objects('RequisitionItem')
-            .filtered('requisition.id == $0', requisition.id);
-
-          // delete the requisition items
-          requisitionItems.forEach(requisitionItem => {
-            database.delete('RequisitionItem', requisitionItem);
-          });
-          // delete the requisition
-          database.delete('Requisition', requisition);
-        });
-      });
-    },
-  },
 ];
 
 export default dataMigrations;
