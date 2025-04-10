@@ -850,8 +850,13 @@ export const createOrUpdateRecord = (database, settings, recordType, record) => 
         paymentType: database.getOrCreate('PaymentType', record.paymentTypeID),
         isCancellation: parseBoolean(record.is_cancellation),
       };
-      database.update(recordType, internalRecord);
-
+      const transaction = database.update(recordType, internalRecord);
+      if (linkedRequisition) {
+        database.update('Requisition', {
+          id: linkedRequisition.id,
+          linkedTransaction: transaction,
+        });
+      }
       break;
     }
     case 'TransactionCategory': {
