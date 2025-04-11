@@ -289,11 +289,13 @@ const dataMigrations = [
   {
     version: '8.7.0',
     migrate: database => {
-      // Get all blank request requisitions (i.e requisitions they have been created possibly
-      // from web entries - having status 'wp', 'wf' etc in the mSupply)
+      // Get all blank request requisitions (i.e requisitions they might have been created possibly
+      // from web entries - having status 'wp', 'wf' etc in the mSupply) or
+      // through transactions linked to requisitions they were already deleted from the mSupply
       const blankRequisitions = database
         .objects('Requisition')
-        .filtered('otherStoreName == null and status == "new" and type == "request"');
+        .filtered('otherStoreName == null and status == "new" and type == "request"')
+        .snapshot();
 
       // Delete all blank request requisitions and their requisition items
       database.write(() => {
@@ -301,6 +303,20 @@ const dataMigrations = [
           const requisitionItems = database
             .objects('RequisitionItem')
             .filtered('requisition.id == $0', requisition.id);
+
+          // Check for linked transactions and unlink them first before deleting it
+          // to avoid any data integrity issues
+          const { linkedTransaction } = requisition;
+          if (linkedTransaction) {
+            database.update('Transaction', {
+              id: linkedTransaction.id,
+              linkedRequisition: null,
+            });
+            database.update('Requisition', {
+              id: requisition.id,
+              linkedTransaction: null,
+            });
+          }
 
           // delete the requisition items
           requisitionItems.forEach(requisitionItem => {
