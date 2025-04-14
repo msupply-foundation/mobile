@@ -301,10 +301,6 @@ const dataMigrations = [
         // Delete all blank request requisitions and their requisition items
         database.write(() => {
           blankRequisitions.forEach(requisition => {
-            const requisitionItems = database
-              .objects('RequisitionItem')
-              .filtered('requisition.id == $0', requisition.id);
-
             // Check for linked transactions and unlink them first before deleting it
             // to avoid any data integrity issues
             const { linkedTransaction } = requisition;
@@ -319,10 +315,6 @@ const dataMigrations = [
               });
             }
 
-            // delete the requisition items
-            requisitionItems.forEach(requisitionItem => {
-              database.delete('RequisitionItem', requisitionItem);
-            });
             // delete the requisition
             database.delete('Requisition', requisition);
           });
