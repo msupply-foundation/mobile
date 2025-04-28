@@ -111,12 +111,13 @@ const generateSyncData = (settings, recordType, record) => {
       return nameRecord;
     }
     case 'Requisition': {
+      const status = REQUISITION_STATUSES.translate(record.status, INTERNAL_TO_EXTERNAL);
       return {
         ID: record.id,
         date_entered: getDateString(record.entryDate),
         user_ID: record.enteredById,
         name_ID: record.otherStoreName?.id ?? '',
-        status: REQUISITION_STATUSES.translate(record.status, INTERNAL_TO_EXTERNAL),
+        status: status ?? 'sg', // If undefined, probably means the requisition is new. Set to 'sg'.
         daysToSupply: String(record.daysToSupply),
         store_ID: settings.get(THIS_STORE_ID),
         serial_number: record.serialNumber,
