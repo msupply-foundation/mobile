@@ -118,7 +118,7 @@ export const sanityCheckIncomingRecord = (recordType, record) => {
       canBeBlank: ['user_ID', 'network_ID'],
     },
     Requisition: {
-      cannotBeBlank: ['status', 'type', 'daysToSupply'],
+      cannotBeBlank: ['name_ID', 'store_ID', 'status', 'type', 'daysToSupply'],
       canBeBlank: ['date_entered', 'serial_number', 'requester_reference', 'programID', 'periodID'],
     },
     RequisitionItem: {
@@ -675,19 +675,21 @@ export const createOrUpdateRecord = (database, settings, recordType, record) => 
       break;
     }
     case 'Requisition': {
-      let status = REQUISITION_STATUSES.translate(record.status, EXTERNAL_TO_INTERNAL);
-      let period;
-      // If not a special 'wp' or 'wf' status, use the normal status translation.
-      if (!status) {
-        status = STATUSES.translate(record.status, EXTERNAL_TO_INTERNAL);
-      }
-      if (record.periodID) {
-        period = database.getOrCreate('Period', record.periodID);
-      }
+      if (record.store_ID !== settings.get(THIS_STORE_ID)) break; // Not for this store
+
+      const status = REQUISITION_STATUSES.translate(record.status, EXTERNAL_TO_INTERNAL);
+      if (!status) break; // Must be a requisition status, either 'suggested' or 'finalised'
+      const period = database.getOrCreate('Period', record.periodID);
+
+      // Look for transactions that are waiting for this requisition to be linked
+      const pendingTransactions = database
+        .objects('Transaction')
+        .filtered('pendingRequisitionId == $0', record.ID);
+      const linkedTransaction = pendingTransactions.length > 0 ? pendingTransactions[0] : null;
 
       internalRecord = {
         id: record.ID,
-        status: REQUISITION_STATUSES.translate(record.status, EXTERNAL_TO_INTERNAL),
+        status,
         entryDate: parseDate(record.date_entered),
         daysToSupply: parseNumber(record.daysToSupply),
         serialNumber: record.serial_number,
@@ -703,13 +705,26 @@ export const createOrUpdateRecord = (database, settings, recordType, record) => 
         customData: parseJsonString(record.custom_data),
         isRemoteOrder: parseBoolean(record.isRemoteOrder),
         createdDate: parseDate(record.date_order_received),
+        linkedTransaction,
       };
       const requisition = database.update(recordType, internalRecord);
+
+      if (linkedTransaction) {
+        database.update('Transaction', {
+          id: linkedTransaction.id,
+          linkedRequisition: requisition,
+          pendingRequisitionId: null,
+        });
+      }
       if (period) period.addRequisitionIfUnique(requisition);
       break;
     }
     case 'RequisitionItem': {
-      const requisition = database.getOrCreate('Requisition', record.requisition_ID);
+      const requisition = database.get('Requisition', record.requisition_ID);
+      // Technically, if the requisition is null, this item becomes an orphan record
+      // and shouldn't be saved.
+      // But for the history of the requisition and to investigate the orphaned item,
+      // we will save it.
       internalRecord = {
         id: record.ID,
         requisition,
@@ -729,9 +744,12 @@ export const createOrUpdateRecord = (database, settings, recordType, record) => 
         option: database.getOrCreate('Options', record.optionID),
       };
       const requisitionItem = database.update(recordType, internalRecord);
-      // requisitionItem will be an orphan record if it's not unique?
-      requisition.addItemIfUnique(requisitionItem);
-      database.save('Requisition', requisition);
+
+      if (requisition) {
+        // requisitionItem will be an orphan record if it's not unique?
+        requisition.addItemIfUnique(requisitionItem);
+        database.save('Requisition', requisition);
+      }
       break;
     }
     case 'Stocktake': {
@@ -795,9 +813,7 @@ export const createOrUpdateRecord = (database, settings, recordType, record) => 
       if (record.store_ID !== settings.get(THIS_STORE_ID)) break; // Not for this store
       const otherParty = database.getOrCreate('Name', record.name_ID);
       const enteredBy = database.getOrCreate('User', record.user_ID);
-      const linkedRequisition = record.requisition_ID
-        ? database.get('Requisition', record.requisition_ID)
-        : null;
+      const linkedRequisition = database.get('Requisition', record.requisition_ID);
       const linkedTransaction = record.linked_transaction_id
         ? database.getOrCreate('Transaction', record.linked_transaction_id)
         : null;
@@ -822,6 +838,7 @@ export const createOrUpdateRecord = (database, settings, recordType, record) => 
         mode: record.mode,
         prescriber: database.getOrCreate('Prescriber', record.prescriber_ID),
         linkedRequisition,
+        pendingRequisitionId: record.requisition_ID,
         subtotal: parseFloat(record.subtotal),
         outstanding: parseFloat(record.total),
         insurancePolicy,

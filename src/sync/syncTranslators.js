@@ -142,12 +142,11 @@ export const NAME_TYPES = new SyncTranslator({
  */
 class RequisitionStatusTranslator extends SyncTranslator {
   translate(status, direction) {
-    if (['cn', 'wf'].includes(status)) return 'finalised';
+    if (status === 'cn') return 'finalised';
     return super.translate(status, direction);
   }
 }
 export const REQUISITION_STATUSES = new RequisitionStatusTranslator({
-  new: 'wp', // 'wp', 'wf', 'cn' should never be returned in api/v3.
   suggested: 'sg',
   finalised: 'fn',
 });

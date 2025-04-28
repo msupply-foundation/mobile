@@ -12,6 +12,10 @@ echo "Cleaning up temporary files..."
 rm -rf $TMPDIR_PACKAGER $TMPDIR_METRO
 echo "Cleaning up watchman files..."
 npx watchman watch-del-all
+echo "Cleaning up android build files..."
+rm -rf android/.gradle
+rm -rf android/.idea
+rm -rf android/app/build
 echo "Reinstalling node modules..."
 rm -rf node_modules/ &&
     yarn cache clean &&
