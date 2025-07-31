@@ -720,11 +720,7 @@ export const createOrUpdateRecord = (database, settings, recordType, record) => 
       break;
     }
     case 'RequisitionItem': {
-      const requisition = database.get('Requisition', record.requisition_ID);
-      // Technically, if the requisition is null, this item becomes an orphan record
-      // and shouldn't be saved.
-      // But for the history of the requisition and to investigate the orphaned item,
-      // we will save it.
+      const requisition = database.getOrCreate('Requisition', record.requisition_ID);
       internalRecord = {
         id: record.ID,
         requisition,
