@@ -126,6 +126,7 @@ export class StocktakeItem extends Realm.Object {
     if (this.batches.some(batch => batch.isSnapshotOutdated)) {
       return true;
     }
+    if (!this.item) return false;
 
     // Check all item batches (with stock) are included by finding matching id in a stocktake batch
     // for this stocktake item.

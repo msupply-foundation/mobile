@@ -1228,7 +1228,14 @@ const createTemperatureBreach = (
 const createUpgradeMessage = (database, fromVersion, toVersion) => {
   const syncSiteId = database.getSetting(SETTINGS_KEYS.SYNC_SITE_ID);
 
+  const messages = database
+    .objects('Message')
+    .filtered('type == "mobile_upgrade"')
+    .sorted('createdDate', true);
+
+  let message = messages.length > 0 ? messages[0] : null;
   const body = {
+    ...(message ? message.body : {}),
     fromVersion: versionToInteger(fromVersion),
     toVersion: versionToInteger(toVersion),
     fromVersionString: String(fromVersion),
@@ -1236,11 +1243,18 @@ const createUpgradeMessage = (database, fromVersion, toVersion) => {
     syncSiteId: Number(syncSiteId),
   };
 
-  const message = database.create('Message', {
-    id: generateUUID(),
+  const newMessage = {
+    id: message ? message.id : generateUUID(),
     type: 'mobile_upgrade',
-  });
+    status: message ? message.status : 'new',
+    createdDate: message ? message.createdDate : new Date(),
+  };
 
+  if (message === null) {
+    message = database.create('Message', newMessage);
+  } else {
+    message = database.update('Message', newMessage);
+  }
   message.body = body;
 
   database.save('Message', message);

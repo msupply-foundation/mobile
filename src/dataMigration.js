@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 /* eslint-disable prettier/prettier */
 /**
  * mSupply Mobile
@@ -5,6 +6,7 @@
  */
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { generateUUID } from 'react-native-database';
 
 import { compareVersions } from './utilities';
 import { SETTINGS_KEYS, SETTINGS_DEFAULTS } from './settings';
@@ -320,8 +322,35 @@ const dataMigrations = [
           });
         });
       } catch (e) {
-        // eslint-disable-next-line no-console
         console.error('Migration 8.7.0 error:', e.message, e.stack);
+      }
+    },
+  },
+  {
+    version: '8.7.2',
+    migrate: database => {
+      try {
+        // Get all master list items which are broken (i.e. have no item linked to them)
+        const brokenMasterListItems = database.objects('MasterListItem').filtered('item == null');
+        const masterListItemIds = brokenMasterListItems.map(masterListItem => masterListItem.id);
+
+        if (masterListItemIds.length === 0) return;
+
+        // This is a mobile upgrade message for mSupply central server
+        // to handle broken master list items.
+        // It will notify the server about the broken master list items
+        // so they can be re-synced with proper item information to the mobile app.
+        database.write(() => {
+          const message = database.create('Message', {
+            id: generateUUID(),
+            type: 'mobile_upgrade',
+            status: 'new',
+          });
+          message.body = { masterListItemIds };
+          database.save('Message', message);
+        });
+      } catch (error) {
+        console.error('Migration 8.7.2 error:', error.message, error.stack);
       }
     },
   },
