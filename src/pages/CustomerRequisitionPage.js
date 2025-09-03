@@ -281,7 +281,7 @@ export const CustomerRequisition = ({
     </View>
   );
 
-  const TopRightToggleItems = (
+  const TopRightToggleItems = () => (
     <>
       <ItemIndicatorToggle />
       <View style={localStyles.horizontalContainerToggles}>
@@ -427,6 +427,14 @@ const mapStateToProps = state => {
       data: selectIndicatorTableRows(customerRequisition),
       indicatorColumns: selectIndicatorTableColumns(customerRequisition),
     };
+  }
+
+  const { indicatorColumns } = customerRequisition;
+
+  if (!Array.isArray(indicatorColumns || [])) {
+    // Realm's result collection are often treated as plain objects by React's PropTypes checks
+    // even if they behave like arrays. So we convert them to arrays here.
+    return { ...customerRequisition, indicatorColumns: Array.from(indicatorColumns) };
   }
 
   return customerRequisition;
