@@ -18,6 +18,8 @@ import {
   parseDate,
   parseNumber,
   parseJsonString,
+  getNextNumber,
+  NUMBER_SEQUENCE_KEYS,
 } from '../database/utilities';
 import { SETTINGS_KEYS } from '../settings';
 import { validateReport } from '../utilities';
@@ -687,12 +689,18 @@ export const createOrUpdateRecord = (database, settings, recordType, record) => 
         .filtered('pendingRequisitionId == $0', record.ID);
       const linkedTransaction = pendingTransactions.length > 0 ? pendingTransactions[0] : null;
 
+      const { REQUISITION_SERIAL_NUMBER } = NUMBER_SEQUENCE_KEYS;
+      const serialNumber =
+        record.linked_requisition_id !== '' && record.serial_number < 1
+          ? getNextNumber(database, REQUISITION_SERIAL_NUMBER)
+          : record.serial_number;
+
       internalRecord = {
         id: record.ID,
         status,
         entryDate: parseDate(record.date_entered),
         daysToSupply: parseNumber(record.daysToSupply),
-        serialNumber: record.serial_number,
+        serialNumber,
         requesterReference: record.requester_reference,
         comment: record.comment,
         enteredBy: database.getOrCreate('User', record.user_ID),
@@ -818,9 +826,15 @@ export const createOrUpdateRecord = (database, settings, recordType, record) => 
         ? database.getOrCreate('InsurancePolicy', record.nameInsuranceJoinID)
         : null;
 
+      const { SUPPLIER_INVOICE_NUMBER } = NUMBER_SEQUENCE_KEYS;
+      const serialNumber =
+        linkedTransaction && record.invoice_num < 1
+          ? getNextNumber(database, SUPPLIER_INVOICE_NUMBER)
+          : record.invoice_num;
+
       internalRecord = {
         id: record.ID,
-        serialNumber: record.invoice_num,
+        serialNumber,
         otherParty,
         comment: record.comment,
         customData: parseJsonString(record.custom_data),
