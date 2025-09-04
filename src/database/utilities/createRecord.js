@@ -1250,11 +1250,7 @@ const createUpgradeMessage = (database, fromVersion, toVersion) => {
     createdDate: message ? message.createdDate : new Date(),
   };
 
-  if (message === null) {
-    message = database.create('Message', newMessage);
-  } else {
-    message = database.update('Message', newMessage);
-  }
+  message = database.update('Message', newMessage);
   message.body = body;
 
   database.save('Message', message);
