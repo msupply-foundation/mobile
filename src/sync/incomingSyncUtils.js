@@ -695,7 +695,7 @@ export const createOrUpdateRecord = (database, settings, recordType, record) => 
       // Otherwise, keep the serial number it was given in mSupply
       const { REQUISITION_SERIAL_NUMBER } = NUMBER_SEQUENCE_KEYS;
       const serialNumber =
-        record.linked_requisition_id !== '' && record.serial_number < 1
+        record.linked_requisition_id && record.serial_number < 1
           ? getNextNumber(database, REQUISITION_SERIAL_NUMBER)
           : record.serial_number;
 
