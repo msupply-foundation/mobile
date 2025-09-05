@@ -306,16 +306,15 @@ export class Requisition extends Realm.Object {
       throw new Error('Cannot add items to a finalised requisition');
     }
 
-    this.program.items
-      .filter(({ item }) => !!item)
-      .forEach(({ item }) => {
-        // Cannot determine the usage of a response requisition until consumption is manually entered.
-        const usage = this.isRequest ? programDailyUsage(item, this.period) : 0;
+    this.program.items.forEach(({ item }) => {
+      if (!item) return;
+      // Cannot determine the usage of a response requisition until consumption is manually entered.
+      const usage = this.isRequest ? programDailyUsage(item, this.period) : 0;
 
-        // Defer calculating stock on hand for response requisitions to the `createRecord` call.
-        const stockOnHand = this.isRequest ? item.getTotalQuantityOnDate(this.period.endDate) : 0;
-        createRecord(database, 'RequisitionItem', this, item, usage, stockOnHand);
-      });
+      // Defer calculating stock on hand for response requisitions to the `createRecord` call.
+      const stockOnHand = this.isRequest ? item.getTotalQuantityOnDate(this.period.endDate) : 0;
+      createRecord(database, 'RequisitionItem', this, item, usage, stockOnHand);
+    });
   }
 
   /**

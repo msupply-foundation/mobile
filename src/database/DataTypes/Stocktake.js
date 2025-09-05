@@ -370,12 +370,15 @@ export class Stocktake extends Realm.Object {
    */
   addItemsFromProgram(database) {
     if (!this.program) return false;
-    this.setItemsByID(
-      database,
-      this.program.items
-        .filter(masterListItem => masterListItem.item && masterListItem.item.id !== '')
-        .map(masterListItem => masterListItem.item.id)
-    );
+
+    const itemIds = this.program.items.reduce((acc, masterListItem) => {
+      if (masterListItem.item && masterListItem.item.id) {
+        acc.push(masterListItem.item.id);
+      }
+      return acc;
+    }, []);
+
+    this.setItemsByID(database, itemIds);
     return true;
   }
 }
