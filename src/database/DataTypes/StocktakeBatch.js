@@ -25,7 +25,7 @@ export class StocktakeBatch extends Realm.Object {
    * @param  {Realm}  database
    */
   destructor(database) {
-    if (this.snapshotNumberOfPacks === 0 && this.itemBatch.numberOfPacks === 0) {
+    if (this.snapshotNumberOfPacks === 0 && this.itemBatch && this.itemBatch.numberOfPacks === 0) {
       database.delete('ItemBatch', this.itemBatch);
     }
   }
