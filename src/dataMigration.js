@@ -349,6 +349,65 @@ const dataMigrations = [
           message.body = { masterListItemIds };
           database.save('Message', message);
         });
+
+        // Look for null items in stocktakes and delete them
+        const stocktakeItemsToDelete = database
+          .objects('StocktakeItem')
+          .filtered('item == null AND stocktake.status != "finalised"')
+          .snapshot();
+        // Look for null items in requisitions and delete them
+        const requisitionItemsToDelete = database
+          .objects('RequisitionItem')
+          .filtered('item == null AND requisition.status != "finalised"')
+          .snapshot();
+        // Look for null items in transaction items and delete them
+        const transactionItemsToDelete = database
+          .objects('TransactionItem')
+          .filtered('item == null AND transaction.status != "finalised"')
+          .snapshot();
+
+        database.write(() => {
+          // Delete associated stocktake batches first
+          const stocktakeBatchesToDelete = stocktakeItemsToDelete.reduce(
+            (batches, stocktakeItem) => {
+              const nullBatches = stocktakeItem.batches.filtered('itemBatch == null');
+              return [...batches, ...nullBatches];
+            },
+            []
+          );
+
+          if (stocktakeBatchesToDelete.length > 0) {
+            database.delete('StocktakeBatch', stocktakeBatchesToDelete);
+          }
+
+          // Delete the stocktake items
+          if (stocktakeItemsToDelete.length > 0) {
+            database.delete('StocktakeItem', stocktakeItemsToDelete);
+          }
+
+          // Delete the requisition items
+          if (requisitionItemsToDelete.length > 0) {
+            database.delete('RequisitionItem', requisitionItemsToDelete);
+          }
+
+          // Delete associated transaction batches first
+          const transactionBatchesToDelete = transactionItemsToDelete.reduce(
+            (batches, transactionItem) => {
+              const nullBatches = transactionItem.batches.filtered('itemBatch == null');
+              return [...batches, ...nullBatches];
+            },
+            []
+          );
+
+          if (transactionBatchesToDelete.length > 0) {
+            database.delete('TransactionBatch', transactionBatchesToDelete);
+          }
+
+          // Delete the transaction items
+          if (transactionItemsToDelete.length > 0) {
+            database.delete('TransactionItem', transactionItemsToDelete);
+          }
+        });
       } catch (error) {
         console.error('Migration 8.7.2 error:', error.message, error.stack);
       }
