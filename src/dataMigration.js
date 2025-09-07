@@ -334,48 +334,26 @@ const dataMigrations = [
         const brokenMasterListItems = database.objects('MasterListItem').filtered('item == null');
         const masterListItemIds = brokenMasterListItems.map(masterListItem => masterListItem.id);
 
-        if (masterListItemIds.length === 0) return;
-
-        // This is a mobile upgrade message for mSupply central server
-        // to handle broken master list items.
-        // It will notify the server about the broken master list items
-        // so they can be re-synced with proper item information to the mobile app.
-        database.write(() => {
-          const message = database.create('Message', {
-            id: generateUUID(),
-            type: 'mobile_upgrade',
-            status: 'new',
-          });
-          message.body = { masterListItemIds };
-          database.save('Message', message);
-        });
-
-        // Look for null items in stocktakes and delete them
+        // Look for null items in stocktakes
         const stocktakeItemsToDelete = database
           .objects('StocktakeItem')
-          .filtered('item == null AND stocktake.status != "finalised"')
-          .snapshot();
-        // Look for null items in requisitions and delete them
+          .filtered('item == null AND stocktake.status != "finalised"');
+        // Look for null items in requisitions
         const requisitionItemsToDelete = database
           .objects('RequisitionItem')
-          .filtered('item == null AND requisition.status != "finalised"')
-          .snapshot();
-        // Look for null items in transaction items and delete them
+          .filtered('item == null AND requisition.status != "finalised"');
+        // Look for null items in transaction items
         const transactionItemsToDelete = database
           .objects('TransactionItem')
-          .filtered('item == null AND transaction.status != "finalised"')
-          .snapshot();
+          .filtered('item == null AND transaction.status != "finalised"');
 
         database.write(() => {
+          const stocktakeBatchesToDelete = [];
+          stocktakeItemsToDelete.forEach(stocktakeItem => {
+            const nullBatches = stocktakeItem.batches.filtered('itemBatch == null');
+            nullBatches.forEach(batch => stocktakeBatchesToDelete.push(batch));
+          });
           // Delete associated stocktake batches first
-          const stocktakeBatchesToDelete = stocktakeItemsToDelete.reduce(
-            (batches, stocktakeItem) => {
-              const nullBatches = stocktakeItem.batches.filtered('itemBatch == null');
-              return [...batches, ...nullBatches];
-            },
-            []
-          );
-
           if (stocktakeBatchesToDelete.length > 0) {
             database.delete('StocktakeBatch', stocktakeBatchesToDelete);
           }
@@ -385,20 +363,12 @@ const dataMigrations = [
             database.delete('StocktakeItem', stocktakeItemsToDelete);
           }
 
-          // Delete the requisition items
-          if (requisitionItemsToDelete.length > 0) {
-            database.delete('RequisitionItem', requisitionItemsToDelete);
-          }
-
+          const transactionBatchesToDelete = [];
+          transactionItemsToDelete.forEach(transactionItem => {
+            const nullBatches = transactionItem.batches.filtered('itemBatch == null');
+            nullBatches.forEach(batch => transactionBatchesToDelete.push(batch));
+          });
           // Delete associated transaction batches first
-          const transactionBatchesToDelete = transactionItemsToDelete.reduce(
-            (batches, transactionItem) => {
-              const nullBatches = transactionItem.batches.filtered('itemBatch == null');
-              return [...batches, ...nullBatches];
-            },
-            []
-          );
-
           if (transactionBatchesToDelete.length > 0) {
             database.delete('TransactionBatch', transactionBatchesToDelete);
           }
@@ -406,6 +376,25 @@ const dataMigrations = [
           // Delete the transaction items
           if (transactionItemsToDelete.length > 0) {
             database.delete('TransactionItem', transactionItemsToDelete);
+          }
+
+          // Delete the requisition items
+          if (requisitionItemsToDelete.length > 0) {
+            database.delete('RequisitionItem', requisitionItemsToDelete);
+          }
+
+          if (masterListItemIds.length > 0) {
+            // This is a mobile upgrade message for mSupply central server
+            // to handle broken master list items.
+            // It will notify the server about the broken master list items
+            // so they can be re-synced with proper item information to the mobile app.
+            const message = database.create('Message', {
+              id: generateUUID(),
+              type: 'mobile_upgrade',
+              status: 'new',
+            });
+            message.body = { masterListItemIds };
+            database.save('Message', message);
           }
         });
       } catch (error) {
