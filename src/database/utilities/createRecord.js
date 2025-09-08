@@ -1232,10 +1232,13 @@ const createUpgradeMessage = (database, messageBody = {}) => {
   const syncSiteId = database.getSetting(SETTINGS_KEYS.SYNC_SITE_ID);
   const { fromVersion = '', toVersion = '', ...rest } = messageBody;
 
+  // There should only ever be one upgrade message at a time, but if there are more,
+  // just update the most recent one.
   const messages = database
     .objects('Message')
     .filtered('type == "mobile_upgrade"')
-    .sorted('createdDate', true);
+    .sorted('createdDate', true)
+    .slice(0, 1);
 
   let message = messages.length > 0 ? messages[0] : null;
   const body = {
