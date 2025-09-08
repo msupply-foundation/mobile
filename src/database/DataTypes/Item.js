@@ -221,7 +221,7 @@ export class Item extends Realm.Object {
    * @param {Date} date
    * @return  {number}
    */
-  geTotalQuantityOnDate(date) {
+  getTotalQuantityOnDate(date) {
     if (date >= new Date()) return this.totalQuantity;
 
     const allMovements = UIDatabase.objects('TransactionBatch')

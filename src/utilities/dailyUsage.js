@@ -73,6 +73,9 @@ export const dailyUsage = item => {
  * @param {Period} period
  */
 export const programDailyUsage = (item, period) => {
+  if (!item || !item.batches) return 0;
+  if (!period || !period.endDate) return 0;
+
   const { batches, id: itemId } = item;
   const { endDate: periodEndDate } = period;
 

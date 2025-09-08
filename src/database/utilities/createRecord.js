@@ -1217,18 +1217,33 @@ const createTemperatureBreach = (
 };
 
 /**
- * Create a Message record. This will be sent to the server and requests tables
+ * Create a Message record for mobile upgrade communications.
+ * This will be sent to the server and requests tables
  * when an app is upgraded from some version to another.
  *
  * @param {Realm}  database    App-wide database interface
- * @param {String} fromVersion Which version the app is being upgraded from.
- * @param {String} toVersion   Which version the app is being upgraded too.
+ * @param {Object} messageBody Body data for the message (e.g., {fromVersion, toVersion, ...})
+ * where `fromVersion` is version the app is being upgraded from
+ * `toVersion` is version the app is being upgraded too.
+ * Plus any other key/values to include in the message body.
  */
 
-const createUpgradeMessage = (database, fromVersion, toVersion) => {
+const createUpgradeMessage = (database, messageBody = {}) => {
   const syncSiteId = database.getSetting(SETTINGS_KEYS.SYNC_SITE_ID);
+  const { fromVersion = '', toVersion = '', ...rest } = messageBody;
 
+  // There should only ever be one upgrade message at a time, but if there are more,
+  // just update the most recent one.
+  const messages = database
+    .objects('Message')
+    .filtered('type == "mobile_upgrade"')
+    .sorted('createdDate', true)
+    .slice(0, 1);
+
+  let message = messages.length > 0 ? messages[0] : null;
   const body = {
+    ...(message ? message.body : {}),
+    ...rest,
     fromVersion: versionToInteger(fromVersion),
     toVersion: versionToInteger(toVersion),
     fromVersionString: String(fromVersion),
@@ -1236,11 +1251,14 @@ const createUpgradeMessage = (database, fromVersion, toVersion) => {
     syncSiteId: Number(syncSiteId),
   };
 
-  const message = database.create('Message', {
-    id: generateUUID(),
+  const newMessage = {
+    id: message ? message.id : generateUUID(),
     type: 'mobile_upgrade',
-  });
+    status: message ? message.status : 'new',
+    createdDate: message ? message.createdDate : new Date(),
+  };
 
+  message = database.update('Message', newMessage);
   message.body = body;
 
   database.save('Message', message);

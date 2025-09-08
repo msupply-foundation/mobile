@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 /* eslint-disable prettier/prettier */
 /**
  * mSupply Mobile
@@ -48,7 +49,7 @@ export const migrateDataToVersion = async (database, settings) => {
       }
     }
     database.write(() => {
-      createRecord(database, 'UpgradeMessage', fromVersion, toVersion);
+      createRecord(database, 'UpgradeMessage', { fromVersion, toVersion });
     });
   }
   // Record the new app version.
@@ -320,8 +321,79 @@ const dataMigrations = [
           });
         });
       } catch (e) {
-        // eslint-disable-next-line no-console
         console.error('Migration 8.7.0 error:', e.message, e.stack);
+      }
+    },
+  },
+  {
+    version: '8.7.2',
+    migrate: database => {
+      try {
+        // Get all master list items which are broken (i.e. have no item linked to them)
+        const brokenMasterListItems = database.objects('MasterListItem').filtered('item == null');
+        const masterListItemIds = Array.from(brokenMasterListItems).map(
+          masterListItem => masterListItem.id
+        );
+
+        // Look for null items in stocktakes
+        const stocktakeItemsToDelete = database
+          .objects('StocktakeItem')
+          .filtered('item == null AND stocktake.status != "finalised"');
+        // Look for null items in requisitions
+        const requisitionItemsToDelete = database
+          .objects('RequisitionItem')
+          .filtered('item == null AND requisition.status != "finalised"');
+        // Look for null items in transaction items
+        const transactionItemsToDelete = database
+          .objects('TransactionItem')
+          .filtered('item == null AND transaction.status != "finalised"');
+
+        database.write(() => {
+          const stocktakeBatchesToDelete = [];
+          stocktakeItemsToDelete.forEach(stocktakeItem => {
+            const nullBatches = stocktakeItem.batches.filtered('itemBatch == null');
+            nullBatches.forEach(batch => stocktakeBatchesToDelete.push(batch));
+          });
+          // Delete associated stocktake batches first
+          if (stocktakeBatchesToDelete.length > 0) {
+            database.delete('StocktakeBatch', stocktakeBatchesToDelete);
+          }
+
+          // Delete the stocktake items
+          if (stocktakeItemsToDelete.length > 0) {
+            database.delete('StocktakeItem', stocktakeItemsToDelete);
+          }
+
+          const transactionBatchesToDelete = [];
+          transactionItemsToDelete.forEach(transactionItem => {
+            const nullBatches = transactionItem.batches.filtered('itemBatch == null');
+            nullBatches.forEach(batch => transactionBatchesToDelete.push(batch));
+          });
+          // Delete associated transaction batches first
+          if (transactionBatchesToDelete.length > 0) {
+            database.delete('TransactionBatch', transactionBatchesToDelete);
+          }
+
+          // Delete the transaction items
+          if (transactionItemsToDelete.length > 0) {
+            database.delete('TransactionItem', transactionItemsToDelete);
+          }
+
+          // Delete the requisition items
+          if (requisitionItemsToDelete.length > 0) {
+            database.delete('RequisitionItem', requisitionItemsToDelete);
+          }
+
+          if (masterListItemIds.length > 0) {
+            // This is a mobile upgrade message for mSupply central server
+            // to handle broken master list items.
+            // It will notify the server about the broken master list items
+            // so they can be re-synced with proper item information to the mobile app.
+            createRecord(database, 'UpgradeMessage', { masterListItemIds });
+          }
+        });
+      } catch (error) {
+        console.error('Migration 8.7.2 error:', error.message, error.stack);
       }
     },
   },
