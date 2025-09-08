@@ -1217,16 +1217,20 @@ const createTemperatureBreach = (
 };
 
 /**
- * Create a Message record. This will be sent to the server and requests tables
+ * Create a Message record for mobile upgrade communications.
+ * This will be sent to the server and requests tables
  * when an app is upgraded from some version to another.
  *
  * @param {Realm}  database    App-wide database interface
- * @param {String} fromVersion Which version the app is being upgraded from.
- * @param {String} toVersion   Which version the app is being upgraded too.
+ * @param {Object} messageBody Body data for the message (e.g., {fromVersion, toVersion, ...})
+ * where `fromVersion` is version the app is being upgraded from
+ * `toVersion` is version the app is being upgraded too.
+ * Plus any other key/values to include in the message body.
  */
 
-const createUpgradeMessage = (database, fromVersion, toVersion) => {
+const createUpgradeMessage = (database, messageBody = {}) => {
   const syncSiteId = database.getSetting(SETTINGS_KEYS.SYNC_SITE_ID);
+  const { fromVersion = '', toVersion = '', ...rest } = messageBody;
 
   const messages = database
     .objects('Message')
@@ -1236,6 +1240,7 @@ const createUpgradeMessage = (database, fromVersion, toVersion) => {
   let message = messages.length > 0 ? messages[0] : null;
   const body = {
     ...(message ? message.body : {}),
+    ...rest,
     fromVersion: versionToInteger(fromVersion),
     toVersion: versionToInteger(toVersion),
     fromVersionString: String(fromVersion),

@@ -6,7 +6,6 @@
  */
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { generateUUID } from 'react-native-database';
 
 import { compareVersions } from './utilities';
 import { SETTINGS_KEYS, SETTINGS_DEFAULTS } from './settings';
@@ -50,7 +49,7 @@ export const migrateDataToVersion = async (database, settings) => {
       }
     }
     database.write(() => {
-      createRecord(database, 'UpgradeMessage', fromVersion, toVersion);
+      createRecord(database, 'UpgradeMessage', { fromVersion, toVersion });
     });
   }
   // Record the new app version.
@@ -332,7 +331,9 @@ const dataMigrations = [
       try {
         // Get all master list items which are broken (i.e. have no item linked to them)
         const brokenMasterListItems = database.objects('MasterListItem').filtered('item == null');
-        const masterListItemIds = brokenMasterListItems.map(masterListItem => masterListItem.id);
+        const masterListItemIds = Array.from(brokenMasterListItems).map(
+          masterListItem => masterListItem.id
+        );
 
         // Look for null items in stocktakes
         const stocktakeItemsToDelete = database
@@ -388,13 +389,7 @@ const dataMigrations = [
             // to handle broken master list items.
             // It will notify the server about the broken master list items
             // so they can be re-synced with proper item information to the mobile app.
-            const message = database.create('Message', {
-              id: generateUUID(),
-              type: 'mobile_upgrade',
-              status: 'new',
-            });
-            message.body = { masterListItemIds };
-            database.save('Message', message);
+            createRecord(database, 'UpgradeMessage', { masterListItemIds });
           }
         });
       } catch (error) {
