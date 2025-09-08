@@ -104,6 +104,9 @@ const DataTableRow = React.memo(
       () =>
         // Map each column to an appropriate cell for a given row.
         columns.map(({ key: columnKey, type, width, alignText, icon }, index) => {
+          // Unique key for a cell.
+          const cellKey = `${rowKey}-${columnKey}`;
+
           // Indicator if the right hand border should be removed from styles for this cell.
           const isLastCell = index === columns.length - 1;
 
@@ -176,7 +179,7 @@ const DataTableRow = React.memo(
                 <TextInputCell
                   onFocus={() => focus(true)}
                   onBlur={() => focus(false)}
-                  key={columnKey}
+                  key={cellKey}
                   value={value}
                   rowKey={rowKey}
                   columnKey={columnKey}
@@ -200,7 +203,7 @@ const DataTableRow = React.memo(
                 <ExpiryDateInput
                   onFocus={() => focus(true)}
                   onBlur={() => focus(false)}
-                  key={columnKey}
+                  key={cellKey}
                   value={rowData[columnKey]}
                   rowKey={rowKey}
                   columnKey={columnKey}
@@ -215,7 +218,7 @@ const DataTableRow = React.memo(
             case COLUMN_TYPES.CHECKABLE:
               return (
                 <CheckableCell
-                  key={columnKey}
+                  key={cellKey}
                   rowKey={rowKey}
                   columnKey={columnKey}
                   isChecked={rowState && rowState.isSelected}
@@ -237,7 +240,7 @@ const DataTableRow = React.memo(
 
               return (
                 <Cell
-                  key={columnKey}
+                  key={cellKey}
                   value={value}
                   width={width}
                   viewStyle={cellContainer[cellAlignment]}
@@ -254,7 +257,7 @@ const DataTableRow = React.memo(
 
               return (
                 <Cell
-                  key={columnKey}
+                  key={cellKey}
                   value={displayValue}
                   width={width}
                   viewStyle={cellContainer[cellAlignment]}
@@ -288,7 +291,7 @@ const DataTableRow = React.memo(
 
               return (
                 <Cell
-                  key={columnKey}
+                  key={cellKey}
                   value={value}
                   width={width}
                   viewStyle={cellContainerStyle[cellAlignment]}
@@ -301,7 +304,7 @@ const DataTableRow = React.memo(
             case COLUMN_TYPES.DATE:
               return (
                 <Cell
-                  key={columnKey}
+                  key={cellKey}
                   value={formatDate(rowData[columnKey], 'll') ?? generalStrings.not_available}
                   width={width}
                   viewStyle={cellContainer[cellAlignment]}
@@ -337,7 +340,7 @@ const DataTableRow = React.memo(
 
               return (
                 <TouchableCell
-                  key={columnKey}
+                  key={cellKey}
                   renderChildren={iconComponent}
                   rowKey={rowKey}
                   columnKey={columnKey}
@@ -363,7 +366,7 @@ const DataTableRow = React.memo(
 
               return (
                 <DropDownCell
-                  key={columnKey}
+                  key={cellKey}
                   isDisabled={isDisabled || extraDisabledCondition}
                   onPress={getCallback(columnKey)}
                   rowKey={rowKey}
@@ -378,7 +381,7 @@ const DataTableRow = React.memo(
             default: {
               return (
                 <Cell
-                  key={columnKey}
+                  key={cellKey}
                   value={rowData[columnKey]}
                   width={width}
                   viewStyle={cellContainer[cellAlignment]}

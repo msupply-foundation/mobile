@@ -30,11 +30,12 @@ const DataTableHeaderRow = React.memo(({ columns, sortKey, isAscending, onPress,
         const sortDirection = isAscending ? 'ASC' : 'DESC';
         const directionForThisColumn = key === sortKey ? sortDirection : null;
         const isLastCell = index === columns.length - 1;
+        const cellKey = `header-${key}-${index}`;
 
         return (
           <HeaderCell
-            key={key}
-            title={title}
+            key={cellKey}
+            title={title || ''}
             SortAscComponent={<SortAscIcon />}
             SortDescComponent={<SortDescIcon />}
             SortNeutralComponent={<SortNeutralIcon />}
