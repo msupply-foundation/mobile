@@ -431,7 +431,7 @@ const mapStateToProps = state => {
 
   const { indicatorColumns } = customerRequisition;
 
-  if (!Array.isArray(indicatorColumns || [])) {
+  if (indicatorColumns && !Array.isArray(indicatorColumns)) {
     // Realm's result collection are often treated as plain objects by React's PropTypes checks
     // even if they behave like arrays. So we convert them to arrays here.
     return { ...customerRequisition, indicatorColumns: Array.from(indicatorColumns) };
