@@ -91,6 +91,9 @@ export class Stocktake extends Realm.Object {
     itemIdsToAdd.forEach(itemId => {
       // Find the matching database item and use it to create a stocktake item.
       const item = items.filtered('id == $0', itemId)[0];
+      // Sometimes item may become null/undefined if master list item(s) is deleted
+      // from the database. Or if there is a problem with the database index or loading.
+      if (!item) return;
       const stocktakeItem = createRecord(database, 'StocktakeItem', this, item);
 
       // Add all item batches currently in stock to the stocktake item as stocktake batches.
